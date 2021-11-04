@@ -13,7 +13,7 @@
         "node" : true,
         "es6" : true
     },
-
+    
     //실질적인 규칙이 extends
     "extends": [
         "airbnb"
