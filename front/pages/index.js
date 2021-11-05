@@ -3,8 +3,9 @@ import AppLayout from '../components/AppLayout';
 import { Row, Col } from 'antd';
 const Home = () => {
     return (
-        
+        <>
         <AppLayout>
+            
                 <Row>
                     <Col span={24}>col</Col>
                 <Row>
@@ -19,6 +20,7 @@ const Home = () => {
                 </Row>
             </Row>
         </AppLayout>
+        </>
     )
 }
 
