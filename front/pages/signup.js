@@ -50,6 +50,9 @@ const Signup = () => {
       (e) => {
         e.preventDefault();
         console.log("submit")
+        if(checkpassword){
+          return alert('비밀번호를 확인해주세요')
+        }
         if(!check){
           setCheckError(true)
         }
@@ -58,7 +61,7 @@ const Signup = () => {
         }
         Router.push('/')
       },
-      [check],
+      [email,password,nickname,confirmpassword,check,checkpassword],
     )
     return (
             <Container>
@@ -111,18 +114,15 @@ const Signup = () => {
       <Form.Item
         name="confirm"
         label="비밀번호 확인"
-        dependencies={['password']}
-        hasFeedback
         rules={[
           {
             required: true,
             message: '입력하신 비밀번호가 다릅니다.',
           },
-          
         ]}
+        
       >
         <Input.Password placeholder="비밀번호 확인" value={confirmpassword} onChange={onChangeConfirmpassword} />
-        {checkpassword && <div>입력하신 비밀번호가 다릅니다.</div>}
 
               </Form.Item>
 
