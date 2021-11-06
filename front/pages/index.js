@@ -6,7 +6,7 @@ const Home = () => {
         <>
         <AppLayout>
             
-                <Row>
+                {/* <Row>
                     <Col span={24}>col</Col>
                 <Row>
                     <Col span={8}>col-8</Col>
@@ -18,7 +18,7 @@ const Home = () => {
                     <Col span={12}>col-12</Col>
                     <Col span={12}>col-12</Col>
                 </Row>
-            </Row>
+            </Row> */}
         </AppLayout>
         </>
     )

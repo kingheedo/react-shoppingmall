@@ -1,58 +1,108 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Input } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Badge, Input, Menu } from 'antd'
+import { SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 import Search from 'antd/lib/input/Search'
-const AppLayout = ({children}) => {
-    const Container = styled.div`
+import useInput from '../hooks/useInput'
+
+const Container = styled.div`
         height: 60px;
-        background-color: blue;
+        background-color: white;
+
     `
     const Wrapper = styled.div`
-        padding: 10px 20px;
+        padding: 2px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+
     `
     const Left = styled.div`
         flex:1;
-        
+
     `
     const SearchContainer = styled.div`
         display: flex;
         align-items: center;
         padding: 5px;
+
     `
     const Right = styled.div`
         flex:1;
+        display:flex;
+        align-item: center;
+        justify-content: flex-end;
+
     `
     const Center = styled.div`
         flex:1;
+        text-align: center;
+
     `
+    const Logo = styled.h1`
+        font-weight : bold;
+        line-height : 1.8;
+
+    `
+    const MenuItem = styled.div`
+        font-size: 14px;
+        margin-left: 25px;
+
+    `
+    const SearchIcon =styled(Search)`
+        .ant-input-search-button {
+            height: 29px;
+
+        }
+    `
+const AppLayout = ({children}) => {
+    const [searchvalue, onChangeSearch] = useInput('')
+    const onSearch = useCallback(
+        () => {
+            return alert(searchvalue)
+        },
+        [searchvalue],
+    )
     return (
-        // <div>
-        //     <div>
-        //         <Link href="/"><a>StarClothes</a></Link>
-        //         <Link href="/signup"><a>SIGN UP</a></Link>
-        //         <Link href="/signin"><a>SIGN IN</a></Link>
-        //         <Link href="/cart"><a>장바구니</a></Link>
-        //     </div>
-        // {children}
-        // </div>
         <>
         <Container>
             <Wrapper>
                 <Left>
                     <SearchContainer>
-                        <Search allowClear style={{width: '20rem',}} placeholder="input search text"   />
+                        <SearchIcon onSearch={onSearch} value={searchvalue} onChange={onChangeSearch} allowClear style={{width: '20rem',}} placeholder="input search text"   />
                     </SearchContainer>
                 </Left>
-                <Center>안녕</Center>
-                <Right>그래</Right>
+                <Center>
+                    <Logo>STAR CLOTHES</Logo>
+                </Center>
+                <Right>
+                    <MenuItem>
+                        <Link href="/signup">
+                            회원가입
+                        </Link>
+                    </MenuItem>
+
+                    <MenuItem>
+                        <Link href="/signin">
+                            로그인
+                        </Link>
+                    </MenuItem>
+
+                    <MenuItem >
+                        <Link href="/signin">
+                            <a>
+                                <Badge count={5}>
+                                    <ShoppingCartOutlined style ={{fontSize: '28px'}} />
+                                </Badge>
+                            </a>
+                        </Link>
+                    </MenuItem>
+                </Right>
             </Wrapper>
         </Container>
+        {children}
         </>
     )
 }
