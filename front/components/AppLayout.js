@@ -1,11 +1,24 @@
 import React, { useCallback, useState } from 'react'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import { Badge, Input, Menu } from 'antd'
-import { SearchOutlined, ShoppingCartOutlined } from '@ant-design/icons'
+import { Badge} from 'antd'
+import { ShoppingCartOutlined } from '@ant-design/icons'
 import Search from 'antd/lib/input/Search'
 import useInput from '../hooks/useInput'
+import styled, {createGlobalStyle} from 'styled-components';
+
+
+
+export const Global = createGlobalStyle`
+    a{
+        color: #111111;
+    } 
+    a:hover{
+        color: #111111;
+    }
+    
+ `;
+
 
 const Container = styled.div`
         height: 60px;
@@ -68,6 +81,7 @@ const AppLayout = ({children}) => {
     return (
         <>
         <Container>
+        <Global />
             <Wrapper>
                 <Left>
                     <SearchContainer>
@@ -75,23 +89,27 @@ const AppLayout = ({children}) => {
                     </SearchContainer>
                 </Left>
                 <Center>
-                    <Logo>STAR CLOTHES</Logo>
+                    <Logo>
+                        <Link href="/">
+                        <a>STAR CLOTHES</a>
+                        </Link>
+                    </Logo>
                 </Center>
                 <Right>
                     <MenuItem>
                         <Link href="/signup">
-                            회원가입
+                            <a>회원가입</a>
                         </Link>
                     </MenuItem>
 
                     <MenuItem>
                         <Link href="/signin">
-                            로그인
+                            <a>로그인</a>
                         </Link>
                     </MenuItem>
 
                     <MenuItem >
-                        <Link href="/signin">
+                        <Link href="/cart">
                             <a>
                                 <Badge count={5}>
                                     <ShoppingCartOutlined style ={{fontSize: '28px'}} />

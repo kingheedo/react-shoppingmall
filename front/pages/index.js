@@ -1,11 +1,14 @@
 import React from 'react';
 import AppLayout from '../components/AppLayout';
-import { Row, Col } from 'antd';
+import ImageSlider from '../components/ImageSlider/ImageSlider';
+
+
+
 const Home = () => {
     return (
         <>
         <AppLayout>
-            
+            <ImageSlider/>
                 {/* <Row>
                     <Col span={24}>col</Col>
                 <Row>
