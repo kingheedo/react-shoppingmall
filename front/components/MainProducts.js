@@ -13,14 +13,14 @@ const MainProducts = ({product}) => {
         [],
     )
     const onClickCard = useCallback(
-        () => {
-            Router.push('/cart')
+        (id) => () => {
+            Router.push(`/product/${id}`)
         },
         [],
     )
     return (
         <Card
-             onClick= {onClickCard}
+             onClick= {onClickCard(product.id,)}
              onMouseEnter = {onMouseHover}
              onMouseLeave = {onMouseHover}
              style={{ width: 240, cursor: 'pointer'}}
