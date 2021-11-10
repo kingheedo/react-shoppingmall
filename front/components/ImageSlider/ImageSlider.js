@@ -23,7 +23,7 @@ const ImageSlider = () => {
             <Carousel style={{overflowX:'hidden'}} arrows prevArrow={<LeftOutlined />} nextArrow={<RightOutlined />} autoplay>
 
                 {Images.map(v => (
-                    <img style ={{width: '120rem',}} src={v.src} alt={v.src}/>
+                    <img key={v.src} style ={{width: '120rem',}} src={v.src} alt={v.src}/>
                 ))}
                 
 

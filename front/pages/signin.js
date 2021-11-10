@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import Router from 'next/router';
 import useInput from '../hooks/useInput';
+import { useDispatch } from 'react-redux';
+import { LOG_IN_REQUEST } from '../reducers/user';
 
 const Container = styled.div`
   width: 100vw;
@@ -31,10 +33,16 @@ const Signin = () => {
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
 
+    const dispatch = useDispatch();
+
+
+
     const onhandleSubmit = useCallback(
     (e) => {
         e.preventDefault();
-        Router.push('/')
+        dispatch({
+            type : LOG_IN_REQUEST,
+        })
     },
     [],
 )
