@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { Button, Input, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-const { Option } = Select;
+import { ADD_PRODUCT_CART_REQUEST } from '../../reducers/user';
 
 const Wrapper = styled.div`
     display:flex;
@@ -20,13 +20,20 @@ const Product_Info = styled.div`
    flex-direction : column;
    padding-left: 30px;
 ` 
+const BtnCart = styled(Button)`
+    width: 160px
+` 
+const BtnBuy = styled(Button)`
+    width: 160px
+` 
 const Product = () => {
     const dispatch = useDispatch()
-    const {singleProduct} = useSelector(state => state.product)
+    const {singleProduct,} = useSelector(state => state.product)
+    const {cart} = useSelector(state => state.user)
     const router = useRouter();
     const {id} = router.query;
-    const [sizeValue, setSizeValue] = useState('')
-    const [amount, setAmount] = useState(0)
+    const [sizeValue, setSizeValue] = useState('사이즈')
+    const [amount, setAmount] = useState(1)
     useEffect(() => {
         dispatch({
             type: LOAD_PRODUCT_REQUEST
@@ -43,7 +50,7 @@ const Product = () => {
     const ondecline = useCallback(
         () => {
             if(amount === 1){
-                return null
+                return alert('주문가능한 최소 수량입니다.')
             }
             setAmount(amount - 1)
         },
@@ -51,12 +58,20 @@ const Product = () => {
     )
     const onincrease = useCallback(
         () => {
-            if(amount > (singleProduct && singleProduct.Stock)){
-                return alert('최대 수량입니다.')
+            if(amount === (singleProduct && singleProduct.Stock)){
+                return alert('주문가능한 최대 수량입니다.')
             }
             setAmount(amount + 1)
         },
         [amount],
+    )
+    const onClickCart = useCallback(
+        () => {
+            dispatch({
+                type: ADD_PRODUCT_CART_REQUEST
+            })
+        },
+        [],
     )
     return (
         <>
@@ -69,7 +84,7 @@ const Product = () => {
                     <span>{singleProduct.price}</span>
                     <em>{singleProduct.uniqueId}</em>
                     <select
-                        style={{width: 200}}
+                        style={{width: 320,textAlign: 'center'}}
                         value={sizeValue}
                         onChange={onSelectSize}
                     >
@@ -78,17 +93,33 @@ const Product = () => {
                         <option value="M">M</option>
                         <option value="L">L</option>
                 </select>
-                <Button onClick={ondecline}>
-                    <MinusOutlined />
-                </Button>
-                <Input value={amount} placeholder="Basic usage" />
-                <Button onClick={onincrease}>
-                    <PlusOutlined />
-                </Button>
-
+                
+                <div style={{display: 'flex'}}>
+                    <Button onClick={ondecline}>
+                        <MinusOutlined />
+                    </Button>
+                    <Input style={{textAlign: 'center'}} value={amount} placeholder="Basic usage" />
+                    <Button onClick={onincrease}>
+                        <PlusOutlined />
+                    </Button>
+                </div>
+                
+                <div style={{display:'flex'}}>
+                <BtnCart onClick={onClickCart} type="Cart">장바구니</BtnCart>
+                <BtnBuy type="BuyNow">바로구매</BtnBuy>
+                </div>
                 </Product_Info>
             </Wrapper>
             }
+            
+            <div>
+                {cart && cart.map(v => 
+                    <div>
+                        {v.Product.name}
+                        {v.Product.price}
+                    </div>)}
+            </div>
+
         </AppLayout>
         
         </>

@@ -1,11 +1,14 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import PropTypes from 'prop-types'
-import { Badge} from 'antd'
+import { Badge, Button} from 'antd'
 import { ShoppingCartOutlined } from '@ant-design/icons'
 import Search from 'antd/lib/input/Search'
 import useInput from '../hooks/useInput'
 import styled, {createGlobalStyle} from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux'
+import { LOG_IN_REQUEST, LOG_OUT_REQUEST } from '../reducers/user'
+import  Router  from 'next/router'
 
 
 
@@ -71,13 +74,26 @@ const Container = styled.div`
         }
     `
 const AppLayout = ({children}) => {
+    const {me,cart} = useSelector(state => state.user)
     const [searchvalue, onChangeSearch] = useInput('')
+    const dispatch = useDispatch();
     const onSearch = useCallback(
         () => {
             return alert(searchvalue)
         },
         [searchvalue],
     )
+        
+
+        const onHandleLogout = useCallback(
+            () => {
+                dispatch({
+                    type: LOG_OUT_REQUEST
+                })
+            },
+            [],
+        )
+        
     return (
         <>
         <Container>
@@ -97,21 +113,32 @@ const AppLayout = ({children}) => {
                 </Center>
                 <Right>
                     <MenuItem>
-                        <Link href="/signup">
+                        <Button>
+                            <Link href='/signup'>
                             <a>회원가입</a>
-                        </Link>
+                            </Link>
+                        </Button>
                     </MenuItem>
 
                     <MenuItem>
-                        <Link href="/signin">
-                            <a>로그인</a>
-                        </Link>
+                        {me 
+                        ?
+                        <Button onClick={onHandleLogout}>
+                            로그아웃
+                        </Button>
+                        :
+                        <Button>
+                            <Link href="/signin">
+                                <a>로그인</a>
+                            </Link>
+                        </Button>
+                        }
                     </MenuItem>
 
                     <MenuItem >
                         <Link href="/cart">
                             <a>
-                                <Badge count={5}>
+                                <Badge count={cart.length}>
                                     <ShoppingCartOutlined style ={{fontSize: '28px'}} />
                                 </Badge>
                             </a>

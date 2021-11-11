@@ -1,11 +1,11 @@
-import React, { useCallback, } from 'react'
+import React, { useCallback, useEffect, } from 'react'
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Link from 'next/link';
 import Router from 'next/router';
 import useInput from '../hooks/useInput';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { LOG_IN_REQUEST } from '../reducers/user';
 
 const Container = styled.div`
@@ -32,10 +32,16 @@ const SignUpButton = styled(Button)`
 const Signin = () => {
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
+    const {me,isLogginDone} = useSelector(state => state.user)
 
     const dispatch = useDispatch();
 
 
+    useEffect(() => {
+        if(me && isLogginDone){
+            Router.push('/signup')
+        }
+    }, [me,isLogginDone])
 
     const onhandleSubmit = useCallback(
     (e) => {
@@ -43,13 +49,13 @@ const Signin = () => {
         dispatch({
             type : LOG_IN_REQUEST,
         })
+        Router.push('/')
     },
     [],
 )
     const onhandleSignUp = useCallback(
     (e) => {
         e.preventDefault();
-        Router.push('/signup')
     },
     [],
 )
