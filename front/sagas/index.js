@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import userSaga from './user';
 import productSaga from './product';
+import cartSaga from './cart'
 
 
 
@@ -11,5 +12,6 @@ export default function* rootSaga() {
     yield all([
         fork(userSaga),
         fork(productSaga),
+        fork(cartSaga),
     ]);
 }

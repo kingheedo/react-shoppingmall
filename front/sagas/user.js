@@ -5,26 +5,6 @@ import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SU
 
 
 
-function AddProductCartApi(data) { //hashtag/name
-    return axios.get('api/product', data);
-}
-function* AddProductCart(action) {
-    try {
-        // const result = yield call(LoadProductsApi, action.data);
-        yield delay(1000);
-        yield put({
-            type: ADD_PRODUCT_CART_SUCCESS,
-            data: dummyProducts(),
-        });
-    } catch (err) {
-      console.error(err);
-        yield put({
-            type: ADD_PRODUCT_CART_FAILURE,
-            error: err.response.data,
-        });
-    }
-}
-
 function LogoutApi(data) { //hashtag/name
     return axios.get('api/product', data);
 }
@@ -71,13 +51,10 @@ function* Login(action) {
   function* watchLogout() {
     yield throttle(3000, LOG_OUT_REQUEST, Logout);
   }
-  function* watchAddProductCart() {
-    yield throttle(3000, ADD_PRODUCT_CART_REQUEST, AddProductCart);
-  }
+  
   export default function* productSaga() {
     yield all([
         fork(watchLogin),
         fork(watchLogout),
-        fork(watchAddProductCart),
     ]);
 }

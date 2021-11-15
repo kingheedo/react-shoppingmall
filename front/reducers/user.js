@@ -36,9 +36,7 @@ export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_REQUEST';
 
-export const ADD_PRODUCT_CART_REQUEST = 'ADD_PRODUCT_CART_REQUEST';
-export const ADD_PRODUCT_CART_SUCCESS = 'ADD_PRODUCT_CART_SUCCESS';
-export const ADD_PRODUCT_CART_FAILURE = 'ADD_PRODUCT_CART_FAILURE';
+
 
 
 const reducer = (state = initialState, action) =>{
@@ -75,23 +73,7 @@ const reducer = (state = initialState, action) =>{
                 draft.logginDone = false;
                 draft.logginError = action.error;
             break;
-            
-            case ADD_PRODUCT_CART_REQUEST:
-                draft.addProductCartLoading = true;
-                draft.addProductCartDone = false;
-                draft.addProductCartError = null;
-            break;
-            case ADD_PRODUCT_CART_SUCCESS:
-                draft.addProductCartLoading = false;
-                draft.addProductCartDone = true;
-                draft.cart.push({Product: action.data});
-            break;
-            case ADD_PRODUCT_CART_FAILURE:
-                draft.addProductCartLoading = false;
-                draft.addProductCartDone = false;
-                draft.addProductCartError = action.error;
-            break;
-        
+
             default:
                 break;
         }

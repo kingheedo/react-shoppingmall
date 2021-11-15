@@ -74,7 +74,8 @@ const Container = styled.div`
         }
     `
 const AppLayout = ({children}) => {
-    const {me,cart} = useSelector(state => state.user)
+    const {me} = useSelector(state => state.user)
+    const {products} = useSelector(state => state.cart)
     const [searchvalue, onChangeSearch] = useInput('')
     const dispatch = useDispatch();
     const onSearch = useCallback(
@@ -138,7 +139,7 @@ const AppLayout = ({children}) => {
                     <MenuItem >
                         <Link href="/cart">
                             <a>
-                                <Badge count={cart.length}>
+                                <Badge count={products.length}>
                                     <ShoppingCartOutlined style ={{fontSize: '28px'}} />
                                 </Badge>
                             </a>
