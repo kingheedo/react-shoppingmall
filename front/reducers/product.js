@@ -11,6 +11,8 @@ export const initialState = {
 
 
 
+
+
 export const LOAD_PRODUCT_REQUEST = 'LOAD_PRODUCT_REQUEST';
 export const LOAD_PRODUCT_SUCCESS = 'LOAD_PRODUCT_SUCCESS';
 export const LOAD_PRODUCT_FAILURE = 'LOAD_PRODUCT_FAILURE';
@@ -55,7 +57,7 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
             },
         ],
         Stars : 4,
-        Color : ['blue','beige','white','black'],
+        Colors : ['blue','beige','white','black'],
         Size : size,
         Stock : 10,
             
@@ -96,7 +98,7 @@ export const dummyProducts  = () =>  (
             },
         ],
         Stars : 4,
-        Color : ['blue','beige','white','black'],
+        Colors : ['blue','beige','white','black'],
         Size : 'S',
         Stock : 10,
             

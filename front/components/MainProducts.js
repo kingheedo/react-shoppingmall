@@ -33,7 +33,7 @@ const MainProducts = ({product}) => {
            </Card>
     )
 }
-MainProducts.proptypes={
+MainProducts.propTypes={
     product : Proptypes.shape({
         id: Proptypes.number,
         uniqueId: Proptypes.string,
@@ -42,7 +42,7 @@ MainProducts.proptypes={
         Images: Proptypes.arrayOf(Proptypes.object),
         Likers : Proptypes.arrayOf(Proptypes.object),
         Stars: Proptypes.number,
-        Color: Proptypes.string,
+        Colors: Proptypes.arrayOf(Proptypes.object),
         Size: Proptypes.string,
         Stock: Proptypes.number,
     }).isRequired,

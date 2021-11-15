@@ -12,9 +12,7 @@ export const initialState = {
     logoutDone: false,
     logoutError: null,
 
-    addProductCartLoading: false,
-    addProductCartDone: false,
-    addProductCartError: null,
+   
 
 
 }

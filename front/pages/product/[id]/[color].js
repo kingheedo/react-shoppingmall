@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import {useRouter} from 'next/router'
 import 'react-redux'
 import { useDispatch, useSelector } from 'react-redux';
-import { LOAD_PRODUCT_REQUEST } from '../../reducers/product';
-import AppLayout from '../../components/AppLayout'
+import { LOAD_PRODUCT_REQUEST } from '../../../reducers/product';
+import AppLayout from '../../../components/AppLayout'
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Button, Image, Input, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ADD_PRODUCT_CART_REQUEST } from '../../reducers/cart';
+import { ADD_PRODUCT_CART_REQUEST } from '../../../reducers/cart';
 
 const Wrapper = styled.div`
     display:flex;
@@ -26,13 +26,13 @@ const BtnCart = styled(Button)`
 const BtnBuy = styled(Button)`
     width: 160px
 ` 
-const Product = () => {
+const OtherColorProduct = () => {
     const dispatch = useDispatch()
     const {singleProduct,} = useSelector(state => state.product)
     const {cart} = useSelector(state => state.cart)
 
     const router = useRouter();
-    const {id} = router.query;
+    const {id,color} = router.query;
     const [size, setSize] = useState('사이즈')
     const [quantity, setQuantity] = useState(1)
     useEffect(() => {
@@ -89,6 +89,15 @@ const Product = () => {
                 <Image src= {singleProduct.Images[0].src}/>
                 <Product_Info>
                     <h2>{singleProduct.name}</h2>
+                    <ul>
+                    {singleProduct && singleProduct.Colors.map(Color =>
+                            <li>
+                                <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
+                                    <a>{Color}</a>
+                                </Link>
+                            </li>
+                        )}
+                    </ul>
                     <span>{singleProduct.price}</span>
                     <em>{singleProduct.uniqueId}</em>
                     <select
@@ -129,4 +138,4 @@ const Product = () => {
     )
 }
 
-export default Product
+export default OtherColorProduct
