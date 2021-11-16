@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
+import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -13,7 +14,7 @@ const CartTable =  styled(Table)`
    
     
     const Cart = () => {
-        const {products} = useSelector(state => state.cart)
+        const {products,total} = useSelector(state => state.cart)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
 
@@ -25,16 +26,23 @@ const CartTable =  styled(Table)`
             // })
         }, [checkedProducts])
         const onChangeCheck = useCallback(
-           (productPluralPrice) => (e) => {
+           (productPluralPrice,productSize) => (e) => {
                 console.log('target', e.target);
                 if(e.target.checked){
-                setcheckedProducts([...checkedProducts,{id: e.target.id, productPluralPrice
-                }])
+                setcheckedProducts([...checkedProducts,{id: e.target.id, productPluralPrice}])
+                dispatch({
+                type: CHECK_CART_PRODUCT_REQUEST,
+                data : {id : e.target.id, Size: productSize}
+            })
             }else{
-                setcheckedProducts(checkedProducts.filter( v => v.id !== e.target.id))
+               setcheckedProducts(checkedProducts.filter( v => v.id !== e.target.id))
+               dispatch({
+                type: UNCHECK_CART_PRODUCT_REQUEST,
+                data : {id : e.target.id, Size: productSize}
+            })
             }
             },
-            [checkedProducts],
+            [checkedProducts,],
         )
 
         
@@ -66,9 +74,9 @@ const CartTable =  styled(Table)`
                     
                     <tbody style={{height:'10rem', textAlign:'center'}} >
                     {products && products.map(product => 
-                                <tr style={{border: '1px solid'}}>
+                                <tr key={product.Size} style={{border: '1px solid'}}>
                                     <td>
-                                        <Checkbox id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice)}/>
+                                        <Checkbox defaultChecked={true} id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice,product.Size)}/>
                                     </td>
                                     <td>
                                         <img style={{width: '8rem'}} src={product.Images[0].src}/>
@@ -91,13 +99,8 @@ const CartTable =  styled(Table)`
                     </tbody>
                     </table>
                 </div>
-                    {/* {products && products.map(product => {
-                        Price += product.price
-                        Price > 1000000 ? Price : Price += 2500
-                        return Price
-                    }
-                        )} */}
-                {/* </div> */}
+                    <div>{total}</div>
+
          </AppLayout>
     )
 }

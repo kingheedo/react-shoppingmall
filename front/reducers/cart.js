@@ -9,6 +9,14 @@ export const initialState = {
     loadAllPriceDone : false,
     loadAllPriceError : null,
 
+    uncheckCartProductLoading: false,
+    uncheckCartProductDone: false,
+    uncheckCartProductError: null,
+
+    checkCartProductLoading: false,
+    checkCartProductDone: false,
+    checkCartProductError: null,
+
     addProductCartLoading: false,
     addProductCartDone: false,
     addProductCartError: null,
@@ -17,6 +25,15 @@ export const initialState = {
 export const LOAD_ALL_PRICE_REQUEST = 'LOAD_ALL_PRICE_REQUEST';
 export const LOAD_ALL_PRICE_SUCCESS = 'LOAD_ALL_PRICE_SUCCESS';
 export const LOAD_ALL_PRICE_FAILURE = 'LOAD_ALL_PRICE_FAILURE';
+
+
+export const CHECK_CART_PRODUCT_REQUEST = 'CHECK_CART_PRODUCT_REQUEST';
+export const CHECK_CART_PRODUCT_SUCCESS = 'CHECK_CART_PRODUCT_SUCCESS';
+export const CHECK_CART_PRODUCT_FAILURE = 'CHECK_CART_PRODUCT_FAILURE';
+
+export const UNCHECK_CART_PRODUCT_REQUEST = 'UNCHECK_CART_PRODUCT_REQUEST';
+export const UNCHECK_CART_PRODUCT_SUCCESS = 'UNCHECK_CART_PRODUCT_SUCCESS';
+export const UNCHECK_CART_PRODUCT_FAILURE = 'UNCHECK_CART_PRODUCT_FAILURE';
 
 export const ADD_PRODUCT_CART_REQUEST = 'ADD_PRODUCT_CART_REQUEST';
 export const ADD_PRODUCT_CART_SUCCESS = 'ADD_PRODUCT_CART_SUCCESS';
@@ -41,6 +58,42 @@ switch (action.type) {
                 draft.loadAllPriceLoading = false;
                 draft.loadAllPriceDone = false;
                 draft.loadAllPriceError = action.error;
+            break;
+
+            case UNCHECK_CART_PRODUCT_REQUEST:
+                draft.checkCartProductLoading = true;
+                draft.checkCartProductDone = false;
+                draft.checkCartProductError = null;
+            break;
+            case UNCHECK_CART_PRODUCT_SUCCESS:{
+                draft.checkCartProductLoading = false;
+                draft.checkCartProductDone = true;
+                const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
+                draft.total -= product.pluralPrice
+            break;
+        }
+            case UNCHECK_CART_PRODUCT_FAILURE:
+                draft.checkCartProductLoading = false;
+                draft.checkCartProductDone = false;
+                draft.checkCartProductError = action.error;
+            break;
+
+            case CHECK_CART_PRODUCT_REQUEST:
+                draft.uncheckCartProductLoading = true;
+                draft.uncheckCartProductDone = false;
+                draft.uncheckCartProductError = null;
+            break;
+            case CHECK_CART_PRODUCT_SUCCESS:{
+                draft.uncheckCartpLoading = false;
+                draft.uncheckCartProductDone = true;
+                 const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
+                draft.total += product.pluralPrice
+            break;
+        }
+            case CHECK_CART_PRODUCT_FAILURE:
+                draft.uncheckCartpLoading = false;
+                draft.uncheckCartProductDone = false;
+                draft.uncheckCartProductError = action.error;
             break;
 
             case ADD_PRODUCT_CART_REQUEST:
