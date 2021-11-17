@@ -5,6 +5,7 @@ import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
+import Payment from '../components/payment'
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -100,6 +101,7 @@ const CartTable =  styled(Table)`
                     </table>
                 </div>
                     <div>{total}</div>
+                    <Payment/>
 
          </AppLayout>
     )
