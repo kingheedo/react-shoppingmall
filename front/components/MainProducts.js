@@ -42,9 +42,11 @@ MainProducts.propTypes={
         Images: Proptypes.arrayOf(Proptypes.object),
         Likers : Proptypes.arrayOf(Proptypes.object),
         Stars: Proptypes.number,
-        Colors: Proptypes.arrayOf(Proptypes.object),
+        Colors: Proptypes.arrayOf(Proptypes.string),
+        price: Proptypes.number,
         Size: Proptypes.string,
         Stock: Proptypes.number,
+        inStock: Proptypes.bool,
     }).isRequired,
 }
 

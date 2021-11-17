@@ -4,6 +4,7 @@ import ImageSlider from '../components/ImageSlider/ImageSlider';
 import MainProducts from '../components/MainProducts';
 import { LOAD_PRODUCTS_REQUEST } from '../reducers/product';
 import {useDispatch, useSelector} from 'react-redux';
+import { Col, Row } from 'antd';
 
 const Home = () => {
     const {mainProducts} = useSelector(state => state.product)
@@ -19,26 +20,19 @@ const Home = () => {
         <>
         <AppLayout>
             <ImageSlider/>
-            
-            {mainProducts && mainProducts.map((product) => 
-            <MainProducts key={product.id} product = {product}/>
-             
-           
-           )}
-            
-                {/* <Row>
-                    <Col span={24}>col</Col>
-                <Row>
-                    <Col span={8}>col-8</Col>
-                    <Col span={8}>col-8</Col>
-                    <Col span={8}>col-8</Col>
-                </Row>
-
-                <Row>
-                    <Col span={12}>col-12</Col>
-                    <Col span={12}>col-12</Col>
-                </Row>
-            </Row> */}
+            <div style={{margin: '2rem 16rem',width:'90rem', }}>
+                <h2>Clothes</h2>
+                <Row gutter = {[18,18]}>
+                
+                {mainProducts && mainProducts.map((product) => 
+                <Col span={6}>
+                    <MainProducts key={product.id} product = {product}/>
+                </Col>
+            )}
+                
+            </Row>
+            </div>
+        
         </AppLayout>
         </>
     )

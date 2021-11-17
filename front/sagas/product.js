@@ -1,4 +1,4 @@
-import { LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS,dummyProducts, dummyProduct, LOAD_PRODUCT_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST } from "../reducers/product";
+import { LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS,dummyProducts, dummyProduct, LOAD_PRODUCT_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST, fakerProducts } from "../reducers/product";
 import axios from 'axios'
 import { all, delay, fork, put, throttle } from "@redux-saga/core/effects";
 
@@ -11,7 +11,7 @@ function* LoadProducts(action) {
         yield delay(1000);
         yield put({
             type: LOAD_PRODUCTS_SUCCESS,
-            data: dummyProducts(),
+            data: fakerProducts(),
         });
     } catch (err) {
       console.error(err);

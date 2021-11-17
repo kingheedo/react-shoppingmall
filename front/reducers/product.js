@@ -63,7 +63,8 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
             
     }
     )
-
+    
+    
 export const dummyProducts  = () =>  (
     {
         id : 1,
@@ -104,7 +105,45 @@ export const dummyProducts  = () =>  (
             
     }
     )
-
+    export const fakerProducts = () => Array(30).fill().map((v,i) =>
+        ({
+            id : i+1,
+        uniqueId : '321938CY2Q',
+        name: faker.name.firstName()
+        ,
+        inStock : true,
+        price : faker.datatype.number(),
+        Reviews:[
+            {
+                id :1,
+                content: '이거 좋아요',
+                User : {
+                    email: faker.internet.email(),
+                },
+            }
+        ],
+        Images:[
+            {
+                src: faker.image.imageUrl(),
+            },
+            {
+                src: faker.image.imageUrl(),
+            }
+        ],
+        Likers: [
+            {
+                id :2
+            },
+            {
+                id:3
+            },
+        ],
+        Stars : 4,
+        Colors : ['blue','beige','white','black'],
+        Size : 'S',
+        Stock : 10,
+        })
+        )
 const reducer = (state = initialState, action) =>{
     return produce(state,(draft) => {
         switch (action.type) {
@@ -117,7 +156,7 @@ const reducer = (state = initialState, action) =>{
             case LOAD_PRODUCTS_SUCCESS:
                 draft.loadMainProductsLoading = false;
                 draft.loadMainProductsDone = true;
-                draft.mainProducts.push(action.data);
+                draft.mainProducts = action.data;
             break;
             case LOAD_PRODUCTS_FAILURE:
                 draft.loadMainProductsLoading = false;
