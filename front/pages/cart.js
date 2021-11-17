@@ -1,4 +1,4 @@
-import { Breadcrumb,Table,Image, Checkbox } from 'antd'
+import { Breadcrumb,Table,Image, Checkbox, Empty } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
@@ -64,17 +64,29 @@ const CartTable =  styled(Table)`
                 <table style={{width: '1100px', border: '1px solid'}}>
                     <thead style={{border: '1px solid'}}>
                         <tr>
+                            {products[0] 
+                            ?
+                            (
+                            <>
                             <th>{' '}</th>
                             <th>{' '}</th>
+                            </>
+
+                            )
+                            : null
+                        }
+                            
                             <th style={{border: '1px solid'}}>상품정보</th>
                             <th style={{border: '1px solid'}}>배송정보</th>
                             <th style={{border: '1px solid'}}>주문금액</th>
                         </tr>
                     </thead>
                     
+                    {products[0]  ? (
+                    
                     <tbody style={{height:'10rem', textAlign:'center'}} >
-                    {products && products.map(product => 
-                                <tr key={product.Size} style={{border: '1px solid'}}>
+                    {products[0] && products.map(product => 
+                                (<tr key={product.Size} style={{border: '1px solid'}}>
                                     <td>
                                         <Checkbox defaultChecked={true} id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice,product.Size)}/>
                                     </td>
@@ -93,10 +105,14 @@ const CartTable =  styled(Table)`
                                     <td>
                                         {product.pluralPrice}원
                                     </td>
-                                </tr>
-                                )}
+                                </tr>)
+                                )
+                                }
                         
                     </tbody>
+                    )
+                    : <Empty style={{margin: '36px'}}/>
+                            }
                     </table>
                 </div>
                     <div>{total}</div>
