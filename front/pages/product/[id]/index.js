@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import {useRouter} from 'next/router'
+import Router, {useRouter} from 'next/router'
 import 'react-redux'
 import { useDispatch, useSelector } from 'react-redux';
 import { LOAD_PRODUCT_REQUEST } from '../../../reducers/product';
 import AppLayout from '../../../components/AppLayout'
 import styled from 'styled-components';
 import Link from 'next/link';
-import { Button, Image, Input, Select } from 'antd';
+import { Button, Image, Input, Modal, Result, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ADD_PRODUCT_CART_REQUEST } from '../../../reducers/cart';
 
@@ -29,18 +29,30 @@ const BtnBuy = styled(Button)`
 const Product = () => {
     const dispatch = useDispatch()
     const {singleProduct,} = useSelector(state => state.product)
-    const {cart} = useSelector(state => state.cart)
+    const {cart,} = useSelector(state => state.cart)
 
     const router = useRouter();
     const {id,color} = router.query;
     const [size, setSize] = useState('사이즈')
     const [quantity, setQuantity] = useState(1)
+    const [visibleModal, setVisibleModal] = useState(false)
+
+    
     useEffect(() => {
         dispatch({
             type: LOAD_PRODUCT_REQUEST
         })
     }, [])
 
+    
+    const onhandleModal = useCallback(
+        () => {
+            setVisibleModal(false)
+            Router.push('/cart')
+
+        },
+        [],
+    )
     const onSelectSize  = useCallback(
         (e) => {
             console.log('SIZE',e.target.value)
@@ -74,10 +86,14 @@ const Product = () => {
             if(size === '사이즈'){
                 return alert('사이즈를 선택해주세요.')
             }
-            dispatch({
+           else{ dispatch({
                 type: ADD_PRODUCT_CART_REQUEST,
                 data: {productId: id, size, quantity, pluralPrice}
             })
+            setVisibleModal(true)
+            }
+            
+            
         },
         [id,quantity,size],
     )
@@ -127,6 +143,25 @@ const Product = () => {
                 <BtnBuy type="BuyNow">바로구매</BtnBuy>
                 </div>
                 </Product_Info>
+
+                <Modal
+                        centered
+                        visible={visibleModal}
+                        footer={null}
+                        onCancel = {() => setVisibleModal(false)}
+                        >
+                        <Result
+                            status="success"
+                            title= {`장바구니에 상품이 담겼습니다.
+                            장바구니로 이동하시겠습니까?`}
+                            extra={[
+                            <Button onClick={onhandleModal} key="move">확인</Button>,
+                            <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
+                            ]}
+                        />,
+                </Modal>
+                    
+            )
             </Wrapper>
             }
             
