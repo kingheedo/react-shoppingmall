@@ -29,7 +29,7 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         inStock : true,
-        price : 50000,
+        price : 20000,
         pluralPrice : productPrice,
         Reviews:[
             {
@@ -60,7 +60,7 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
         Colors : ['blue','beige','white','black'],
         Size : size,
         Stock : 10,
-            
+        DeliveryFee: 2500,
     }
     )
     
@@ -102,6 +102,7 @@ export const dummyProducts  = () =>  (
         Colors : ['blue','beige','white','black'],
         Size : 'S',
         Stock : 10,
+        DeliveryFee: 2500,
             
     }
     )
@@ -142,6 +143,7 @@ export const dummyProducts  = () =>  (
         Colors : ['blue','beige','white','black'],
         Size : 'S',
         Stock : 10,
+        deliveryFee: 2500,
         })
         )
 const reducer = (state = initialState, action) =>{

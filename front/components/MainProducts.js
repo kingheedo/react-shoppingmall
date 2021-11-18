@@ -47,6 +47,7 @@ MainProducts.propTypes={
         Size: Proptypes.string,
         Stock: Proptypes.number,
         inStock: Proptypes.bool,
+        deliveryFee: Proptypes.number,
     }).isRequired,
 }
 

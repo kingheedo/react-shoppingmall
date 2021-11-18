@@ -3,8 +3,8 @@ import produce from "immer";
 
 export const initialState = {
     products : [],
-    total: 0,
-
+    totalPrice: 0,
+    totalDeliveryFee : 0,
     loadAllPriceLoading : false,
     loadAllPriceDone : false,
     loadAllPriceError : null,
@@ -51,7 +51,7 @@ switch (action.type) {
             case LOAD_ALL_PRICE_SUCCESS:{
                 draft.loadAllPriceLoading = false;
                 draft.loadAllPriceDone = true;
-                draft.total += action.data
+                draft.totalPrice += action.data
             break;
         }
             case LOAD_ALL_PRICE_FAILURE:
@@ -69,7 +69,7 @@ switch (action.type) {
                 draft.checkCartProductLoading = false;
                 draft.checkCartProductDone = true;
                 const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
-                draft.total -= product.pluralPrice
+                draft.totalPrice -= (product.pluralPrice + product.DeliveryFee)
             break;
         }
             case UNCHECK_CART_PRODUCT_FAILURE:
@@ -87,7 +87,7 @@ switch (action.type) {
                 draft.uncheckCartpLoading = false;
                 draft.uncheckCartProductDone = true;
                  const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
-                draft.total += product.pluralPrice
+                draft.totalPrice += (product.pluralPrice + product.DeliveryFee)
             break;
         }
             case CHECK_CART_PRODUCT_FAILURE:
@@ -104,13 +104,18 @@ switch (action.type) {
             case ADD_PRODUCT_CART_SUCCESS:{
                 draft.addProductCartLoading = false;
                 draft.addProductCartDone = true;
-                draft.total = draft.total += action.data.pluralPrice;
                 const exproduct = draft.products.find(v => (v.id === action.data.id ) && (v.Size === action.data.Size))
                 if(exproduct){
                     exproduct.quantity += action.data.quantity
                     exproduct.pluralPrice += action.data.pluralPrice
+                     exproduct.pluralPrice > 39900 ?  (exproduct.DeliveryFee  = 0) :  (exproduct.DeliveryFee = 2500)
+                     draft.totalPrice += (exproduct.pluralPrice + exproduct.DeliveryFee)
                 }
-                else draft.products.push(action.data)
+                else {
+                    draft.products.push(action.data)
+                    action.data.pluralPrice > 39900 ? action.data.DeliveryFee = 0 :  action.data.DeliveryFee =2500
+                    draft.totalPrice += (action.data.pluralPrice + action.data.DeliveryFee)
+                }
             break;
         }
             case ADD_PRODUCT_CART_FAILURE:

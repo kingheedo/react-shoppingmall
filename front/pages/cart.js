@@ -11,10 +11,13 @@ const CartTable =  styled(Table)`
     display:none;
 },
 `
+const Wrapper = styled.div`
+    margin: 200px;
+`
    
     
     const Cart = () => {
-        const {products,total} = useSelector(state => state.cart)
+        const {products,totalPrice,shipPay,} = useSelector(state => state.cart)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
 
@@ -48,75 +51,77 @@ const CartTable =  styled(Table)`
         
     return (
         <AppLayout>
-                <Breadcrumb style= {{margin: '80px'}}>
-                    <Breadcrumb.Item>
-                        <Link href="/">
-                            <a>
-                                Home
-                            </a>
-                        </Link>    
-                    </Breadcrumb.Item>
-                    <Breadcrumb.Item>
-                                장바구니
-                    </Breadcrumb.Item>
-                </Breadcrumb>
-                <div style={{margin:'80px',  }}>
-                <table style={{width: '1100px', border: '1px solid'}}>
-                    <thead style={{border: '1px solid'}}>
-                        <tr>
-                            {products[0] 
-                            ?
-                            (
-                            <>
-                            <th>{' '}</th>
-                            <th>{' '}</th>
-                            </>
+                <Wrapper>
+                    <Breadcrumb>
+                        <Breadcrumb.Item>
+                            <Link href="/">
+                                <a>
+                                    Home
+                                </a>
+                            </Link>    
+                        </Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                                    장바구니
+                        </Breadcrumb.Item>
+                    </Breadcrumb>
+                    <div>
+                    <table style={{width: '1100px', border: '1px solid'}}>
+                        <thead style={{border: '1px solid'}}>
+                            <tr>
+                                {products[0] 
+                                ?
+                                (
+                                <>
+                                <th>{' '}</th>
+                                <th>{' '}</th>
+                                </>
 
-                            )
-                            : null
-                        }
-                            
-                            <th style={{border: '1px solid'}}>상품정보</th>
-                            <th style={{border: '1px solid'}}>배송정보</th>
-                            <th style={{border: '1px solid'}}>주문금액</th>
-                        </tr>
-                    </thead>
-                    
-                    {products[0]  ? (
-                    
-                    <tbody style={{height:'10rem', textAlign:'center'}} >
-                    {products[0] && products.map(product => 
-                                (<tr key={product.Size} style={{border: '1px solid'}}>
-                                    <td>
-                                        <Checkbox defaultChecked={true} id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice,product.Size)}/>
-                                    </td>
-                                    <td>
-                                        <img style={{width: '8rem'}} src={product.Images[0].src}/>
-                                    </td>
-                                    <td>
-                                        {product.name}
-                                        <br/>
-                                        {product.Size}/
-                                        {product.quantity}개
-                                    </td>
-                                    <td>
-                                        {product.price > 40000 ? '무료배송' : `${2500}원`}
-                                    </td>
-                                    <td>
-                                        {product.pluralPrice}원
-                                    </td>
-                                </tr>)
                                 )
-                                }
-                        
-                    </tbody>
-                    )
-                    : <Empty style={{margin: '36px'}}/>
+                                : null
                             }
-                    </table>
-                </div>
-                    <div>{total}</div>
-
+                                
+                                <th style={{border: '1px solid'}}>상품정보</th>
+                                <th style={{border: '1px solid'}}>배송정보</th>
+                                <th style={{border: '1px solid'}}>주문금액</th>
+                            </tr>
+                        </thead>
+                        
+                        
+                        <tbody style={{height:'10rem', textAlign:'center'}} >
+                        {products[0] && products.map(product => 
+                                    (<tr key={product.Size} style={{border: '1px solid'}}>
+                                        <td>
+                                            <Checkbox defaultChecked={true} id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice,product.Size)}/>
+                                        </td>
+                                        <td>
+                                            <img style={{width: '8rem'}} src={product.Images[0].src}/>
+                                        </td>
+                                        <td>
+                                            {product.name}
+                                            <br/>
+                                            {product.Size}/
+                                            {product.quantity}개
+                                        </td>
+                                        <td>
+                                            {product.DeliveryFee}원
+                                        </td>
+                                        <td>
+                                            {product.pluralPrice}원
+                                        </td>
+                                    </tr>)
+                                    )
+                                    }
+                            
+                                </tbody>
+                            </table>
+                            </div>
+                        {/* <div>
+                            <h5>스토어 주문금액 합계</h5>
+                            <span>상품금액<em>{total}원</em> + 배송비<em>{shipPay}원</em></span>
+                            <span>{totalPrice}원</span>
+                        </div> */}
+                        {totalPrice}
+                </Wrapper>
          </AppLayout>
     )
 }
