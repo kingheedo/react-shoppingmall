@@ -105,7 +105,7 @@ const Product = () => {
                 <Image src= {singleProduct.Images[0].src}/>
                 <Product_Info>
                     <h2>{singleProduct.name}</h2>
-                    <ul>
+                    {/* <ul>
                         {singleProduct && singleProduct.Colors.map(Color =>
                             <li>
                                 <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
@@ -113,7 +113,7 @@ const Product = () => {
                                 </Link>
                             </li>
                         )}
-                    </ul>
+                    </ul> */}
                     <span>{singleProduct.price}</span>
                     <em>{singleProduct.uniqueId}</em>
                     <select

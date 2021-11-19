@@ -5,6 +5,7 @@ import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
 import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
+import Router from 'next/router'
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -17,17 +18,16 @@ const Wrapper = styled.div`
    
     
     const Cart = () => {
-        const {products,totalPrice,shipPay,} = useSelector(state => state.cart)
+        const {products,totalPrice,totalDeliveryFee,} = useSelector(state => state.cart)
+        const {me} = useSelector(state => state.user)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
 
         useEffect(() => {
-            console.log('checkedProducts',checkedProducts)
-            // dispatch({
-            //     type: LOAD_ALL_PRICE_REQUEST,
-            //     data :checkedProducts[id].productPluralPrice
-            // })
-        }, [checkedProducts])
+            if(!me){
+                Router.push('/signin')
+            }
+        }, [me])
         const onChangeCheck = useCallback(
            (productPluralPrice,productSize) => (e) => {
                 console.log('target', e.target);
@@ -103,7 +103,7 @@ const Wrapper = styled.div`
                                             {product.quantity}개
                                         </td>
                                         <td>
-                                            {product.DeliveryFee}원
+                                            {product.DeliveryFee ===0 ? '무료배송' : `${product.DeliveryFee}원`}
                                         </td>
                                         <td>
                                             {product.pluralPrice}원
@@ -115,12 +115,12 @@ const Wrapper = styled.div`
                                 </tbody>
                             </table>
                             </div>
-                        {/* <div>
+                        <div>
                             <h5>스토어 주문금액 합계</h5>
-                            <span>상품금액<em>{total}원</em> + 배송비<em>{shipPay}원</em></span>
+                            <span>상품금액 <em>{totalPrice - totalDeliveryFee }원</em> + 배송비 <em>{totalDeliveryFee}원 = </em></span>
                             <span>{totalPrice}원</span>
-                        </div> */}
-                        {totalPrice}
+                        </div>
+                        
                 </Wrapper>
          </AppLayout>
     )
