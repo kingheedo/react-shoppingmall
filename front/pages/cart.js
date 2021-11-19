@@ -99,7 +99,7 @@ const Wrapper = styled.div`
                                         <td>
                                             {product.name}
                                             <br/>
-                                            {product.Size}/
+                                            {product.Size}
                                             {product.quantity}개
                                         </td>
                                         <td>

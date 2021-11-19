@@ -6,12 +6,19 @@ export const initialState = {
     loadMainProductsLoading : false,
     loadMainProductsDone : false,
     loadMainProductsError : null,
+    addProductReviewLoading: false,
+    addProductReviewDone: false,
+    addProductReviewError: false,
 
 }
 
 
 
 
+
+export const ADD_PRODUCT_REVIEW_REQUEST = 'ADD_PRODUCT_REVIEW_REQUEST';
+export const ADD_PRODUCT_REVIEW_SUCCESS = 'ADD_PRODUCT_REVIEW_SUCCESS';
+export const ADD_PRODUCT_REVIEW_FAILURE = 'ADD_PRODUCT_REVIEW_FAILURE';
 
 export const LOAD_PRODUCT_REQUEST = 'LOAD_PRODUCT_REQUEST';
 export const LOAD_PRODUCT_SUCCESS = 'LOAD_PRODUCT_SUCCESS';
@@ -33,10 +40,17 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
         pluralPrice : productPrice,
         Reviews:[
             {
-                id :1,
+                id :2,
                 content: '이거 좋아요',
                 User : {
                     email: 'gmlehdhkd@naver.com'
+                },
+            },
+            {
+                id :5,
+                content: '이거 좋아요2',
+                User : {
+                    email: 'dhkdgmleh@naver.com'
                 },
             }
         ],
@@ -61,6 +75,7 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
         Size : size,
         Stock : 10,
         DeliveryFee: 2500,
+        notYetReivewers : [{id: 1}, {id: 2}],
     }
     )
     
@@ -78,6 +93,7 @@ export const dummyProducts  = () =>  (
                 id :1,
                 content: '이거 좋아요',
                 User : {
+                    id: 2,
                     email: 'gmlehdhkd@naver.com'
                 },
             }
@@ -103,6 +119,7 @@ export const dummyProducts  = () =>  (
         Size : 'S',
         Stock : 10,
         DeliveryFee: 2500,
+        notYetReivewers : [{id: 1}, {id: 2}],
             
     }
     )
@@ -119,6 +136,7 @@ export const dummyProducts  = () =>  (
                 id :1,
                 content: '이거 좋아요',
                 User : {
+                    id: 2,
                     email: faker.internet.email(),
                 },
             }
@@ -149,6 +167,24 @@ export const dummyProducts  = () =>  (
 const reducer = (state = initialState, action) =>{
     return produce(state,(draft) => {
         switch (action.type) {
+            case ADD_PRODUCT_REVIEW_REQUEST:
+                draft.addProductReviewLoading = true;
+                draft.addProductReviewDone = false;
+                draft.addProductReviewError = null;
+            break;
+            case ADD_PRODUCT_REVIEW_SUCCESS:
+                draft.addProductReviewLoading = false;
+                draft.addProductReviewDone = true;
+                draft.singleProduct.Reviews.push(action.data)
+                const user = draft.singleProduct.notYetReivewers.find(v => v.id === action.data.User.id)
+                draft.singleProduct.notYetReivewers = draft.singleProduct.notYetReivewers.filter(v => v.id !== user.id)
+            break;
+            case ADD_PRODUCT_REVIEW_FAILURE:
+                draft.addProductReviewLoading = false;
+                draft.addProductReviewDone = false;
+                draft.addProductReviewError = action.error;
+            break;
+
             case LOAD_PRODUCTS_REQUEST:
                 draft.loadMainProductsLoading = true;
                 draft.loadMainProductsDone = false;
