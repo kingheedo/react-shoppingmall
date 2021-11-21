@@ -45,6 +45,8 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
                 User : {
                     email: 'gmlehdhkd@naver.com'
                 },
+                rate: 2,
+
             },
             {
                 id :5,
@@ -52,6 +54,8 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
                 User : {
                     email: 'dhkdgmleh@naver.com'
                 },
+                rate: 3,
+
             }
         ],
         Images:[

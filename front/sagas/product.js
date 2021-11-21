@@ -18,6 +18,7 @@ function* AddProductReview(action) {
                     id: action.data.userId,
                     email: 'gmlehdhkd@naver.com'
                 },
+                rate: action.data.Rate,
             }
         });
     } catch (err) {

@@ -1,14 +1,14 @@
-import { Button, Divider, List, Modal, Result } from 'antd';
+import { Button, Divider, List, Modal, Rate, Input  } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react'
 import Proptypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux';
-import TextArea from 'rc-textarea';
 import { ADD_PRODUCT_REVIEW_REQUEST } from '../reducers/product';
 const Review = ({product}) => {
     const {me} = useSelector(state => state.user)
-
+    const { TextArea } = Input;
     
     const [reviewContent, setReviewContent] = useState('')
+    const [reviewRate, setReviewRate] = useState(2.5)
     const [visibleModal, setVisibleModal] = useState(false)
     const dispatch = useDispatch()
     const WhoBuyedProduct = product.notYetReivewers && product.notYetReivewers.find(v => v.id === (me && me.User.id))
@@ -16,13 +16,22 @@ const Review = ({product}) => {
    
     const onClickReview = useCallback(
         () => {
+            if(reviewContent === ''){
+                return alert('내용을 입력하세요')
+            }
+            if(reviewContent.length <= 20){
+                return alert('최소 20글자를 입력해주세요 ')
+            }
+            if(reviewRate === 0){
+                return alert('별점을 평가해주세요.')
+            }
             dispatch({
                 type: ADD_PRODUCT_REVIEW_REQUEST,
-                data : {userId: me.User.id, productId: product.id, Content: reviewContent}
+                data : {userId: me.User.id, productId: product.id, Content: reviewContent, Rate: reviewRate}
             })
             setVisibleModal(false)
         },
-        [reviewContent],
+        [reviewContent,reviewRate],
     )
 
     const onChangeText = useCallback(
@@ -31,7 +40,13 @@ const Review = ({product}) => {
         },
         [],
     )
-    
+    const onChangeRate = useCallback(
+        (reviewRate) => {
+            console.log(reviewRate)
+            setReviewRate(reviewRate)
+        },
+        [reviewRate],
+    )
     return (
         <>
             <Divider orientation="left">상품 리뷰</Divider>
@@ -65,6 +80,8 @@ const Review = ({product}) => {
                     <List.Item.Meta
                     description={item.User.email}
                     />
+                    <Rate disabled defaultValue={item.rate} />
+                    <br/>
                     {item.content}
                 </List.Item>
                 )}
@@ -78,7 +95,8 @@ const Review = ({product}) => {
                         ]}
                         onCancel = {() => setVisibleModal(false)}
                         >
-                            <TextArea showCount minLength ={20} maxLength={100} onChange={onChangeText} value={reviewContent} />
+                            <Rate allowHalf  value={reviewRate} onChange={onChangeRate} />
+                            <TextArea showCount maxLength={100} onChange={onChangeText} value={reviewContent} />
                             
                 </Modal>
         </>
