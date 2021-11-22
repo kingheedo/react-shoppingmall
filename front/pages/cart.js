@@ -6,6 +6,7 @@ import Link from 'next/link'
 import styled from 'styled-components'
 import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
 import Router from 'next/router'
+import Payment from '../components/payment'
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -120,7 +121,7 @@ const Wrapper = styled.div`
                             <span>상품금액 <em>{totalPrice - totalDeliveryFee }원</em> + 배송비 <em>{totalDeliveryFee}원 = </em></span>
                             <span>{totalPrice}원</span>
                         </div>
-                        
+                        <Payment/>
                 </Wrapper>
          </AppLayout>
     )
