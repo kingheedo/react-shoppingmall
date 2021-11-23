@@ -25,8 +25,8 @@ const Home = () => {
                 <Row gutter = {[18,18]}>
                 
                 {mainProducts && mainProducts.map((product) => 
-                <Col span={6}>
-                    <MainProducts key={product.id} product = {product}/>
+                <Col key={product.id} span={6}>
+                    <MainProducts  product = {product}/>
                 </Col>
             )}
                 
