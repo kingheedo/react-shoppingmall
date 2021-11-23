@@ -35,8 +35,7 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
         uniqueId : '321938CY2Q',
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
-        inStock : true,
-        price : 20000,
+        price : 100,
         pluralPrice : productPrice,
         Reviews:[
             {
@@ -90,7 +89,6 @@ export const dummyProducts  = () =>  (
         uniqueId : '321938CY2Q',
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
-        inStock : true,
         price : 50000,
         Reviews:[
             {
@@ -119,7 +117,6 @@ export const dummyProducts  = () =>  (
             },
         ],
         Stars : 4,
-        Colors : ['blue','beige','white','black'],
         Size : 'S',
         Stock : 10,
         DeliveryFee: 2500,
@@ -133,7 +130,6 @@ export const dummyProducts  = () =>  (
         uniqueId : '321938CY2Q',
         name: faker.name.firstName()
         ,
-        inStock : true,
         price : faker.datatype.number(),
         Reviews:[
             {
@@ -162,7 +158,6 @@ export const dummyProducts  = () =>  (
             },
         ],
         Stars : 4,
-        Colors : ['blue','beige','white','black'],
         Size : 'S',
         Stock : 10,
         deliveryFee: 2500,

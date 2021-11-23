@@ -23,17 +23,17 @@ const Wrapper = styled.div`
         const {me} = useSelector(state => state.user)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
-
+        
         useEffect(() => {
             if(!me){
                 Router.push('/signin')
             }
         }, [me])
         const onChangeCheck = useCallback(
-           (productPluralPrice,productSize) => (e) => {
+           (productSize) => (e) => {
                 console.log('target', e.target);
                 if(e.target.checked){
-                setcheckedProducts([...checkedProducts,{id: e.target.id, productPluralPrice}])
+                setcheckedProducts([...checkedProducts,{id: e.target.id, Size : productSize}])
                 dispatch({
                 type: CHECK_CART_PRODUCT_REQUEST,
                 data : {id : e.target.id, Size: productSize}
@@ -80,7 +80,6 @@ const Wrapper = styled.div`
                                 )
                                 : null
                             }
-                                
                                 <th style={{border: '1px solid'}}>상품정보</th>
                                 <th style={{border: '1px solid'}}>배송정보</th>
                                 <th style={{border: '1px solid'}}>주문금액</th>
@@ -92,7 +91,7 @@ const Wrapper = styled.div`
                         {products[0] && products.map(product => 
                                     (<tr key={product.Size} style={{border: '1px solid'}}>
                                         <td>
-                                            <Checkbox defaultChecked={true} id={product.id} value={checkedProducts} onChange ={onChangeCheck(product.pluralPrice,product.Size)}/>
+                                            <Checkbox id={product.id} value={checkedProducts.find(v => v.id === product.id && v.Size === product.Size)} onChange ={onChangeCheck(product.Size)}/>
                                         </td>
                                         <td>
                                             <img style={{width: '8rem'}} src={product.Images[0].src}/>
@@ -100,7 +99,7 @@ const Wrapper = styled.div`
                                         <td>
                                             {product.name}
                                             <br/>
-                                            {product.Size}
+                                            {product.Size}/
                                             {product.quantity}개
                                         </td>
                                         <td>
@@ -121,7 +120,7 @@ const Wrapper = styled.div`
                             <span>상품금액 <em>{totalPrice - totalDeliveryFee }원</em> + 배송비 <em>{totalDeliveryFee}원 = </em></span>
                             <span>{totalPrice}원</span>
                         </div>
-                        <Payment/>
+                       <Payment checkedProducts={checkedProducts}/>
                 </Wrapper>
          </AppLayout>
     )

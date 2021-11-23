@@ -90,6 +90,7 @@ switch (action.type) {
                  const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
                 draft.totalPrice += (product.pluralPrice + product.DeliveryFee)
                 draft.totalDeliveryFee += product.DeliveryFee
+                
             break;
         }
             case CHECK_CART_PRODUCT_FAILURE:
@@ -111,14 +112,11 @@ switch (action.type) {
                     exproduct.quantity += action.data.quantity
                     exproduct.pluralPrice += action.data.pluralPrice
                      exproduct.pluralPrice > 39900 ?  (exproduct.DeliveryFee  = 0) :  (exproduct.DeliveryFee = 2500)
-                     draft.totalPrice += (exproduct.pluralPrice + exproduct.DeliveryFee)
-                     draft.totalDeliveryFee += exproduct.DeliveryFee
+                     
                 }
                 else {
                     draft.products.push(action.data)
-                    action.data.pluralPrice > 39900 ? action.data.DeliveryFee = 0 :  action.data.DeliveryFee =2500
-                    draft.totalPrice += (action.data.pluralPrice + action.data.DeliveryFee)
-                    draft.totalDeliveryFee += action.data.DeliveryFee
+                    action.data.pluralPrice > 39900 ? action.data.DeliveryFee = 0 :  action.data.DeliveryFee =100
                 }
             break;
         }
