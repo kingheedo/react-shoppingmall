@@ -5,8 +5,12 @@ const {Model} =  DataTypes;
 module.exports = class Cart extends Model{
     static init(sequelize){
         return super.init({
-            totalPrice: DECIMAL,
-            totalDeliveryFee : DECIMAL,
+            id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+        },
 
         },{
             modelName: 'Cart',
