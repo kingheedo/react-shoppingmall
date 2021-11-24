@@ -20,7 +20,7 @@ export const dummyUser = () => ({
     id: 5,
     User:{
         id:1,
-        nickname:'사용자2'
+        name:'사용자2'
     },
     Images: [{src:"https://cdn.pixabay.com/photo/2021/01/24/20/47/mountains-5946500_1280.jpg"},],
     Comments: ['댓글테스트'],

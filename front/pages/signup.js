@@ -26,9 +26,9 @@ const Signup = () => {
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
     const [confirmpassword, onChangeConfirmpassword] = useInput('')
-    const [nickname, onChangeNickname] = useInput('')
+    const [name, onChangeName] = useInput('')
     const [checkpassword, setCheckPassword] = useState(false)
-    const [check, setCheck] = useState('')
+    const [check, onChangeCheck] = useInput('')
     const [checkerror, setCheckError] = useState(false)
 
     useEffect(() => {
@@ -40,12 +40,7 @@ const Signup = () => {
 
     
 
-    const onChangeCheck = useCallback(
-      (e) => {
-        setCheck(e.target.checked)
-      },
-      [check],
-    )
+  
     const onSubmitForm = useCallback(
       (e) => {
         e.preventDefault();
@@ -56,12 +51,12 @@ const Signup = () => {
         if(!check){
           setCheckError(true)
         }
-        if(!(email && password && nickname && confirmpassword && check)){
+        if(!(email && password && name && confirmpassword && check)){
           return alert('빈칸이 존재합니다.')
         }
         Router.push('/')
       },
-      [email,password,nickname,confirmpassword,check,checkpassword],
+      [email,password,name,confirmpassword,check,checkpassword],
     )
     return (
             <Container>
@@ -85,17 +80,17 @@ const Signup = () => {
         <Input placeholder="이메일" value={email} onChange ={onChangeEmail} />
       </Form.Item>
         <Form.Item
-        name="nickname"
-        label="닉네임"
+        name="name"
+        label="이름"
         rules={[
           {
             required: true,
-            message: '닉네임을 입력해주세요.',
+            message: '이름을 입력해주세요.',
             whitespace: true,
           },
         ]}
       >
-        <Input placeholder="닉네임" value={nickname} onChange={onChangeNickname}/>
+        <Input placeholder="이름" value={name} onChange={onChangeName}/>
       </Form.Item>
       <Form.Item
       style={{marginRight: '10px'}}

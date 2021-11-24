@@ -96,7 +96,7 @@ const Review = ({product}) => {
                         onCancel = {() => setVisibleModal(false)}
                         >
                             <Rate allowHalf  value={reviewRate} onChange={onChangeRate} />
-                            <TextArea showCount maxLength={100} onChange={onChangeText} value={reviewContent} />
+                            <TextArea showCount maxLength={50} onChange={onChangeText} value={reviewContent} />
                             
                 </Modal>
         </>
