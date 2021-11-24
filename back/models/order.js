@@ -4,8 +4,12 @@ const {Model} =  DataTypes;
 module.exports = class Order extends Model{
     static init(sequelize){
         return super.init({
-            
-
+            id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+        },
         },{
             modelName: 'Order',
             tableName: 'orders',
