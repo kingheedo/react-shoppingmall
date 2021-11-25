@@ -26,7 +26,7 @@ module.exports = class Product extends Model{
                 allowNull : true,
             },
             size : {
-                type : DataTypes.STRING(1),
+                type : DataTypes.ENUM('XS','S','M','L'),
                 allowNull : true,
             },
             stock: {
