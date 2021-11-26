@@ -6,7 +6,7 @@ import userSaga from './user';
 import productSaga from './product';
 import cartSaga from './cart'
 
-
+axios.defaults.baseURL = 'http://localhost:3065';
 
 export default function* rootSaga() {
     yield all([

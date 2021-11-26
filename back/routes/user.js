@@ -2,6 +2,8 @@ const express = require('express');
 const { User } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt')
+
+router.post('/login')
 router.post('/',  async(req, res, next) => {
     try{
         const exUser = await User.findOne({
