@@ -59,7 +59,7 @@ function* LoadSingleProduct(action) {
         yield delay(1000);
         yield put({
             type: LOAD_PRODUCT_SUCCESS,
-            data: dummyProduct(),
+            data: dummyProduct(parseInt(action.data,10)),
         });
     } catch (err) {
       console.error(err);

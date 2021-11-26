@@ -22,6 +22,6 @@ module.exports = class Review extends Model{
     }
      static associate(db){
         db.Review.belongsTo(db.User)
-        db.Review.belongsTo(db.Post)
+        db.Review.belongsTo(db.Product)
     }
 }

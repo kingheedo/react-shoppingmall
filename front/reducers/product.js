@@ -32,7 +32,6 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
     {
         id : productId,
         quantity : quantity,
-        uniqueId : '321938CY2Q',
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         price : 100,
@@ -85,7 +84,6 @@ export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
 export const dummyProducts  = () =>  (
     {
         id : 1,
-        uniqueId : '321938CY2Q',
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         price : 50000,

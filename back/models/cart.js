@@ -5,13 +5,18 @@ const {Model} =  DataTypes;
 module.exports = class Cart extends Model{
     static init(sequelize){
         return super.init({
-            id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        allowNull: false,
-        primaryKey: true
-        },
-
+           quantity : {
+                type : DataTypes.INTEGER,
+                allowNull : true,
+            },
+            pluralPrice: {
+                type : DataTypes.DECIMAL,
+                allowNull : true,
+            },
+            size : {
+                type : DataTypes.STRING(2),
+                allowNull : false,
+            },
         },{
             modelName: 'Cart',
             tableName: 'carts',
@@ -19,10 +24,5 @@ module.exports = class Cart extends Model{
             collate: 'utf8_general_ci', 
             sequelize,   
         })
-    }
-    static associate(db){
-        db.Cart.hasMany(db.Product)
-        db.Cart.belongsTo(db.User)
-
     }
 }

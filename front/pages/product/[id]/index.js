@@ -44,9 +44,10 @@ const Product = () => {
     
     useEffect(() => {
         dispatch({
-            type: LOAD_PRODUCT_REQUEST
+            type: LOAD_PRODUCT_REQUEST,
+            data : id
         })
-    }, [])
+    }, [id])
 
     
     const onhandleModal = useCallback(
