@@ -74,10 +74,12 @@ const Container = styled.div`
         }
     `
 const AppLayout = ({children}) => {
-    const {me} = useSelector(state => state.user)
+    const {me,} = useSelector(state => state.user)
     const {products} = useSelector(state => state.cart)
     const [searchvalue, onChangeSearch] = useInput('')
     const dispatch = useDispatch();
+
+   
     const onSearch = useCallback(
         () => {
             return alert(searchvalue)

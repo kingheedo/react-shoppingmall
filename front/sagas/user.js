@@ -5,16 +5,14 @@ import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SU
 
 
 
-function LogoutApi(data) { //hashtag/name
-    return axios.get('api/product', data);
+function LogoutApi() { //hashtag/name
+    return axios.post('/user/logout');
 }
-function* Logout(action) {
+function* Logout() {
     try {
-        // const result = yield call(LoadProductsApi, action.data);
-        yield delay(1000);
+        yield call(LogoutApi);
         yield put({
             type: LOG_OUT_SUCCESS,
-            data: null,
         });
     } catch (err) {
       console.error(err);
@@ -26,15 +24,14 @@ function* Logout(action) {
 }
 
 function LoginApi(data) { //hashtag/name
-    return axios.get('api/product', data);
+    return axios.post('/user/login', data);
 }
 function* Login(action) {
     try {
-        // const result = yield call(LoadProductsApi, action.data);
-        yield delay(1000);
+        const result = yield call(LoginApi, action.data);
         yield put({
             type: LOG_IN_SUCCESS,
-            data: dummyUser(),
+            data: result.data,
         });
     } catch (err) {
       console.error(err);
@@ -46,7 +43,7 @@ function* Login(action) {
 }
 
 function SignUpApi(data) { //hashtag/name
-    return axios.post('http://localhost:3065/user',data);
+    return axios.post('/user',data);
 }
 function* SignUp(action) {
     try {

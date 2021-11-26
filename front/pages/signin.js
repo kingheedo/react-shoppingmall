@@ -32,26 +32,26 @@ const SignUpButton = styled(Button)`
 const Signin = () => {
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
-    const {me,isLogginDone} = useSelector(state => state.user)
+    const {me,loginDone} = useSelector(state => state.user)
 
     const dispatch = useDispatch();
 
 
     useEffect(() => {
-        if(me && isLogginDone){
-            Router.push('/signup')
+        if(me || loginDone){
+            Router.push('/')
         }
-    }, [me,isLogginDone])
+    }, [me,loginDone])
 
     const onhandleSubmit = useCallback(
     (e) => {
         e.preventDefault();
         dispatch({
             type : LOG_IN_REQUEST,
+            data : {email, password}
         })
-        Router.push('/')
     },
-    [],
+    [email,password],
 )
     const onhandleSignUp = useCallback(
     (e) => {

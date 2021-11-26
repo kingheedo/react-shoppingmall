@@ -4,9 +4,9 @@ import { dummyProduct } from './product';
 export const initialState = {
     me: null,
     cart: [],
-    logginLoading : false,
-    logginDone : false,
-    logginError : null,
+    loginLoading : false,
+    loginDone : false,
+    loginError : null,
 
     logoutLoaing: false,
     logoutDone: false,
@@ -46,20 +46,36 @@ export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 const reducer = (state = initialState, action) =>{
     return produce(state,(draft) => {
         switch (action.type) {
+            case LOG_OUT_REQUEST:
+                draft.logoutLoaing = true;
+                draft.logoutDone = false;
+                draft.logoutError = null;
+            break;
+            case LOG_OUT_SUCCESS:
+                draft.logoutLoading = false;
+                draft.logoutDone = true;
+                draft.me = null;
+            break;
+            case LOG_OUT_FAILURE:
+                draft.logoutLoading = false;
+                draft.logoutDone = false;
+                draft.logoutError = action.error;
+            break;
+
             case LOG_IN_REQUEST:
-                draft.logginLoading = true;
-                draft.logginDone = false;
-                draft.logginError = null;
+                draft.loginLoading = true;
+                draft.loginDone = false;
+                draft.loginError = null;
             break;
             case LOG_IN_SUCCESS:
-                draft.logginLoading = false;
-                draft.logginDone = true;
+                draft.loginLoading = false;
+                draft.loginDone = true;
                 draft.me = action.data;
             break;
             case LOG_IN_FAILURE:
-                draft.logginLoading = false;
-                draft.logginDone = false;
-                draft.logginError = action.error;
+                draft.loginLoading = false;
+                draft.loginDone = false;
+                draft.loginError = action.error;
             break;
 
             case SIGN_UP_REQUEST:
