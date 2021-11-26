@@ -3,12 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Proptypes from 'prop-types'
 import { useDispatch, useSelector } from 'react-redux';
 import { ADD_PRODUCT_REVIEW_REQUEST } from '../reducers/product';
+import useInput from '../hooks/useInput';
 const Review = ({product}) => {
     const {me} = useSelector(state => state.user)
     const { TextArea } = Input;
     
-    const [reviewContent, setReviewContent] = useState('')
-    const [reviewRate, setReviewRate] = useState(2.5)
+    const [reviewContent, onChangeText] = useInput('')
+    const [reviewRate, onChangeRate] = useState(2.5)
     const [visibleModal, setVisibleModal] = useState(false)
     const dispatch = useDispatch()
     const WhoBuyedProduct = product.notYetReivewers && product.notYetReivewers.find(v => v.id === (me && me.User.id))
@@ -34,19 +35,6 @@ const Review = ({product}) => {
         [reviewContent,reviewRate],
     )
 
-    const onChangeText = useCallback(
-        (e) => {
-            setReviewContent(e.target.value)
-        },
-        [],
-    )
-    const onChangeRate = useCallback(
-        (reviewRate) => {
-            console.log(reviewRate)
-            setReviewRate(reviewRate)
-        },
-        [reviewRate],
-    )
     return (
         <>
             <Divider orientation="left">상품 리뷰</Divider>

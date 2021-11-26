@@ -12,6 +12,9 @@ export const initialState = {
     logoutDone: false,
     logoutError: null,
 
+    signUpLoading :false,
+    signUpSuccess :false,
+    signUpError :null,
    
 
 
@@ -28,12 +31,15 @@ export const dummyUser = () => ({
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
-export const LOG_IN_FAILURE = 'LOG_IN_REQUEST';
+export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
-export const LOG_OUT_FAILURE = 'LOG_OUT_REQUEST';
+export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
 
 
@@ -56,20 +62,18 @@ const reducer = (state = initialState, action) =>{
                 draft.logginError = action.error;
             break;
 
-            case LOG_OUT_REQUEST:
-                draft.logginLoading = true;
-                draft.logginDone = false;
-                draft.logginError = null;
+            case SIGN_UP_REQUEST:
+                draft.signUpLoading = true;
+                draft.signUpDone = false;
+                draft.signUpError = null;
             break;
-            case LOG_OUT_SUCCESS:
-                draft.logginLoading = false;
-                draft.logginDone = true;
-                draft.me = action.data;
+            case SIGN_UP_SUCCESS:
+                draft.signUpLoading = false;
+                draft.signUpDone = true;
             break;
-            case LOG_OUT_FAILURE:
-                draft.logginLoading = false;
-                draft.logginDone = false;
-                draft.logginError = action.error;
+            case SIGN_UP_FAILURE:
+                draft.signUpLoading = false;
+                draft.signUpError = action.error;
             break;
 
             default:

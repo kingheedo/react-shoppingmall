@@ -37,7 +37,7 @@ const Product = () => {
 
     const router = useRouter();
     const {id,color} = router.query;
-    const [size, setSize] = useState('사이즈')
+    const [size, onSelectSize] = useState('사이즈')
     const [quantity, setQuantity] = useState(1)
     const [visibleModal, setVisibleModal] = useState(false)
 
@@ -49,7 +49,6 @@ const Product = () => {
         })
     }, [id])
 
-    
     const onhandleModal = useCallback(
         () => {
             setVisibleModal(false)
@@ -58,14 +57,7 @@ const Product = () => {
         },
         [],
     )
-    const onSelectSize  = useCallback(
-        (e) => {
-            console.log('SIZE',e.target.value)
-            setSize(e.target.value)
-
-        },
-        [],
-    )
+    
     const ondecline = useCallback(
         () => {
             if(quantity === 1){

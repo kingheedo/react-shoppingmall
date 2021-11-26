@@ -3,6 +3,10 @@ import {Form, Input, Checkbox, Button} from 'antd'
 import useInput from '../hooks/useInput'
 import Router from 'next/router'
 import styled from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+import { SIGN_UP_REQUEST } from '../reducers/user'
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const Container = styled.div`
   width: 100vw;
@@ -22,7 +26,10 @@ const Wrapper = styled.div`
     padding: 20px;
     background-color: white;
 `
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
 const Signup = () => {
+    const {signUpDone,signUpError,signUpLoading} = useSelector(state => state.user)
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
     const [confirmpassword, onChangeConfirmpassword] = useInput('')
@@ -30,6 +37,18 @@ const Signup = () => {
     const [checkpassword, setCheckPassword] = useState(false)
     const [check, onChangeCheck] = useInput('')
     const [checkerror, setCheckError] = useState(false)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+      if(signUpDone){
+        Router.push('/')
+      }
+    }, [signUpDone])
+    useEffect(() => {
+      if(signUpError){
+        alert(signUpError)
+      }
+    }, [signUpError])
 
     useEffect(() => {
       if(password && confirmpassword && password !== confirmpassword){
@@ -37,24 +56,23 @@ const Signup = () => {
       }
       setCheckPassword(false)
     }, [password,confirmpassword])
-
-    
-
   
     const onSubmitForm = useCallback(
       (e) => {
         e.preventDefault();
-        console.log("submit")
         if(checkpassword){
           return alert('비밀번호를 확인해주세요')
         }
         if(!check){
-          setCheckError(true)
+          return setCheckError(true)
         }
         if(!(email && password && name && confirmpassword && check)){
           return alert('빈칸이 존재합니다.')
         }
-        Router.push('/')
+        dispatch({
+          type: SIGN_UP_REQUEST,
+          data: {email, name , password}
+        })
       },
       [email,password,name,confirmpassword,check,checkpassword],
     )
@@ -132,9 +150,14 @@ const Signup = () => {
                 </Form.Item>
 
                 <Form.Item >
+                    {signUpLoading ? <Button type="primary" loading>
+                      Loading
+                    </Button>
+                    :
                     <Button onClick={onSubmitForm} type="primary" htmlType="submit">
                     CREATE
                     </Button>
+                    }
               </Form.Item>
             </Form>
                 </Wrapper>
