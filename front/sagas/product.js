@@ -36,10 +36,9 @@ function LoadProductsApi(data) { //hashtag/name
 function* LoadProducts(action) {
     try {
         // const result = yield call(LoadProductsApi, action.data);
-        yield delay(1000);
         yield put({
             type: LOAD_PRODUCTS_SUCCESS,
-            data: fakerProducts(),
+            data: fakerProducts(10),
         });
     } catch (err) {
       console.error(err);

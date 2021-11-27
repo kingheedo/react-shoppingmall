@@ -115,13 +115,17 @@ const AppLayout = ({children}) => {
                     </Logo>
                 </Center>
                 <Right>
-                    <MenuItem>
+                    {me
+                     ? null
+                     :
+                     (<MenuItem>
                         <Button>
                             <Link href='/signup'>
                             <a>회원가입</a>
                             </Link>
                         </Button>
-                    </MenuItem>
+                    </MenuItem>)
+                    }
 
                     <MenuItem>
                         {me 

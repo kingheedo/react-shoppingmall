@@ -3,7 +3,7 @@ import Proptypes from 'prop-types';
 import Router from 'next/router';
 import { Card } from 'antd';
 
-const MainProducts = ({product}) => {
+const MainProduct = ({product}) => {
     
     const [show, setShow] = useState(false);
     const onMouseHover = useCallback(
@@ -33,7 +33,7 @@ const MainProducts = ({product}) => {
            </Card>
     )
 }
-MainProducts.propTypes={
+MainProduct.propTypes={
     product : Proptypes.shape({
         id: Proptypes.number,
         uniqueId: Proptypes.string,
@@ -50,4 +50,4 @@ MainProducts.propTypes={
     }).isRequired,
 }
 
-export default MainProducts
+export default MainProduct

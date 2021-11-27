@@ -43,6 +43,12 @@ router.post('/',  async(req, res, next) => {
         if(exUser){
             return res.status(403).send('이미 존재하는 이메일 입니다.')
         }
+        const exName = await User.findOne({
+            where: {name: req.body.name}
+        })
+        if(exName){
+            return res.status(403).send('이미 존재하는 이름 입니다.')
+        }
         const hashedPassword = await bcrypt.hash(req.body.password, 12);
         await User.create({ //await을 붙이지 않으면 비동기가 되어서 res.json이 먼저 실행됨
             email : req.body.email,

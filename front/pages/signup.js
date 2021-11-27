@@ -4,7 +4,7 @@ import useInput from '../hooks/useInput'
 import Router from 'next/router'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { SIGN_UP_REQUEST } from '../reducers/user'
+import { SIGN_UP_REQUEST, SIGN_UP_RESET } from '../reducers/user'
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -26,10 +26,8 @@ const Wrapper = styled.div`
     padding: 20px;
     background-color: white;
 `
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-
 const Signup = () => {
-    const {signUpDone,signUpError,signUpLoading} = useSelector(state => state.user)
+    const {me,signUpDone,signUpError,signUpLoading} = useSelector(state => state.user)
     const [email, onChangeEmail] = useInput('')
     const [password, onChangePassword] = useInput('')
     const [confirmpassword, onChangeConfirmpassword] = useInput('')
@@ -39,11 +37,16 @@ const Signup = () => {
     const [checkerror, setCheckError] = useState(false)
     const dispatch = useDispatch()
 
+
+
     useEffect(() => {
-      if(signUpDone){
+      if(me || signUpDone){
         Router.push('/')
+        dispatch({
+          type : SIGN_UP_RESET,
+        })
       }
-    }, [signUpDone])
+    }, [me,signUpDone])
     useEffect(() => {
       if(signUpError){
         alert(signUpError)

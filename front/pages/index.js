@@ -1,19 +1,35 @@
 import React, {  useEffect, } from 'react';
 import AppLayout from '../components/AppLayout';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
-import MainProducts from '../components/MainProducts';
+import MainProduct from '../components/MainProduct';
 import { LOAD_PRODUCTS_REQUEST } from '../reducers/product';
 import {useDispatch, useSelector} from 'react-redux';
 import { Col, Row } from 'antd';
 
 const Home = () => {
-    const {mainProducts} = useSelector(state => state.product)
+    const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch({
-            type : LOAD_PRODUCTS_REQUEST
-        })
-    }, [])
+
+    useEffect(
+  () => {
+    function onScroll() {
+      if(window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight -300){
+        if(hasMoreProducts && !loadMainProductsLoading){
+          const lastId = mainProducts[mainProducts.length - 1]?.id
+          dispatch({
+            type : LOAD_PRODUCTS_REQUEST,
+            lastId
+          })
+        }
+      }
+    }
+    window.addEventListener('scroll',onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  },
+  [hasMoreProducts, loadMainProductsLoading, mainProducts],
+);
     
     
     return (
@@ -26,7 +42,7 @@ const Home = () => {
                 
                 {mainProducts && mainProducts.map((product) => 
                 <Col key={product.id} span={6}>
-                    <MainProducts  product = {product}/>
+                    <MainProduct product = {product}/>
                 </Col>
             )}
                 

@@ -3,6 +3,7 @@ import produce from 'immer'
 export const initialState = {
     mainProducts: [],
     singleProduct: null,
+    hasMoreProducts : true,
     loadMainProductsLoading : false,
     loadMainProductsDone : false,
     loadMainProductsError : null,
@@ -121,7 +122,7 @@ export const dummyProducts  = () =>  (
             
     }
     )
-    export const fakerProducts = () => Array(30).fill().map((v,i) =>
+    export const fakerProducts = (number) => Array(number).fill().map((v,i) =>
         ({
             id : i+1,
         uniqueId : '321938CY2Q',
@@ -185,12 +186,12 @@ const reducer = (state = initialState, action) =>{
                 draft.loadMainProductsLoading = true;
                 draft.loadMainProductsDone = false;
                 draft.loadMainProductsError = null;
-                draft.mainProducts = [];
             break;
             case LOAD_PRODUCTS_SUCCESS:
                 draft.loadMainProductsLoading = false;
                 draft.loadMainProductsDone = true;
-                draft.mainProducts = action.data;
+                draft.mainProducts = draft.mainProducts.concat(action.data);
+                draft.hasMoreProducts = action.data.length === 10;
             break;
             case LOAD_PRODUCTS_FAILURE:
                 draft.loadMainProductsLoading = false;
