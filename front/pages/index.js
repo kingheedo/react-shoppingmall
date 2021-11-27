@@ -5,30 +5,23 @@ import MainProduct from '../components/MainProduct';
 import { LOAD_PRODUCTS_REQUEST } from '../reducers/product';
 import {useDispatch, useSelector} from 'react-redux';
 import { Col, Row } from 'antd';
+import { useInView } from "react-intersection-observer"
 
 const Home = () => {
     const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
     const dispatch = useDispatch();
-
+    const [ref, inView] = useInView()
     useEffect(
   () => {
-    function onScroll() {
-      if(window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight -300){
-        if(hasMoreProducts && !loadMainProductsLoading){
+        if(inView && hasMoreProducts && !loadMainProductsLoading){
           const lastId = mainProducts[mainProducts.length - 1]?.id
           dispatch({
             type : LOAD_PRODUCTS_REQUEST,
             lastId
           })
         }
-      }
-    }
-    window.addEventListener('scroll',onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-    }
   },
-  [hasMoreProducts, loadMainProductsLoading, mainProducts],
+  [inView,hasMoreProducts, loadMainProductsLoading, mainProducts],
 );
     
     
@@ -45,7 +38,7 @@ const Home = () => {
                     <MainProduct product = {product}/>
                 </Col>
             )}
-                
+              <div ref={ref}/>
             </Row>
             </div>
         
