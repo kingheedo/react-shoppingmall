@@ -27,6 +27,7 @@ module.exports = class User extends Model{
         })
     }
     static associate(db){
+        db.User.hasMany(db.Product)
         db.User.hasMany(db.Review)
         db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'})
         db.User.belongsToMany(db.Product, {through: db.Cart})
