@@ -116,6 +116,18 @@ const AppLayout = ({children}) => {
                 </Center>
                 <Right>
                     {me
+                     ? 
+                     (<MenuItem>
+                        <Button>
+                            <Link href='/productForm'>
+                            <a>상품등록</a>
+                            </Link>
+                        </Button>
+                    </MenuItem>)
+                     : null
+                     
+                    }
+                    {me
                      ? null
                      :
                      (<MenuItem>
