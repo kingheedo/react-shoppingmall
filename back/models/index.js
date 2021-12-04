@@ -4,6 +4,7 @@ const config = require("../config/config")[env]
 const db = {};
 
 const cart = require('./cart')
+const image = require('./image')
 const review = require('./review')
 const product = require('./product')
 const user = require('./user')
@@ -11,6 +12,7 @@ const user = require('./user')
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 db.Cart = cart;
+db.Image = image;
 db.Review = review;
 db.Product = product;
 db.User = user;

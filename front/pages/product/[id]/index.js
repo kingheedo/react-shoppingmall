@@ -10,6 +10,7 @@ import { Button, Image, Input, Modal, Result, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ADD_PRODUCT_CART_REQUEST } from '../../../reducers/cart';
 import Review from '../../../components/Review';
+import useInput from '../../../hooks/useInput';
 
 const Wrapper = styled.div`
     display:flex;
@@ -37,7 +38,7 @@ const Product = () => {
 
     const router = useRouter();
     const {id,color} = router.query;
-    const [size, onSelectSize] = useState('사이즈')
+    const [size, onSelectSize] = useInput('사이즈')
     const [quantity, setQuantity] = useState(1)
     const [visibleModal, setVisibleModal] = useState(false)
 
@@ -78,14 +79,14 @@ const Product = () => {
     )
     const onClickCart = useCallback(
         (price) => () => {
-            const pluralPrice = price * quantity;
+            const totalPrice = price * quantity;
             console.log('size',size)
             if(size === '사이즈'){
                 return alert('사이즈를 선택해주세요.')
             }
            else{ dispatch({
                 type: ADD_PRODUCT_CART_REQUEST,
-                data: {productId: id, size, quantity, pluralPrice}
+                data: {productId: id, size, quantity, totalPrice}
             })
             setVisibleModal(true)
             }

@@ -19,7 +19,7 @@ const Wrapper = styled.div`
    
     
     const Cart = () => {
-        const {products,totalPrice,totalDeliveryFee,} = useSelector(state => state.cart)
+        const {products,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart)
         const {me} = useSelector(state => state.user)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
@@ -106,7 +106,7 @@ const Wrapper = styled.div`
                                             {product.DeliveryFee ===0 ? '무료배송' : `${product.DeliveryFee}원`}
                                         </td>
                                         <td>
-                                            {product.pluralPrice}원
+                                            {product.totalPrice}원
                                         </td>
                                     </tr>)
                                     )
@@ -117,8 +117,8 @@ const Wrapper = styled.div`
                             </div>
                         <div>
                             <h5>스토어 주문금액 합계</h5>
-                            <span>상품금액 <em>{totalPrice - totalDeliveryFee }원</em> + 배송비 <em>{totalDeliveryFee}원 = </em></span>
-                            <span>{totalPrice}원</span>
+                            <span>상품금액 <em>{cartTotalPrice - cartTotalDeliveryFee }원</em> + 배송비 <em>{cartTotalDeliveryFee}원 = </em></span>
+                            <span>{cartTotalPrice}원</span>
                         </div>
                        <Payment checkedProducts={checkedProducts}/>
                 </Wrapper>

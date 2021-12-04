@@ -69,7 +69,7 @@ function* AddProductCart(action) {
         yield delay(1000);
         yield put({
             type: ADD_PRODUCT_CART_SUCCESS,
-            data: dummyProduct(parseInt(action.data.productId,10),action.data.size, action.data.quantity, parseInt(action.data.pluralPrice,10)),
+            data: dummyProduct(parseInt(action.data.productId,10),action.data.size, action.data.quantity, parseInt(action.data.totalPrice,10)),
         });
     } catch (err) {
       console.error(err);

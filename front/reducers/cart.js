@@ -3,8 +3,8 @@ import produce from "immer";
 
 export const initialState = {
     products : [],
-    totalPrice: 0,
-    totalDeliveryFee : 0,
+    cartTotalPrice: 0,
+    cartTotalDeliveryFee : 0,
     loadAllPriceLoading : false,
     loadAllPriceDone : false,
     loadAllPriceError : null,
@@ -51,7 +51,7 @@ switch (action.type) {
             case LOAD_ALL_PRICE_SUCCESS:{
                 draft.loadAllPriceLoading = false;
                 draft.loadAllPriceDone = true;
-                draft.totalPrice += action.data
+                draft.cartTotalPrice += action.data
             break;
         }
             case LOAD_ALL_PRICE_FAILURE:
@@ -69,8 +69,8 @@ switch (action.type) {
                 draft.checkCartProductLoading = false;
                 draft.checkCartProductDone = true;
                 const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
-                draft.totalPrice -= (product.pluralPrice + product.DeliveryFee)
-                draft.totalDeliveryFee -= product.DeliveryFee
+                draft.cartTotalPrice -= (product.totalPrice + product.DeliveryFee)
+                draft.cartTotalDeliveryFee -= product.DeliveryFee
             break;
         }
             case UNCHECK_CART_PRODUCT_FAILURE:
@@ -88,8 +88,8 @@ switch (action.type) {
                 draft.uncheckCartpLoading = false;
                 draft.uncheckCartProductDone = true;
                  const product = draft.products.find(v => (v.id === action.data.id) && (v.Size === action.data.Size))
-                draft.totalPrice += (product.pluralPrice + product.DeliveryFee)
-                draft.totalDeliveryFee += product.DeliveryFee
+                draft.cartTotalPrice += (product.totalPrice + product.DeliveryFee)
+                draft.cartTotalDeliveryFee += product.DeliveryFee
                 
             break;
         }
@@ -110,13 +110,13 @@ switch (action.type) {
                 const exproduct = draft.products.find(v => (v.id === action.data.id ) && (v.Size === action.data.Size))
                 if(exproduct){
                     exproduct.quantity += action.data.quantity
-                    exproduct.pluralPrice += action.data.pluralPrice
-                     exproduct.pluralPrice > 39900 ?  (exproduct.DeliveryFee  = 0) :  (exproduct.DeliveryFee = 2500)
+                    exproduct.totalPrice += action.data.totalPrice
+                     exproduct.totalPrice > 39900 ?  (exproduct.DeliveryFee  = 0) :  (exproduct.DeliveryFee = 2500)
                      
                 }
                 else {
                     draft.products.push(action.data)
-                    action.data.pluralPrice > 39900 ? action.data.DeliveryFee = 0 :  action.data.DeliveryFee =100
+                    action.data.totalPrice > 39900 ? action.data.DeliveryFee = 0 :  action.data.DeliveryFee =100
                 }
             break;
         }

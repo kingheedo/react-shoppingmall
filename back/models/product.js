@@ -9,10 +9,6 @@ module.exports = class Product extends Model{
                 allowNull : false,
                 unique: true,
             },
-            src: {
-                type : DataTypes.STRING(200),
-                allowNull : false,
-            },
             price : {
                 type : DataTypes.DECIMAL,
                 allowNull : false,

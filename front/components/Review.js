@@ -12,7 +12,7 @@ const Review = ({product}) => {
     const [reviewRate, onChangeRate] = useState(2.5)
     const [visibleModal, setVisibleModal] = useState(false)
     const dispatch = useDispatch()
-    const WhoBuyedProduct = product.notYetReivewers && product.notYetReivewers.find(v => v.id === (me && me.User.id))
+    const WhoBuyedProduct = product.notYetReivewers && product.notYetReivewers.find(v => v.id === (me && me.id))
 
    
     const onClickReview = useCallback(
@@ -28,7 +28,7 @@ const Review = ({product}) => {
             }
             dispatch({
                 type: ADD_PRODUCT_REVIEW_REQUEST,
-                data : {userId: me.User.id, productId: product.id, Content: reviewContent, Rate: reviewRate}
+                data : {userId: me.id, productId: product.id, Content: reviewContent, Rate: reviewRate}
             })
             setVisibleModal(false)
         },
@@ -66,7 +66,7 @@ const Review = ({product}) => {
                     }
                 >
                     <List.Item.Meta
-                    description={item.User.email}
+                    description={item.email}
                     />
                     <Rate disabled defaultValue={item.rate} />
                     <br/>

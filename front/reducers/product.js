@@ -29,14 +29,14 @@ export const LOAD_PRODUCTS_REQUEST = 'LOAD_PRODUCTS_REQUEST';
 export const LOAD_PRODUCTS_SUCCESS = 'LOAD_PRODUCTS_SUCCESS';
 export const LOAD_PRODUCTS_FAILURE = 'LOAD_PRODUCTS_FAILURE';
 
-export const dummyProduct  = (productId, size, quantity, productPrice) =>  (
+export const dummyProduct  = (productId, size, quantity, totalPrice) =>  (
     {
         id : productId,
         quantity : quantity,
         name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         price : 100,
-        pluralPrice : productPrice,
+        totalPrice : totalPrice,
         Reviews:[
             {
                 id :2,
