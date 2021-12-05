@@ -9,7 +9,7 @@ const session = require("express-session")
 const cookieParser = require('cookie-parser');
 const passport = require('passport')
 const dotenv = require('dotenv')
-
+const path = require('path')
 
 dotenv.config();
 db.sequelize.sync()
@@ -19,9 +19,7 @@ db.sequelize.sync()
     .catch(console.error);
 passportConfig();
 
-app.use(cors({
-    origin: '*',
-}))
+app.use('/', express.static(path.join(__dirname,'uploads')))
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
 
@@ -30,9 +28,15 @@ app.use(session({
     resave: false,
     secret: process.env.COOKIE_SECRET
 }))
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser(process.env.COOKIE_SECRET))
+
+app.use(cors({
+    origin : 'http://localhost:3060',
+    credentials: true,
+}))
 
 app.get('/', (req, res) =>{
     res.send('hello express');

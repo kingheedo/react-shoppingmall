@@ -33,7 +33,7 @@ const Signup = () => {
     const [confirmpassword, onChangeConfirmpassword] = useInput('')
     const [name, onChangeName] = useInput('')
     const [checkpassword, setCheckPassword] = useState(false)
-    const [check, onChangeCheck] = useInput('')
+    const [check, setCheck] = useState(false)
     const [checkerror, setCheckError] = useState(false)
     const dispatch = useDispatch()
 
@@ -41,6 +41,7 @@ const Signup = () => {
 
     useEffect(() => {
       if(me || signUpDone){
+        alert('회원가입이 완료되었습니다.')
         Router.push('/')
         dispatch({
           type : SIGN_UP_RESET,
@@ -59,7 +60,14 @@ const Signup = () => {
       }
       setCheckPassword(false)
     }, [password,confirmpassword])
-  
+    
+    const onChangeCheck = useCallback(
+      () => {
+        setCheck(prev => !prev)
+      },
+      [],
+    )
+
     const onSubmitForm = useCallback(
       (e) => {
         e.preventDefault();

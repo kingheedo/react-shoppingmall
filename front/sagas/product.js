@@ -1,6 +1,46 @@
-import { LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS,dummyProducts, dummyProduct, LOAD_PRODUCT_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST, fakerProducts, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS, ADD_PRODUCT_REVIEW_FAILURE } from "../reducers/product";
+import { LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS,dummyProducts, dummyProduct, LOAD_PRODUCT_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST, fakerProducts, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS, ADD_PRODUCT_REVIEW_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, UPLOAD_IMAGES_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, REGISTER_PRODUCT_FAILURE } from "../reducers/product";
 import axios from 'axios'
-import { all, delay, fork, put, throttle } from "@redux-saga/core/effects";
+import { all,call, delay, fork, put, throttle,takeLatest } from "redux-saga/effects";
+
+function RegisterProductAPI(data) {
+  return axios.post('/product', data); //patch 게시글의 일부분을 수정
+}
+
+function* RegisterProduct(action) {
+  try {
+    const result = yield call(RegisterProductAPI, action.data);
+    yield put({
+      type: REGISTER_PRODUCT_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+      console.error(err);
+    yield put({
+      type: REGISTER_PRODUCT_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
+
+function UploadImagesAPI(data) {
+  return axios.post('/product/images', data); //patch 게시글의 일부분을 수정
+}
+
+function* UploadImages(action) {
+  try {
+    const result = yield call(UploadImagesAPI, action.data);
+    yield put({
+      type: UPLOAD_IMAGES_SUCCESS,
+      data: result.data,
+    });
+  } catch (err) {
+      console.error(err);
+    yield put({
+      type: UPLOAD_IMAGES_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function AddProductReviewApi(data) { //hashtag/name
     return axios.get('api/product', data);
@@ -68,7 +108,14 @@ function* LoadSingleProduct(action) {
         });
     }
 }
+function* watchRegisterProduct() {
+    yield takeLatest(REGISTER_PRODUCT_REQUEST, RegisterProduct);
 
+  }
+function* watchUploadImages() {
+    yield takeLatest(UPLOAD_IMAGES_REQUEST, UploadImages);
+
+  }
 function* watchAddProductReview() {
     yield throttle(3000, ADD_PRODUCT_REVIEW_REQUEST, AddProductReview);
 
@@ -85,6 +132,8 @@ function* watchLoadProduct() {
 
   export default function* productSaga() {
     yield all([
+        fork(watchRegisterProduct),
+        fork(watchUploadImages),
         fork(watchAddProductReview),
         fork(watchLoadProducts),
         fork(watchLoadProduct),

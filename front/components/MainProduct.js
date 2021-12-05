@@ -24,10 +24,10 @@ const MainProduct = ({product}) => {
              onMouseEnter = {onMouseHover}
              onMouseLeave = {onMouseHover}
              style={{ width: 240, cursor: 'pointer'}}
-             cover={show ? <img alt="Images[1].src" src={product && product.Images[1].src} /> : <img alt="Images[0].src" src={product && product.Images[0].src} /> }
+             cover={show ? <img alt="Images[1].src" src={`http://localhost:3065/${product.Images[1].src}`} /> : <img alt="Images[0].src" src={`http://localhost:3065/${product.Images[0].src}`} /> }
            >
              <div>
-                 <span>{product && product.name}</span>
+                 <span>{product && product.productName}</span>
                  <strong>{product && product.price}</strong>
              </div>
            </Card>
@@ -37,7 +37,7 @@ MainProduct.propTypes={
     product : Proptypes.shape({
         id: Proptypes.number,
         uniqueId: Proptypes.string,
-        name: Proptypes.string,
+        productName: Proptypes.string,
         Reviews: Proptypes.arrayOf(Proptypes.object),
         Images: Proptypes.arrayOf(Proptypes.object),
         Likers : Proptypes.arrayOf(Proptypes.object),

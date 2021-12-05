@@ -1,4 +1,4 @@
-import { all, delay, fork, put, throttle } from "@redux-saga/core/effects";
+import { all, delay, fork, put, throttle } from "redux-saga/effects";
 import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, CHECK_CART_PRODUCT_FAILURE, CHECK_CART_PRODUCT_REQUEST, CHECK_CART_PRODUCT_SUCCESS,LOAD_ALL_PRICE_FAILURE, LOAD_ALL_PRICE_REQUEST, LOAD_ALL_PRICE_SUCCESS, UNCHECK_CART_PRODUCT_FAILURE, UNCHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_SUCCESS } from "../reducers/cart";
 import { dummyProduct } from "../reducers/product";
 

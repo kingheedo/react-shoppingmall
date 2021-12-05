@@ -1,9 +1,26 @@
 import { LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS,dummyProducts } from "../reducers/product";
 import axios from 'axios'
-import { all, call, delay, fork, put, throttle } from "@redux-saga/core/effects";
-import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, dummyUser, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../reducers/user";
+import { all, call, delay, fork, put, takeLatest, throttle } from "redux-saga/effects";
+import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, dummyUser, LOAD_USER_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../reducers/user";
 
-
+function LoadUserApi() { //hashtag/name
+    return axios.get('/user');
+}
+function* LoadUser(action) {
+    try {
+        const result = yield call(LoadUserApi);
+        yield put({
+            type: LOAD_USER_SUCCESS,
+            data: result.data,
+        });
+    } catch (err) {
+      console.error(err);
+        yield put({
+            type: LOAD_USER_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 
 function LogoutApi() { //hashtag/name
     return axios.post('/user/logout');
@@ -59,8 +76,11 @@ function* SignUp(action) {
     }
 }
 
+  function* watchLoadUser() {
+    yield takeLatest(LOAD_USER_REQUEST, LoadUser);
+  }
   function* watchLogin() {
-    yield throttle(3000, LOG_IN_REQUEST, Login);
+    yield takeLatest(LOG_IN_REQUEST, Login);
   }
   function* watchLogout() {
     yield throttle(3000, LOG_OUT_REQUEST, Logout);
@@ -70,6 +90,7 @@ function* SignUp(action) {
   }
   export default function* productSaga() {
     yield all([
+        fork(watchLoadUser),
         fork(watchLogin),
         fork(watchLogout),
         fork(watchSignUp),

@@ -6,6 +6,26 @@ const passport = require('passport');
 const {} = require('./middlewares')
 const {isLoggedIn, isNotLoggedIn} = require('./middlewares')
 
+router.get('/', async(req, res, next) =>{
+     try{
+         if(req.user){
+        const user = await User.findOne({
+         where : {id : req.user.id},
+         attributes: {
+             exclude : ['password']
+         }
+        })
+        res.status(200).json(user);
+         }else{
+             res.status(200).json(null);
+         }
+         
+     }catch(error){
+         console.error(error);
+         next(error);
+     }
+})
+
 router.post('/logout',isLoggedIn, (req, res, next) => {
     req.logout();
     req.session.destroy();

@@ -3,7 +3,14 @@ import produce from 'immer'
 export const initialState = {
     mainProducts: [],
     singleProduct: null,
+    imagePath: [],
     hasMoreProducts : true,
+    registerProductLoading: false,
+    registerProductDone: false,
+    registerProductErrors: null,
+    uploadImagesLoading: false,
+    uploadImagesDone: false,
+    uploadImagesErrors: null,
     loadMainProductsLoading : false,
     loadMainProductsDone : false,
     loadMainProductsError : null,
@@ -13,9 +20,15 @@ export const initialState = {
 
 }
 
+export const REMOVE_IMAGE = 'REMOVE_IMAGE';
 
+export const REGISTER_PRODUCT_REQUEST = 'REGISTER_PRODUCT_REQUEST';
+export const REGISTER_PRODUCT_SUCCESS = 'REGISTER_PRODUCT_SUCCESS';
+export const REGISTER_PRODUCT_FAILURE = 'REGISTER_PRODUCT_FAILURE';
 
-
+export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE';
 
 export const ADD_PRODUCT_REVIEW_REQUEST = 'ADD_PRODUCT_REVIEW_REQUEST';
 export const ADD_PRODUCT_REVIEW_SUCCESS = 'ADD_PRODUCT_REVIEW_SUCCESS';
@@ -33,7 +46,7 @@ export const dummyProduct  = (productId, size, quantity, totalPrice) =>  (
     {
         id : productId,
         quantity : quantity,
-        name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
+        productName: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         price : 100,
         totalPrice : totalPrice,
@@ -85,7 +98,7 @@ export const dummyProduct  = (productId, size, quantity, totalPrice) =>  (
 export const dummyProducts  = () =>  (
     {
         id : 1,
-        name: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
+        productName: '★인기재입고★ 스카이 블루 퀼팅 경량 리사이클 패딩 점퍼'
         ,
         price : 50000,
         Reviews:[
@@ -126,7 +139,7 @@ export const dummyProducts  = () =>  (
         ({
             id : i+1,
         uniqueId : '321938CY2Q',
-        name: faker.name.firstName()
+        productName: faker.name.firstName()
         ,
         price : faker.datatype.number(),
         Reviews:[
@@ -164,6 +177,37 @@ export const dummyProducts  = () =>  (
 const reducer = (state = initialState, action) =>{
     return produce(state,(draft) => {
         switch (action.type) {
+            case REGISTER_PRODUCT_REQUEST:
+                draft.registerProductLoading = true;
+                draft.registerProductDone = false;
+                draft.registerProductError = null;
+            break;
+            case REGISTER_PRODUCT_SUCCESS:
+                draft.registerProductLoading = false;
+                draft.registerProductDone = true;
+                draft.mainProducts.unshift(action.data);
+                draft.imagePath = [];
+            break;
+            case REGISTER_PRODUCT_FAILURE:
+                draft.registerProductLoading = false;
+                draft.registerProductError = action.error;
+            break;
+
+            case UPLOAD_IMAGES_REQUEST:
+                draft.uploadImagesLoading = true;
+                draft.uploadImagesDone = false;
+                draft.uploadImagesError = null;
+            break;
+            case UPLOAD_IMAGES_SUCCESS:
+                draft.uploadImagesLoading = false;
+                draft.uploadImagesDone = true;
+                draft.imagePath = action.data;
+            break;
+            case UPLOAD_IMAGES_FAILURE:
+                draft.uploadImagesLoading = false;
+                draft.uploadImagesError = action.error;
+            break;
+
             case ADD_PRODUCT_REVIEW_REQUEST:
                 draft.addProductReviewLoading = true;
                 draft.addProductReviewDone = false;
@@ -214,7 +258,10 @@ const reducer = (state = initialState, action) =>{
                 draft.loadMainProductsDone = false;
                 draft.loadMainProductsError = action.error;
             break;
-        
+            
+            case REMOVE_IMAGE:
+                draft.imagePath = draft.imagePath.filter((v,i) => i !== action.data);
+                break;
             default:
                 break;
         }

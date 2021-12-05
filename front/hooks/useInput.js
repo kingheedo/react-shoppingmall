@@ -1,19 +1,14 @@
 import { useCallback, useState } from 'react';
 
-export default (initialValue) => {
+export default (initialValue = null) => {
 
     const [value, setValue] = useState(initialValue);
     const handler = useCallback(
     (e) => {
-        !e.target.value 
-        ?
-        setValue(e.target.checked)
-        :
-        setValue(e.target.value)
-        console.log(e.target.value)
-        console.log(value)
+            setValue(e.target.value);
+            console.log(e.target.value)
     },
-    [value],
+    [],
 )
 return [value, handler, setValue]
 

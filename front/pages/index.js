@@ -6,11 +6,18 @@ import { LOAD_PRODUCTS_REQUEST } from '../reducers/product';
 import {useDispatch, useSelector} from 'react-redux';
 import { Col, Row } from 'antd';
 import { useInView } from "react-intersection-observer"
+import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const Home = () => {
     const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
     const dispatch = useDispatch();
     const [ref, inView] = useInView()
+
+    useEffect(() => {
+      dispatch({
+        type: LOAD_USER_REQUEST,
+      })
+    }, [])
     useEffect(
   () => {
         if(inView && hasMoreProducts && !loadMainProductsLoading){
@@ -33,8 +40,8 @@ const Home = () => {
                 <h2>Clothes</h2>
                 <Row gutter = {[18,18]}>
                 
-                {mainProducts && mainProducts.map((product) => 
-                <Col key={product.id} span={6}>
+                {mainProducts && mainProducts.map((product,i) => 
+                <Col key={i} span={6}>
                     <MainProduct product = {product}/>
                 </Col>
             )}

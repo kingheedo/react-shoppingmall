@@ -4,10 +4,9 @@ const {Model} =  DataTypes;
 module.exports = class Product extends Model{
     static init(sequelize){
         return super.init({
-            name : {
+            productName : {
                 type : DataTypes.STRING(50),
                 allowNull : false,
-                unique: true,
             },
             price : {
                 type : DataTypes.DECIMAL,
@@ -23,11 +22,11 @@ module.exports = class Product extends Model{
             },
             star: {
                 type : DataTypes.INTEGER,
-                allowNull : false,
+                allowNull : true,
             },
             deliveryFee : {
                 type : DataTypes.DECIMAL,
-                allowNull : false,
+                allowNull : true,
             },
 
         },{
@@ -40,6 +39,7 @@ module.exports = class Product extends Model{
     }
     static associate(db){
         db.Product.belongsTo(db.User)
+        db.Product.hasMany(db.Image);
         db.Product.hasMany(db.Review);
         db.Product.belongsToMany(db.User, {through : 'Like', as: 'Likers'})
         db.Product.belongsToMany(db.User, {through: db.Cart})

@@ -12,7 +12,7 @@ module.exports = () => {
             where: {email}
         })
         if(!user){
-            done(null, false, {reason: '존재하지 않는 사용자입니다.'})
+            return done(null, false, {reason: '존재하지 않는 사용자입니다.'})
         }
         const result = await bcrypt.compare(password, user.password)
         if(result){

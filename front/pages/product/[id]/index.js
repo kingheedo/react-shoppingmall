@@ -102,9 +102,9 @@ const Product = () => {
             <Wrapper>
                 <ContentWrapper>
                         <div style={{display: 'flex'}}>
-                        <Image src= {singleProduct.Images[0].src}/>
+                        <Image src= {`http://localhost:3065/${singleProduct.Images[0].src}`}/>
                         <Product_Info>
-                            <h2 style={{margin: '2rem'}}>{singleProduct.name}</h2>
+                            <h2 style={{margin: '2rem'}}>{singleProduct.productName}</h2>
                             {/* <ul>
                                 {singleProduct && singleProduct.Colors.map(Color =>
                                     <li>

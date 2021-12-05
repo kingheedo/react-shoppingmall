@@ -4,6 +4,11 @@ import { dummyProduct } from './product';
 export const initialState = {
     me: null,
     cart: [],
+
+    loadUserLoading : false,
+    loadUserDone : false,
+    loadUserError : null,
+    
     loginLoading : false,
     loginDone : false,
     loginError : null,
@@ -29,6 +34,12 @@ export const dummyUser = () => ({
     Comments: ['댓글테스트'],
 })
 
+
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
+
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
@@ -48,6 +59,21 @@ export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 const reducer = (state = initialState, action) =>{
     return produce(state,(draft) => {
         switch (action.type) {
+            case LOAD_USER_REQUEST:
+                draft.loadUserLoaing = true;
+                draft.loadUserDone = false;
+                draft.loadUserError = null;
+            break;
+            case LOAD_USER_SUCCESS:
+                draft.loadUserLoading = false;
+                draft.loadUserDone = true;
+                draft.me = action.data;
+            break;
+            case LOAD_USER_FAILURE:
+                draft.loadUserLoading = false;
+                draft.loadUserError = action.error;
+            break;
+
             case LOG_OUT_REQUEST:
                 draft.logoutLoaing = true;
                 draft.logoutDone = false;
@@ -60,7 +86,6 @@ const reducer = (state = initialState, action) =>{
             break;
             case LOG_OUT_FAILURE:
                 draft.logoutLoading = false;
-                draft.logoutDone = false;
                 draft.logoutError = action.error;
             break;
 
@@ -76,7 +101,6 @@ const reducer = (state = initialState, action) =>{
             break;
             case LOG_IN_FAILURE:
                 draft.loginLoading = false;
-                draft.loginDone = false;
                 draft.loginError = action.error;
             break;
 

@@ -97,7 +97,7 @@ const Wrapper = styled.div`
                                             <img style={{width: '8rem'}} src={product.Images[0].src}/>
                                         </td>
                                         <td>
-                                            {product.name}
+                                            {product.productName}
                                             <br/>
                                             {product.Size}/
                                             {product.quantity}개
