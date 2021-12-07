@@ -44,7 +44,7 @@ const Signin = () => {
 
     useEffect(() => {
         if(me){
-            Router.push('/')
+            Router.back()
         }
     }, [me])
 

@@ -18,6 +18,7 @@ const Home = () => {
         type: LOAD_USER_REQUEST,
       })
     }, [])
+    
     useEffect(
   () => {
         if(inView && hasMoreProducts && !loadMainProductsLoading){
@@ -36,7 +37,7 @@ const Home = () => {
         <>
         <AppLayout>
             <ImageSlider/>
-            <div style={{margin: '2rem 16rem',width:'90rem', }}>
+            <div style={{margin: '2rem 16rem', }}>
                 <h2>Clothes</h2>
                 <Row gutter = {[18,18]}>
                 

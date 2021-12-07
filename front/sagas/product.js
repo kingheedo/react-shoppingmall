@@ -70,15 +70,15 @@ function* AddProductReview(action) {
     }
 }
 
-function LoadProductsApi(data) { //hashtag/name
-    return axios.get('api/product', data);
+function LoadProductsApi(lastId) { //hashtag/name
+    return axios.get(`/products?lastId=${lastId || 0}`);
 }
 function* LoadProducts(action) {
     try {
-        // const result = yield call(LoadProductsApi, action.data);
+        const result = yield call(LoadProductsApi, action.lastId)
         yield put({
             type: LOAD_PRODUCTS_SUCCESS,
-            data: fakerProducts(10),
+            data: result.data,
         });
     } catch (err) {
       console.error(err);

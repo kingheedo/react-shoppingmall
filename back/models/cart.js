@@ -10,7 +10,7 @@ module.exports = class Cart extends Model{
                 allowNull : true,
             },
             totalPrice: {
-                type : DataTypes.DECIMAL,
+                type : DataTypes.INTEGER,
                 allowNull : true,
             },
             size : {

@@ -234,8 +234,8 @@ const reducer = (state = initialState, action) =>{
             case LOAD_PRODUCTS_SUCCESS:
                 draft.loadMainProductsLoading = false;
                 draft.loadMainProductsDone = true;
-                draft.mainProducts = draft.mainProducts.concat(action.data);
-                draft.hasMoreProducts = action.data.length === 10;
+                draft.mainProducts = [...draft.mainProducts, ...action.data];
+                draft.hasMoreProducts = action.data.length === 4;
             break;
             case LOAD_PRODUCTS_FAILURE:
                 draft.loadMainProductsLoading = false;

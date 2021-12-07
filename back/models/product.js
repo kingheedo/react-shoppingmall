@@ -9,7 +9,7 @@ module.exports = class Product extends Model{
                 allowNull : false,
             },
             price : {
-                type : DataTypes.DECIMAL,
+                type : DataTypes.INTEGER,
                 allowNull : false,
             },
             size : {
@@ -25,7 +25,7 @@ module.exports = class Product extends Model{
                 allowNull : true,
             },
             deliveryFee : {
-                type : DataTypes.DECIMAL,
+                type : DataTypes.INTEGER,
                 allowNull : true,
             },
 

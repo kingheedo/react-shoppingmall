@@ -3,8 +3,6 @@ import produce from 'immer'
 import { dummyProduct } from './product';
 export const initialState = {
     me: null,
-    cart: [],
-
     loadUserLoading : false,
     loadUserDone : false,
     loadUserError : null,

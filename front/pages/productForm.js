@@ -15,6 +15,7 @@ import { useDispatch, useSelector,} from 'react-redux';
 import { REGISTER_PRODUCT_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '../reducers/product';
 import Router from 'next/router';
 import useInput from '../hooks/useInput';
+import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const FormLayout= styled(Form)`
     
@@ -74,6 +75,12 @@ const ProductForm = () => {
 
   const dispatch = useDispatch()
   const imageUpload = useRef()
+
+  useEffect(() => {
+      dispatch({
+        type: LOAD_USER_REQUEST,
+      })
+    }, [])
   useEffect(() => {
     if(!me){
       Router.push('/')
@@ -101,6 +108,7 @@ const ProductForm = () => {
     );
   const onSubmitForm = useCallback(
     (e) => {
+      e.preventDefault();
       if(imagePath.length !== 2 || !productName || !productPrice || !productStock){
         return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.')
       }
@@ -111,7 +119,6 @@ const ProductForm = () => {
       formData.append('productName', productName)
       formData.append('productPrice', productPrice)
       formData.append('productStock', productStock)
-      console.log(formData)
       dispatch({
         type: REGISTER_PRODUCT_REQUEST,
         data : formData
@@ -143,7 +150,7 @@ const onDeleteImage = useCallback(
                  <ImageWrapper>
                 {imagePath && imagePath.map((v,i) => 
                         (
-                         <div>
+                         <div key={v.id}>
                             <img src={`http://localhost:3065/${v}`} style={{width: '200px', height:'200px', marginRight: '0.5rem',display: 'block'}} alt ={v}/>
                             <Button style={{marginTop:'0.5rem'}} onClick= {onDeleteImage(i)}>삭제</Button>
                          </div>

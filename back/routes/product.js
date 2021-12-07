@@ -49,20 +49,10 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             
         }
         const fullProduct = await Product.findOne({
-            where: {id: product.id},
+            where: {id : product.id},
             include:[{
-                model: Image,
-            },{
-                model: Review,
-                include:[{
-                    model: User,
-                    attributes: ['id','name'],
-                }]
-            },{
-                model: User,
-                attributes: ['id'],
-                as: 'Likers',
-            }]
+                model : Image,
+            },]
         })
         res.status(202).json(fullProduct);
     }catch(error){

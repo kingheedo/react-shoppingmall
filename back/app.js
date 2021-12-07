@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const productRouter = require('./routes/product');
+const productsRouter = require('./routes/products');
 const userRouter = require('./routes/user');
 const db = require('./models')
 const cors = require('cors')
@@ -38,13 +39,9 @@ app.use(cors({
     credentials: true,
 }))
 
-app.get('/', (req, res) =>{
-    res.send('hello express');
-})
-
-
 app.use('/user', userRouter)
 app.use('/product',productRouter)
+app.use('/products',productsRouter)
 app.listen(3065, () => {
     console.log('서버 실행 중')
 })

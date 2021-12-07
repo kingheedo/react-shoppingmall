@@ -26,13 +26,21 @@ export const Global = createGlobalStyle`
 const Container = styled.div`
         height: 60px;
         background-color: white;
-
+        @media only screen and (max-width: 870px) {
+        height: 120px; 
+        @media only screen and (max-width: 770px) {
+        margin-bottom: 2rem;
+        }
+        }
     `
     const Wrapper = styled.div`
         padding: 2px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        @media only screen and (max-width: 770px) {
+        flex-direction : column;
+        }
 
     `
     const Left = styled.div`
