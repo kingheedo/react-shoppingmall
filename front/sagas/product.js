@@ -89,16 +89,16 @@ function* LoadProducts(action) {
     }
 }
 
-function LoadSingleProductApi(data) { //hashtag/name
-    return axios.get('api/product', data);
+function LoadSingleProductApi(id) { //hashtag/name
+    return axios.get(`/product?id=${id}`,);
 }
 function* LoadSingleProduct(action) {
     try {
-        // const result = yield call(LoadSingleProductApi, action.data);
+        const result = yield call(LoadSingleProductApi, action.id);
         yield delay(1000);
         yield put({
             type: LOAD_PRODUCT_SUCCESS,
-            data: dummyProduct(parseInt(action.data,10)),
+            data: result.data
         });
     } catch (err) {
       console.error(err);

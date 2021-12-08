@@ -46,7 +46,7 @@ const Product = () => {
     useEffect(() => {
         dispatch({
             type: LOAD_PRODUCT_REQUEST,
-            data : id
+            id
         })
     }, [id])
 
@@ -102,7 +102,7 @@ const Product = () => {
             <Wrapper>
                 <ContentWrapper>
                         <div style={{display: 'flex'}}>
-                        <Image src= {`http://localhost:3065/${singleProduct.Images[0].src}`}/>
+                        <Image alt ="singleProduct.Images[0]" style={{width: '400px', height: '400px'}} src= {`http://localhost:3065/${singleProduct.Images[0].src}`}/>
                         <Product_Info>
                             <h2 style={{margin: '2rem'}}>{singleProduct.productName}</h2>
                             {/* <ul>
@@ -114,7 +114,7 @@ const Product = () => {
                                     </li>
                                 )}
                             </ul> */}
-                            <span  style={{margin: '2rem 0' }}>{singleProduct.price}</span>
+                            <span  style={{margin: '2rem 0' }}>{`${singleProduct.price} 원`}</span>
                             <em  style={{margin: '2rem 0'}}>{singleProduct.uniqueId}</em>
                             <select
                                 style={{margin: '1rem 0', width: 320,textAlign: 'center'}}

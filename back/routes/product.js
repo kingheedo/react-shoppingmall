@@ -27,6 +27,26 @@ const upload = multer({
     limits : {fileSize: 20 * 1024 * 1024, files: 2}
 });
 
+router.get('/', async(req, res, next ) => {
+    const loadProduct = await Product.findOne({
+        where: {id : req.query.id},
+        include: [{
+            model: Image
+        },{
+            model : Review,
+            include: [{
+                model : User,
+                attributes: ['email']
+            }]
+        },{
+            model: User,
+            attributes: ['id'],
+            as : 'Likers'
+        }]
+    })
+    res.status(202).json(loadProduct)
+})
+
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => { //Post /post/images
     console.log('req.files',req.files);
     res.json(req.files.map((v) => v.filename))
@@ -61,9 +81,7 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
     }
 })
 
-router.get('/', (req,res) => {
-    res.send('hello express');
-})
+
 
 
 module.exports = router;
