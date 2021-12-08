@@ -7,6 +7,7 @@ const cart = require('./cart')
 const image = require('./image')
 const review = require('./review')
 const product = require('./product')
+const size = require('./size')
 const user = require('./user')
 
 const sequelize = new Sequelize(config.database, config.username, config.password, config);
@@ -15,6 +16,7 @@ db.Cart = cart;
 db.Image = image;
 db.Review = review;
 db.Product = product;
+db.Size = size;
 db.User = user;
 
 Object.keys(db).forEach(modelName => {

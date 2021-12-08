@@ -38,7 +38,7 @@ const Product = () => {
 
     const router = useRouter();
     const {id,color} = router.query;
-    const [size, onSelectSize] = useInput('사이즈')
+    const [size, onSelectSize] = useInput('')
     const [quantity, setQuantity] = useState(1)
     const [visibleModal, setVisibleModal] = useState(false)
 
@@ -96,82 +96,78 @@ const Product = () => {
         [id,quantity,size],
     )
     return (
-        <>
         <AppLayout>
-            {singleProduct && 
             <Wrapper>
                 <ContentWrapper>
-                        <div style={{display: 'flex'}}>
-                        <Image alt ="singleProduct.Images[0]" style={{width: '400px', height: '400px'}} src= {`http://localhost:3065/${singleProduct.Images[0].src}`}/>
-                        <Product_Info>
-                            <h2 style={{margin: '2rem'}}>{singleProduct.productName}</h2>
-                            {/* <ul>
-                                {singleProduct && singleProduct.Colors.map(Color =>
-                                    <li>
-                                        <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
-                                            <a>{Color}</a>
-                                        </Link>
-                                    </li>
-                                )}
-                            </ul> */}
-                            <span  style={{margin: '2rem 0' }}>{`${singleProduct.price} 원`}</span>
-                            <em  style={{margin: '2rem 0'}}>{singleProduct.uniqueId}</em>
-                            <select
-                                style={{margin: '1rem 0', width: 320,textAlign: 'center'}}
-                                value={size}
-                                onChange={onSelectSize}
-                            >
-                                <option value="사이즈">사이즈</option>
-                                <option value="XS">XS</option>
-                                <option value="S">S</option>
-                                <option value="M">M</option>
-                                <option value="L">L</option>
-                        </select>
-                        
-                        <div style={{display: 'flex',width: '20rem'}}>
-                            <Button onClick={ondecline}>
-                                <MinusOutlined />
-                            </Button>
-                            <Input style={{textAlign: 'center'}} value={quantity} placeholder="Basic usage" />
-                            <Button onClick={onincrease}>
-                                <PlusOutlined />
-                            </Button>
-                        </div>
-                        
-                        <div style={{display:'flex', marginTop : '1rem'}}>
-                        <BtnCart onClick={onClickCart(singleProduct.price)} type="Cart">장바구니</BtnCart>
-                        <BtnBuy type="BuyNow">바로구매</BtnBuy>
-                        </div>
-                        </Product_Info>
-                        <Modal
-                                centered
-                                visible={visibleModal}
-                                footer={null}
-                                onCancel = {() => setVisibleModal(false)}
+                        {singleProduct &&
+                            <>
+                            <div style={{display: 'flex'}}>
+                            <Image alt ="singleProduct.Images[0]" style={{width: '400px', height: '400px'}} src= {`http://localhost:3065/${singleProduct.Images[0].src}`}/>
+                            <Product_Info>
+                                <h2 style={{margin: '2rem'}}>{singleProduct.productName}</h2>
+                                {/* <ul>
+                                    {singleProduct && singleProduct.Colors.map(Color =>
+                                        <li>
+                                            <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
+                                                <a>{Color}</a>
+                                            </Link>
+                                        </li>
+                                    )}
+                                </ul> */}
+                                <span  style={{margin: '2rem 0' }}>{`${singleProduct.price} 원`}</span>
+                                <em  style={{margin: '2rem 0'}}>{singleProduct.uniqueId}</em>
+                                <select
+                                    style={{margin: '1rem 0', width: 320,textAlign: 'center'}}
+                                    value={size}
+                                    onChange={onSelectSize}
                                 >
-                                <Result
-                                    status="success"
-                                    title= {`장바구니에 상품이 담겼습니다.
-                                    장바구니로 이동하시겠습니까?`}
-                                    extra={[
-                                    <Button onClick={onhandleModal} key="move">확인</Button>,
-                                    <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
-                                    ]}
-                                />
-                        </Modal>
-                        </div>
+                                        <option value= '사이즈'>사이즈</option>
+                                        {singleProduct && singleProduct.Sizes.map(productSize =>
+                                        <option value= {productSize.option}>{productSize.option}</option>
+                                        )}
+                            </select>
                             
-                    <Review product = {singleProduct}/>
+                            <div style={{display: 'flex',width: '20rem'}}>
+                                <Button onClick={ondecline}>
+                                    <MinusOutlined />
+                                </Button>
+                                <Input style={{textAlign: 'center'}} value={quantity} placeholder="Basic usage" />
+                                <Button onClick={onincrease}>
+                                    <PlusOutlined />
+                                </Button>
+                            </div>
+                            
+                            <div style={{display:'flex', marginTop : '1rem'}}>
+                            <BtnCart onClick={onClickCart(singleProduct.price)} type="Cart">장바구니</BtnCart>
+                            <BtnBuy type="BuyNow">바로구매</BtnBuy>
+                            </div>
+                            </Product_Info>
+                            <Modal
+                                    centered
+                                    visible={visibleModal}
+                                    footer={null}
+                                    onCancel = {() => setVisibleModal(false)}
+                                    >
+                                    <Result
+                                        status="success"
+                                        title= {`장바구니에 상품이 담겼습니다.
+                                        장바구니로 이동하시겠습니까?`}
+                                        extra={[
+                                        <Button onClick={onhandleModal} key="move">확인</Button>,
+                                        <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
+                                        ]}
+                                    />
+                            </Modal>
+                            </div>
+                                
+                        <Review product = {singleProduct}/>
+                        </>
+                        }
+                    
                 </ContentWrapper>
             </Wrapper>
-            }
-
-            
-            
-
         </AppLayout>
         
-        </>
     )
 }
 

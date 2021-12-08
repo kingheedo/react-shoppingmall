@@ -21,7 +21,7 @@ router.get('/', async (req, res, next) =>{
                 model: User,
                 attributes: ['id','email']
             }]
-        }]
+        },]
     })
     res.status(202).json(products);
     }catch(error){
