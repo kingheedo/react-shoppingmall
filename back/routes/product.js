@@ -4,7 +4,7 @@ const multer = require('multer');
 const { isLoggedIn } = require('./middlewares');
 const path = require('path')
 const fs = require('fs');
-const { Product, Review, User, Image } = require('../models');
+const { Product, Review, User, Image, Size } = require('../models');
 
 try{
     fs.accessSync('uploads');
@@ -42,6 +42,9 @@ router.get('/', async(req, res, next ) => {
             model: User,
             attributes: ['id'],
             as : 'Likers'
+        },{
+            model: Size,
+            attributes: ['option']
         }]
     })
     res.status(202).json(loadProduct)
@@ -68,10 +71,21 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
                 await product.addImages(images)
             
         }
+        if(req.body.productSize){
+            const sizes = await Promise.all(
+                req.body.productSize.map(size => Size.create({
+                    option: size
+                }))
+            );
+            await product.addSizes(sizes)
+        }
         const fullProduct = await Product.findOne({
             where: {id : product.id},
             include:[{
-                model : Image,
+            model : Image,
+            },
+            {
+            model: Size,
             },]
         })
         res.status(202).json(fullProduct);

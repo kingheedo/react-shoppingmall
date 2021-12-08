@@ -12,10 +12,6 @@ module.exports = class Product extends Model{
                 type : DataTypes.INTEGER,
                 allowNull : false,
             },
-            size : {
-                type : DataTypes.ENUM('XS','S','M','L'),
-                allowNull : true,
-            },
             stock: {
                 type : DataTypes.INTEGER,
                 allowNull : false,
@@ -38,9 +34,10 @@ module.exports = class Product extends Model{
         })
     }
     static associate(db){
-        db.Product.belongsTo(db.User)
+        db.Product.belongsTo(db.User);
+        db.Product.hasMany(db.Size);
         db.Product.hasMany(db.Image);
-        db.Product.hasMany(db.Review);
+        db.Product.hasMany(db.Review); 
         db.Product.belongsToMany(db.User, {through : 'Like', as: 'Likers'})
         db.Product.belongsToMany(db.User, {through: db.Cart})
 

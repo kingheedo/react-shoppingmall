@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-
 import {
   Form,
   InputNumber,
   Button,
   Upload,
   Input,
-  
+  Checkbox,
+  Divider,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import AppLayout from '../components/AppLayout';
@@ -16,6 +16,8 @@ import { REGISTER_PRODUCT_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '.
 import Router from 'next/router';
 import useInput from '../hooks/useInput';
 import { LOAD_USER_REQUEST } from '../reducers/user';
+
+const CheckboxGroup = Checkbox.Group;
 
 const FormLayout= styled(Form)`
     
@@ -26,6 +28,9 @@ const FormLayout= styled(Form)`
 const FormItem = styled(Form.Item)`
   &: first-child{
     margin-right : 1rem;
+  }
+  .ant-form-item-label {
+    text-align: left;
   }
 `
 const FirstFormItem = styled.div`
@@ -58,40 +63,44 @@ const layout = {
 
 const validateMessages = {
   required: '${label} 이 필요합니다!',
-  
-  
-  stock: {
-    range: '${label}은 최소 ${min} 이상이어야 합니다.',
-  },
 };
 
 const ProductForm = () => {
-  const {me} = useSelector(state => state.user)
+  const {me, loadUserDone,} = useSelector(state => state.user)
   const {imagePath} = useSelector(state => state.product)
 
   const [productName, onChangeName] = useInput('')
-  const [productPrice, onChangePrice] = useInput('')
-  const [productStock , onChangeStock] = useInput('')
-
+  const [productPrice, onChangePrice, setProductPrice] = useInput('')
+  const [productStock , onChangeStock, setProductStock] = useInput('')
+  const checkedOption = ['SM','M','L','XL'];
+  const [allChecked, setAllChecked] = useState(false)
+  const [checkedSize, setCheckedSize] = useState([])
   const dispatch = useDispatch()
   const imageUpload = useRef()
-
+  
+  useEffect(() => {
+    console.log(checkedSize)
+   
+  }, [checkedSize])
   useEffect(() => {
       dispatch({
         type: LOAD_USER_REQUEST,
       })
     }, [])
+
   useEffect(() => {
-    if(!me){
+    if(!me && !loadUserDone){
       Router.push('/')
     }
-  }, [me])
+  }, [me,loadUserDone])
+
   const onClickImageUpload = useCallback(
     () => {
       imageUpload.current.click();
     },
     [imageUpload.current],
   )
+
   const onChangeImages = useCallback(
         (e) => {
             console.log('images', e.target.files);
@@ -106,6 +115,7 @@ const ProductForm = () => {
         },
         [],
     );
+
   const onSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
@@ -116,22 +126,45 @@ const ProductForm = () => {
       imagePath.forEach(image =>{
         formData.append('image', image)
       });
+      checkedSize.forEach(productSize =>{
+        formData.append('productSize', productSize )
+      })
       formData.append('productName', productName)
       formData.append('productPrice', productPrice)
       formData.append('productStock', productStock)
+      
       dispatch({
         type: REGISTER_PRODUCT_REQUEST,
         data : formData
       })
     },
-    [imagePath,productName,productPrice,productStock],
+    [imagePath,productName,productPrice,productStock,checkedSize],
   )
+
 const onDeleteImage = useCallback(
   (index) => () => {
     dispatch({
       type: REMOVE_IMAGE,
       data: index
     })
+  },
+  [],
+)
+
+const onChageCheckBox = useCallback(
+  (check) => {
+    setCheckedSize(check)
+    if(checkedSize.length === checkedOption.length){
+      setAllChecked(prev => !prev)
+    }
+  },
+  [checkedSize],
+)
+
+const onChangeAllCheck = useCallback(
+  (e) => {
+    setCheckedSize(e.target.checked ? checkedOption : []);
+    setAllChecked(prev => !prev);
   },
   [],
 )
@@ -158,15 +191,27 @@ const onDeleteImage = useCallback(
                       )}
                 </ImageWrapper>
                    </ImageContainer>
+
                 <FormItem name={['name']} label="상품명" rules={[{type: 'string', required: true }]}>
                     <Input value={productName} onChange={onChangeName} />
                 </FormItem>
-                <FormItem name={['price']} label="상품가격" rules={[{required: true }]}>
-                    <Input value={productPrice} type='number' onChange={onChangePrice} />
+
+                <FormItem name={['price']} label="상품가격" rules={[{required: true, }]}>
+                    <Input min ='1' value={productPrice} type='number' onChange={onChangePrice} />
                 </FormItem>
-                <FormItem name={['stock']} label="재고수량" rules={[{required: true,  min: 1 }]}>
-                    <Input min = '1' value={productStock}  type='number' onChange={onChangeStock}/>
+
+                <FormItem name={['stock']} label="재고수량" rules={[{required: true, }]}>
+                    <Input min ='1' value={productStock}  type='number' onChange={onChangeStock}/>
                 </FormItem>
+
+                <FormItem>
+                  <Checkbox onChange={onChangeAllCheck} checked= {allChecked}>
+                    Check all
+                  </Checkbox>
+                  <Divider />
+                  <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChageCheckBox}/>
+                </FormItem>
+
                 <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                     <Button onClick={onSubmitForm} type="primary" htmlType="submit">
                         Submit
