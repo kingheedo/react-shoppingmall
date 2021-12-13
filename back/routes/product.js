@@ -86,6 +86,7 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             },
             {
             model: Size,
+            attributes: ['option'],
             },]
         })
         res.status(202).json(fullProduct);

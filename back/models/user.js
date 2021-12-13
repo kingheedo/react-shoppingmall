@@ -30,6 +30,6 @@ module.exports = class User extends Model{
         db.User.hasMany(db.Product)
         db.User.hasMany(db.Review)
         db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'})
-        db.User.belongsToMany(db.Product, {through: db.Cart})
+        db.User.belongsToMany(db.Product, {through: {model: db.Cart, as: 'CartProduct',unique: false }})
     }
 }

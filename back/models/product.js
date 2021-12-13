@@ -16,14 +16,6 @@ module.exports = class Product extends Model{
                 type : DataTypes.INTEGER,
                 allowNull : false,
             },
-            star: {
-                type : DataTypes.INTEGER,
-                allowNull : true,
-            },
-            deliveryFee : {
-                type : DataTypes.INTEGER,
-                allowNull : true,
-            },
 
         },{
             modelName: 'Product',
@@ -39,7 +31,7 @@ module.exports = class Product extends Model{
         db.Product.hasMany(db.Image);
         db.Product.hasMany(db.Review); 
         db.Product.belongsToMany(db.User, {through : 'Like', as: 'Likers'})
-        db.Product.belongsToMany(db.User, {through: db.Cart})
+        db.Product.belongsToMany(db.User, {through: {model: db.Cart, as: 'CartUser',unique: false}})
 
 
     }

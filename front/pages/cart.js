@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
 import Router from 'next/router'
 import Payment from '../components/payment'
+import { LOAD_USER_REQUEST } from '../reducers/user'
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -19,11 +20,17 @@ const Wrapper = styled.div`
    
     
     const Cart = () => {
-        const {products,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart)
+        const {userCart,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart)
         const {me} = useSelector(state => state.user)
         const dispatch = useDispatch()
         const [checkedProducts, setcheckedProducts] = useState([])
         
+        useEffect(() => {
+            dispatch({
+                type: LOAD_USER_REQUEST
+            })
+        }, [])
+
         useEffect(() => {
             if(!me){
                 Router.push('/signin')
@@ -69,7 +76,7 @@ const Wrapper = styled.div`
                     <table style={{width: '1100px', border: '1px solid'}}>
                         <thead style={{border: '1px solid'}}>
                             <tr>
-                                {products[0] 
+                                {userCart[0] 
                                 ?
                                 (
                                 <>
@@ -88,25 +95,25 @@ const Wrapper = styled.div`
                         
                         
                         <tbody style={{height:'10rem', textAlign:'center'}} >
-                        {products[0] && products.map(product => 
-                                    (<tr key={product.Size} style={{border: '1px solid'}}>
+                        {userCart[0] && userCart.map(cartSingleProduct => 
+                                    (<tr key={cartSingleProduct.size} style={{border: '1px solid'}}>
                                         <td>
-                                            <Checkbox id={product.id} value={checkedProducts.find(v => v.id === product.id && v.Size === product.Size)} onChange ={onChangeCheck(product.Size)}/>
+                                            <Checkbox id={cartSingleProduct.id} value={checkedProducts.find(v => v.id === cartSingleProduct.id && v.size === cartSingleProduct.size)} onChange ={onChangeCheck(cartSingleProduct.size)}/>
                                         </td>
                                         <td>
-                                            <img style={{width: '8rem'}} src={product.Images[0].src}/>
+                                            <img style={{width: '8rem'}} src={`http://localhost:3065/${cartSingleProduct.Product.Images[0].src}`}/>
                                         </td>
                                         <td>
-                                            {product.productName}
+                                            {cartSingleProduct.Product.productName}
                                             <br/>
-                                            {product.Size}/
-                                            {product.quantity}개
+                                            {cartSingleProduct.size}/
+                                            {cartSingleProduct.quantity}개
                                         </td>
                                         <td>
-                                            {product.DeliveryFee ===0 ? '무료배송' : `${product.DeliveryFee}원`}
+                                            {cartSingleProduct.totalPrice > 3000 ? '무료배송' : '2500원' }
                                         </td>
                                         <td>
-                                            {product.totalPrice}원
+                                            {cartSingleProduct.totalPrice}원
                                         </td>
                                     </tr>)
                                     )

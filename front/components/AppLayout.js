@@ -83,7 +83,7 @@ const Container = styled.div`
     `
 const AppLayout = ({children}) => {
     const {me,} = useSelector(state => state.user)
-    const {products} = useSelector(state => state.cart)
+    const {userCart} = useSelector(state => state.cart)
     const [searchvalue, onChangeSearch] = useInput('')
     const dispatch = useDispatch();
 
@@ -165,7 +165,7 @@ const AppLayout = ({children}) => {
                     <MenuItem >
                         <Link href="/cart">
                             <a>
-                                <Badge count={products.length}>
+                                <Badge count={userCart.length}>
                                     <ShoppingCartOutlined style ={{fontSize: '28px'}} />
                                 </Badge>
                             </a>

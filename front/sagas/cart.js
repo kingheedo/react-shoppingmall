@@ -1,6 +1,6 @@
-import { all, delay, fork, put, throttle } from "redux-saga/effects";
+import {call,all, delay, fork, put, throttle } from "redux-saga/effects";
 import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, CHECK_CART_PRODUCT_FAILURE, CHECK_CART_PRODUCT_REQUEST, CHECK_CART_PRODUCT_SUCCESS,LOAD_ALL_PRICE_FAILURE, LOAD_ALL_PRICE_REQUEST, LOAD_ALL_PRICE_SUCCESS, UNCHECK_CART_PRODUCT_FAILURE, UNCHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_SUCCESS } from "../reducers/cart";
-import { dummyProduct } from "../reducers/product";
+import axios from 'axios'
 
 function LoadAllPriceApi(data) { //hashtag/name
     return axios.get('api/product', data);
@@ -61,15 +61,14 @@ function* CheckCartProduct(action) {
 }
 
 function AddProductCartApi(data) { //hashtag/name
-    return axios.get('api/product', data);
+    return axios.post('/cart',data);
 }
 function* AddProductCart(action) {
     try {
-        // const result = yield call(AddProductCartApi, action.data);
-        yield delay(1000);
+        const result = yield call(AddProductCartApi, action.data);
         yield put({
             type: ADD_PRODUCT_CART_SUCCESS,
-            data: dummyProduct(parseInt(action.data.productId,10),action.data.size, action.data.quantity, parseInt(action.data.totalPrice,10)),
+            data: result.data
         });
     } catch (err) {
       console.error(err);

@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cartRouter = require('./routes/cart');
 const productRouter = require('./routes/product');
 const productsRouter = require('./routes/products');
 const userRouter = require('./routes/user');
@@ -42,6 +43,7 @@ app.use(cors({
 app.use('/user', userRouter)
 app.use('/product',productRouter)
 app.use('/products',productsRouter)
+app.use('/cart',cartRouter)
 app.listen(3065, () => {
     console.log('서버 실행 중')
 })

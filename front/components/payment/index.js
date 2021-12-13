@@ -4,8 +4,8 @@ import Proptypes from 'prop-types'
 import { useSelector } from 'react-redux';
 import { Modal } from 'antd';
 const Index = ({checkedProducts}) => {
-  const {products,totalPrice} = useSelector(state => state.cart)
-  const finalPurchaseProductsList = products && products.filter(v => checkedProducts && checkedProducts.some(f=> (v.id === f.id) && (v.Size === f.Size)))
+  const {userCart,totalPrice} = useSelector(state => state.cart)
+  const finalPurchaseProductsList = userCart && userCart.filter(v => checkedProducts && checkedProducts.some(f=> (v.id === f.id) && (v.Size === f.Size)))
 
   useEffect(() => {
     console.log('finalPurchaseProductsList',finalPurchaseProductsList)

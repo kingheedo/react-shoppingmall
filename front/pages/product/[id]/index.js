@@ -70,7 +70,7 @@ const Product = () => {
     )
     const onincrease = useCallback(
         () => {
-            if(quantity === (singleProduct && singleProduct.Stock)){
+            if(quantity === (singleProduct && singleProduct.stock)){
                 return alert('주문가능한 최대 수량입니다.')
             }
             setQuantity(quantity + 1)
