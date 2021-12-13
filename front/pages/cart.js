@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { CHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
+import { CHECK_CART_PRODUCT_REQUEST, LOAD_CART_PRODUCTS_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
 import Router from 'next/router'
 import Payment from '../components/payment'
 import { LOAD_USER_REQUEST } from '../reducers/user'
@@ -28,6 +28,11 @@ const Wrapper = styled.div`
         useEffect(() => {
             dispatch({
                 type: LOAD_USER_REQUEST
+            })
+        }, [])
+        useEffect(() => {
+            dispatch({
+                type: LOAD_CART_PRODUCTS_REQUEST
             })
         }, [])
 

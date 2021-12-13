@@ -6,6 +6,24 @@ const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
 
+router.get('/', isLoggedIn, async(req, res, next) => {
+    try{
+        const fullCartitem = await Cart.findAll({
+            where : {UserId: req.user.id,},
+            include: [{
+                model: Product,
+                include: [{
+                    model: Image,
+                }]
+            }]
+        })
+        res.status(202).json(fullCartitem)
+    }catch(error){
+        console.error(error);   
+        next(error)
+    }
+})
+
 router.post('/', isLoggedIn, async(req, res, next) => {
     try{
         const exCartItem = await Cart.findOne({

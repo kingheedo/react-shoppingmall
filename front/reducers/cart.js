@@ -5,9 +5,9 @@ export const initialState = {
     userCart : [],
     cartTotalPrice: 0,
     cartTotalDeliveryFee : 0,
-    loadAllPriceLoading : false,
-    loadAllPriceDone : false,
-    loadAllPriceError : null,
+    loadCartProductsLoading : false,
+    loadCartProductsDone : false,
+    loadCartProductsError : null,
 
     uncheckCartProductLoading: false,
     uncheckCartProductDone: false,
@@ -22,9 +22,9 @@ export const initialState = {
     addProductCartError: null,
 }
 
-export const LOAD_ALL_PRICE_REQUEST = 'LOAD_ALL_PRICE_REQUEST';
-export const LOAD_ALL_PRICE_SUCCESS = 'LOAD_ALL_PRICE_SUCCESS';
-export const LOAD_ALL_PRICE_FAILURE = 'LOAD_ALL_PRICE_FAILURE';
+export const LOAD_CART_PRODUCTS_REQUEST = 'LOAD_CART_PRODUCTS_REQUEST';
+export const LOAD_CART_PRODUCTS_SUCCESS = 'LOAD_CART_PRODUCTS_SUCCESS';
+export const LOAD_CART_PRODUCTS_FAILURE = 'LOAD_CART_PRODUCTS_FAILURE';
 
 
 export const CHECK_CART_PRODUCT_REQUEST = 'CHECK_CART_PRODUCT_REQUEST';
@@ -42,22 +42,22 @@ export const ADD_PRODUCT_CART_FAILURE = 'ADD_PRODUCT_CART_FAILURE';
 
 const reducer = (state = initialState, action) => {
     return produce(state,(draft) => {
-switch (action.type) {
-            case LOAD_ALL_PRICE_REQUEST:
-                draft.loadAllPriceLoading = true;
-                draft.loadAllPriceDone = false;
-                draft.loadAllPriceError = null;
+        switch (action.type) {
+            case LOAD_CART_PRODUCTS_REQUEST:
+                draft.loadCartProductsLoading = true;
+                draft.loadCartProductsDone = false;
+                draft.loadCartProductsError = null;
             break;
-            case LOAD_ALL_PRICE_SUCCESS:{
-                draft.loadAllPriceLoading = false;
-                draft.loadAllPriceDone = true;
-                draft.cartTotalPrice += action.data
+            case LOAD_CART_PRODUCTS_SUCCESS:{
+                draft.loadCartProductsLoading = false;
+                draft.loadCartProductsDone = true;
+                draft.userCart = action.data;
             break;
         }
-            case LOAD_ALL_PRICE_FAILURE:
-                draft.loadAllPriceLoading = false;
-                draft.loadAllPriceDone = false;
-                draft.loadAllPriceError = action.error;
+            case LOAD_CART_PRODUCTS_FAILURE:
+                draft.loadCartProductsLoading = false;
+                draft.loadCartProductsDone = false;
+                draft.loadCartProductsError = action.error;
             break;
 
             case UNCHECK_CART_PRODUCT_REQUEST:

@@ -38,7 +38,7 @@ const Product = () => {
 
     const router = useRouter();
     const {id,color} = router.query;
-    const [size, onSelectSize] = useInput('')
+    const [size, onSelectSize] = useInput('사이즈')
     const [quantity, setQuantity] = useState(1)
     const [visibleModal, setVisibleModal] = useState(false)
 
@@ -84,14 +84,11 @@ const Product = () => {
             if(size === '사이즈'){
                 return alert('사이즈를 선택해주세요.')
             }
-           else{ dispatch({
+            dispatch({
                 type: ADD_PRODUCT_CART_REQUEST,
                 data: {productId: id, size, quantity, totalPrice}
             })
             setVisibleModal(true)
-            }
-            
-            
         },
         [id,quantity,size],
     )
