@@ -11,6 +11,7 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { ADD_PRODUCT_CART_REQUEST } from '../../../reducers/cart';
 import Review from '../../../components/Review';
 import useInput from '../../../hooks/useInput';
+import { LOAD_USER_REQUEST } from '../../../reducers/user';
 
 const Wrapper = styled.div`
     display:flex;
@@ -49,7 +50,18 @@ const Product = () => {
             id
         })
     }, [id])
-
+    
+    useEffect(() => {
+      dispatch({
+        type: LOAD_USER_REQUEST,
+      })
+    }, [])
+    
+    useEffect(() => {
+            dispatch({
+                type: LOAD_CART_PRODUCTS_REQUEST
+            })
+        }, [])
     const onhandleModal = useCallback(
         () => {
             setVisibleModal(false)

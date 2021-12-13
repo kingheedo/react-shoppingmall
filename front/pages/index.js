@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { Col, Row } from 'antd';
 import { useInView } from "react-intersection-observer"
 import { LOAD_USER_REQUEST } from '../reducers/user';
+import { LOAD_CART_PRODUCTS_REQUEST } from '../reducers/cart';
 
 const Home = () => {
     const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
@@ -18,7 +19,11 @@ const Home = () => {
         type: LOAD_USER_REQUEST,
       })
     }, [])
-    
+    useEffect(() => {
+            dispatch({
+                type: LOAD_CART_PRODUCTS_REQUEST
+            })
+        }, [])
     useEffect(
   () => {
         if(inView && hasMoreProducts && !loadMainProductsLoading){
