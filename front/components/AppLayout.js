@@ -101,6 +101,7 @@ const AppLayout = ({children}) => {
                 dispatch({
                     type: LOG_OUT_REQUEST
                 })
+                Router.reload('/')
             },
             [],
         )

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { all, call, delay, fork, put, takeLatest, throttle } from "redux-saga/effects";
 import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS } from "../reducers/user";
 
-function LoadUserApi() { //hashtag/name
+function LoadUserApi() {
     return axios.get('/user');
 }
 function* LoadUser(action) {
@@ -40,7 +40,7 @@ function* Logout() {
     }
 }
 
-function LoginApi(data) { //hashtag/name
+function LoginApi(data) {
     return axios.post('/user/login', data);
 }
 function* Login(action) {
@@ -59,7 +59,7 @@ function* Login(action) {
     }
 }
 
-function SignUpApi(data) { //hashtag/name
+function SignUpApi(data) {
     return axios.post('/user',data);
 }
 function* SignUp(action) {

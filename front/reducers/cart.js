@@ -9,14 +9,6 @@ export const initialState = {
     loadCartProductsDone : false,
     loadCartProductsError : null,
 
-    uncheckCartProductLoading: false,
-    uncheckCartProductDone: false,
-    uncheckCartProductError: null,
-
-    checkCartProductLoading: false,
-    checkCartProductDone: false,
-    checkCartProductError: null,
-
     addProductCartLoading: false,
     addProductCartDone: false,
     addProductCartError: null,
@@ -27,13 +19,10 @@ export const LOAD_CART_PRODUCTS_SUCCESS = 'LOAD_CART_PRODUCTS_SUCCESS';
 export const LOAD_CART_PRODUCTS_FAILURE = 'LOAD_CART_PRODUCTS_FAILURE';
 
 
-export const CHECK_CART_PRODUCT_REQUEST = 'CHECK_CART_PRODUCT_REQUEST';
-export const CHECK_CART_PRODUCT_SUCCESS = 'CHECK_CART_PRODUCT_SUCCESS';
-export const CHECK_CART_PRODUCT_FAILURE = 'CHECK_CART_PRODUCT_FAILURE';
-
-export const UNCHECK_CART_PRODUCT_REQUEST = 'UNCHECK_CART_PRODUCT_REQUEST';
-export const UNCHECK_CART_PRODUCT_SUCCESS = 'UNCHECK_CART_PRODUCT_SUCCESS';
-export const UNCHECK_CART_PRODUCT_FAILURE = 'UNCHECK_CART_PRODUCT_FAILURE';
+export const CHECK_CART_PRODUCT = 'CHECK_CART_PRODUCT';
+export const UNCHECK_CART_PRODUCT = 'UNCHECK_CART_PRODUCT';
+export const CHECK_ALL_PRODUCTS = 'CHECK_ALL_PRODUCTS';
+export const UNCHECK_ALL_PRODUCTS = 'UNCHECK_ALL_PRODUCTS';
 
 export const ADD_PRODUCT_CART_REQUEST = 'ADD_PRODUCT_CART_REQUEST';
 export const ADD_PRODUCT_CART_SUCCESS = 'ADD_PRODUCT_CART_SUCCESS';
@@ -48,57 +37,42 @@ const reducer = (state = initialState, action) => {
                 draft.loadCartProductsDone = false;
                 draft.loadCartProductsError = null;
             break;
-            case LOAD_CART_PRODUCTS_SUCCESS:{
+            case LOAD_CART_PRODUCTS_SUCCESS:
                 draft.loadCartProductsLoading = false;
                 draft.loadCartProductsDone = true;
                 draft.userCart = action.data;
             break;
-        }
+        
             case LOAD_CART_PRODUCTS_FAILURE:
                 draft.loadCartProductsLoading = false;
                 draft.loadCartProductsDone = false;
                 draft.loadCartProductsError = action.error;
             break;
 
-            case UNCHECK_CART_PRODUCT_REQUEST:
-                draft.checkCartProductLoading = true;
-                draft.checkCartProductDone = false;
-                draft.checkCartProductError = null;
+            case CHECK_ALL_PRODUCTS:
+                draft.cartTotalDeliveryFee = draft.userCart.reduce((prev,curr) => (prev.totalPrice > 3000 ? 0 : 2500) + (curr.totalPrice > 3000 ? 0 : 2500),0);
+                draft.cartTotalPrice = draft.userCart.reduce((prev, curr) => prev + curr.totalPrice, draft.cartTotalDeliveryFee);
             break;
-            case UNCHECK_CART_PRODUCT_SUCCESS:{
-                draft.checkCartProductLoading = false;
-                draft.checkCartProductDone = true;
-                const product = draft.userCart.find(v => (v.id === action.data.id) && (v.size === action.data.size));
-                draft.cartTotalDeliveryFee -= (product.totalPrice > 3000) ? 0 : 2500;
-                draft.cartTotalPrice -= (product.totalPrice + draft.cartTotalDeliveryFee);
+        
+            case UNCHECK_ALL_PRODUCTS:
+                draft.cartTotalPrice = 0
+                draft.cartTotalDeliveryFee = 0
             break;
-        }
-            case UNCHECK_CART_PRODUCT_FAILURE:
-                draft.checkCartProductLoading = false;
-                draft.checkCartProductDone = false;
-                draft.checkCartProductError = action.error;
-            break;
-
-            case CHECK_CART_PRODUCT_REQUEST:
-                draft.uncheckCartProductLoading = true;
-                draft.uncheckCartProductDone = false;
-                draft.uncheckCartProductError = null;
-            break;
-            case CHECK_CART_PRODUCT_SUCCESS:{
-                draft.uncheckCartpLoading = false;
-                draft.uncheckCartProductDone = true;
-                 const product = draft.userCart.find(v => (v.id === action.data.id) && (v.size === action.data.size));
-                draft.cartTotalDeliveryFee += (product.totalPrice > 3000) ? 0 : 2500;
-                draft.cartTotalPrice += (product.totalPrice + draft.cartTotalDeliveryFee);
-                
+        
+            case UNCHECK_CART_PRODUCT:{
+                const product = draft.userCart.find(v => v.id === action.data.id);
+                const productDeliveryFee = product.totalPrice > 3000 ? 0 : 2500
+                draft.cartTotalDeliveryFee -= productDeliveryFee
+                draft.cartTotalPrice -=(product.totalPrice + productDeliveryFee);
             break;
         }
-            case CHECK_CART_PRODUCT_FAILURE:
-                draft.uncheckCartpLoading = false;
-                draft.uncheckCartProductDone = false;
-                draft.uncheckCartProductError = action.error;
+            case CHECK_CART_PRODUCT:{
+                const product = draft.userCart.find(v => v.id === action.data.id);
+                const productDeliveryFee = product.totalPrice > 3000 ? 0 : 2500
+                draft.cartTotalDeliveryFee += productDeliveryFee
+                draft.cartTotalPrice += (product.totalPrice + productDeliveryFee);
             break;
-
+        }
             case ADD_PRODUCT_CART_REQUEST:
                 draft.addProductCartLoading = true;
                 draft.addProductCartDone = false;

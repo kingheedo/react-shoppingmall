@@ -1,13 +1,15 @@
-import { Breadcrumb,Table,Image, Checkbox, Empty } from 'antd'
+import { Breadcrumb,Table, Checkbox } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { CHECK_CART_PRODUCT_REQUEST, LOAD_CART_PRODUCTS_REQUEST, UNCHECK_CART_PRODUCT_REQUEST } from '../reducers/cart'
+import { CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, LOAD_CART_PRODUCTS_REQUEST, UNCHECK_ALL_PRODUCTS, UNCHECK_CART_PRODUCT } from '../reducers/cart'
 import Router from 'next/router'
 import Payment from '../components/payment'
 import { LOAD_USER_REQUEST } from '../reducers/user'
+
+const CheckboxGroup = Checkbox.Group;
 
 const CartTable =  styled(Table)`
 .ant-pagination {
@@ -20,11 +22,15 @@ const Wrapper = styled.div`
    
     
     const Cart = () => {
-        const {userCart,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart)
-        const {me} = useSelector(state => state.user)
+        const {userCart,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart);
+        const {me} = useSelector(state => state.user);
         const dispatch = useDispatch()
-        const [checkedProducts, setcheckedProducts] = useState([])
-        
+        const [checkedProductsList, setcheckedProductsList] = useState(userCart);
+        const [checkedAllProducts, setCheckedAllProducts] = useState(true);
+        const [checkedProductState, setCheckedProductState] = useState(
+            new Array(userCart.length).fill(true)
+        )
+        // const checkItem = checkedProductsList.find(v => v.id === cartSingleProduct.id && v.size === cartSingleProduct.size)
         useEffect(() => {
             dispatch({
                 type: LOAD_USER_REQUEST
@@ -35,30 +41,63 @@ const Wrapper = styled.div`
                 type: LOAD_CART_PRODUCTS_REQUEST
             })
         }, [])
+        useEffect(() => {
+            dispatch({
+                type: CHECK_ALL_PRODUCTS,
+            })
+        }, [])
 
         useEffect(() => {
             if(!me){
                 Router.push('/signin')
             }
         }, [me])
-        const onChangeCheck = useCallback(
-           (productSize) => (e) => {
-                console.log('target', e.target);
+        
+        const onChangeAllCheckedProducts = useCallback(
+            (e) => {
+                setCheckedAllProducts(prev => !prev)
                 if(e.target.checked){
-                setcheckedProducts([...checkedProducts,{id: e.target.id, Size : productSize}])
+                    setCheckedProductState(checkedProductState.fill(true))
+                    setcheckedProductsList(userCart)
+                    dispatch({
+                        type: CHECK_ALL_PRODUCTS,
+                    })
+                    
+                }else{
+                    setCheckedProductState(checkedProductState.fill(false))
+                    setcheckedProductsList('')
+                    dispatch({
+                        type: UNCHECK_ALL_PRODUCTS,
+                    })
+                    
+                }
+                
+            },
+            [checkedProductsList,userCart],
+        )
+        const onChangeCheck = useCallback(
+           (productId,index) => (e) => {
+                const updateCheckState = checkedProductState.map((productState,i) => 
+                    i === index ? !productState : productState
+                );
+                setCheckedProductState(updateCheckState)
+                setCheckedAllProducts(checkedProductsList.length === userCart.length ? false : true)
+                const checkProduct = userCart.find(product => product.id === productId)
+                if(e.target.checked){
+                setcheckedProductsList([...checkedProductsList,checkProduct])
                 dispatch({
-                type: CHECK_CART_PRODUCT_REQUEST,
-                data : {id : e.target.id, Size: productSize}
-            })
+                type: CHECK_CART_PRODUCT,
+                data : {id : productId,}
+                })
             }else{
-               setcheckedProducts(checkedProducts.filter( v => v.id !== e.target.id))
+               setcheckedProductsList(checkedProductsList.filter( v => v.id !== productId))
                dispatch({
-                type: UNCHECK_CART_PRODUCT_REQUEST,
-                data : {id : e.target.id, Size: productSize}
+                type: UNCHECK_CART_PRODUCT,
+                data : {id : productId,}
             })
             }
             },
-            [checkedProducts,],
+            [checkedProductsList,userCart],
         )
 
         
@@ -79,34 +118,42 @@ const Wrapper = styled.div`
                     </Breadcrumb>
                     <div>
                     <table style={{width: '1100px', border: '1px solid'}}>
-                        <thead style={{border: '1px solid'}}>
+                        <thead>
                             <tr>
                                 {userCart[0] 
                                 ?
                                 (
                                 <>
-                                <th>{' '}</th>
-                                <th>{' '}</th>
+                                <th style={{borderRight: '1px solid'}}>
+                                    <Checkbox checked={checkedAllProducts} onChange={onChangeAllCheckedProducts}/>
+                                </th>
+                                <th style={{borderRight: '1px solid'}}>{' '}</th>
                                 </>
 
                                 )
                                 : null
                             }
-                                <th style={{border: '1px solid'}}>상품정보</th>
-                                <th style={{border: '1px solid'}}>배송정보</th>
-                                <th style={{border: '1px solid'}}>주문금액</th>
+                                
+                                <th style={{borderRight: '1px solid'}}>상품정보</th>
+                                <th style={{borderRight: '1px solid'}}>배송정보</th>
+                                <th style={{borderRight: '1px solid'}}>주문금액</th>
                             </tr>
                         </thead>
                         
                         
                         <tbody style={{height:'10rem', textAlign:'center'}} >
-                        {userCart[0] && userCart.map(cartSingleProduct => 
-                                    (<tr key={cartSingleProduct.size} style={{border: '1px solid'}}>
+                                <tr>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                        {userCart[0] && userCart.map((cartSingleProduct,index) => 
+                                    (<tr key={cartSingleProduct.id} style={{border: '1px solid'}}>
                                         <td>
-                                            <Checkbox id={cartSingleProduct.id} value={checkedProducts.find(v => v.id === cartSingleProduct.id && v.size === cartSingleProduct.size)} onChange ={onChangeCheck(cartSingleProduct.size)}/>
+                                            <input checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id,index)}/>
                                         </td>
                                         <td>
-                                            <img style={{width: '8rem'}} src={`http://localhost:3065/${cartSingleProduct.Product.Images[0].src}`}/>
+                                            <img style={{width: '8rem'}} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`}/>
                                         </td>
                                         <td>
                                             {cartSingleProduct.Product.productName}
@@ -129,10 +176,10 @@ const Wrapper = styled.div`
                             </div>
                         <div>
                             <h5>스토어 주문금액 합계</h5>
-                            <span>상품금액 <em>{cartTotalPrice - cartTotalDeliveryFee }원</em> + 배송비 <em>{cartTotalDeliveryFee}원 = </em></span>
+                            <span>상품금액 <em>{cartTotalPrice-cartTotalDeliveryFee}원</em> + 배송비 <em>{cartTotalDeliveryFee}원 = </em></span>
                             <span>{cartTotalPrice}원</span>
                         </div>
-                       <Payment checkedProducts={checkedProducts}/>
+                       {/* <Payment checkedProducts={checkedProductsList}/> */}
                 </Wrapper>
          </AppLayout>
     )

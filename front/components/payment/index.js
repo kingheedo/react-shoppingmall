@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import { Modal } from 'antd';
 const Index = ({checkedProducts}) => {
   const {userCart,totalPrice} = useSelector(state => state.cart)
-  const finalPurchaseProductsList = userCart && userCart.filter(v => checkedProducts && checkedProducts.some(f=> (v.id === f.id) && (v.Size === f.Size)))
+  // const finalPurchaseProductsList = userCart && userCart.filter(v => checkedProducts && checkedProducts.some(f=> (v.id === f.id) && (v.Size === f.Size)))
 
-  useEffect(() => {
-    console.log('finalPurchaseProductsList',finalPurchaseProductsList)
-    console.log('...finalPurchaseProductsList',...finalPurchaseProductsList)
-  }, [finalPurchaseProductsList])
+  // useEffect(() => {
+  //   console.log('finalPurchaseProductsList',finalPurchaseProductsList)
+  //   console.log('...finalPurchaseProductsList',...finalPurchaseProductsList)
+  // }, [finalPurchaseProductsList])
   const onClickRequest = () => {
     window.BootPay.request({
       price: totalPrice, //실제 결제되는 가격

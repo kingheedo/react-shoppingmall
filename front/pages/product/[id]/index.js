@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { Button, Image, Input, Modal, Result, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { ADD_PRODUCT_CART_REQUEST } from '../../../reducers/cart';
+import { ADD_PRODUCT_CART_REQUEST, LOAD_CART_PRODUCTS_REQUEST } from '../../../reducers/cart';
 import Review from '../../../components/Review';
 import useInput from '../../../hooks/useInput';
 import { LOAD_USER_REQUEST } from '../../../reducers/user';

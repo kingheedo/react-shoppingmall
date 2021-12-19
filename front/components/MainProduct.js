@@ -24,7 +24,7 @@ const MainProduct = ({product}) => {
              onMouseEnter = {onMouseHover}
              onMouseLeave = {onMouseHover}
              style={{ width: 240, cursor: 'pointer'}}
-             cover={show ? <img alt="Images[1]" src={`http://localhost:3065/${product.Images[1].src}`} /> : <img alt="Images[0]" src={`http://localhost:3065/${product.Images[0].src}`} /> }
+             cover={show ? <img alt="Images[0]" src={`http://localhost:3065/${product.Images[0].src}`} /> : <img alt="Images[1]" src={`http://localhost:3065/${product.Images[1].src}`} /> }
            >
              <div>
                  <span>{product && product.productName}</span>
