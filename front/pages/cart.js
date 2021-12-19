@@ -81,7 +81,7 @@ const Wrapper = styled.div`
                     i === index ? !productState : productState
                 );
                 setCheckedProductState(updateCheckState)
-                setCheckedAllProducts(checkedProductsList.length === userCart.length ? false : true)
+                setCheckedAllProducts(updateCheckState.every(v => v===true))
                 const checkProduct = userCart.find(product => product.id === productId)
                 if(e.target.checked){
                 setcheckedProductsList([...checkedProductsList,checkProduct])
@@ -96,8 +96,9 @@ const Wrapper = styled.div`
                 data : {id : productId,}
             })
             }
+
             },
-            [checkedProductsList,userCart],
+            [checkedProductsList,userCart,checkedProductState],
         )
 
         
