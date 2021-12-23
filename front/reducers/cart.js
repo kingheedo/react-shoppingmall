@@ -14,6 +14,10 @@ export const initialState = {
     addProductCartError: null,
 }
 
+export const DELETE_CART_PRODUCT_REQUEST = 'DELETE_CART_PRODUCT_REQUEST';
+export const DELETE_CART_PRODUCT_SUCCESS = 'DELETE_CART_PRODUCT_SUCCESS';
+export const DELETE_CART_PRODUCT_FAILURE = 'DELETE_CART_PRODUCT_FAILURE';
+
 export const LOAD_CART_PRODUCTS_REQUEST = 'LOAD_CART_PRODUCTS_REQUEST';
 export const LOAD_CART_PRODUCTS_SUCCESS = 'LOAD_CART_PRODUCTS_SUCCESS';
 export const LOAD_CART_PRODUCTS_FAILURE = 'LOAD_CART_PRODUCTS_FAILURE';
@@ -32,6 +36,27 @@ export const ADD_PRODUCT_CART_FAILURE = 'ADD_PRODUCT_CART_FAILURE';
 const reducer = (state = initialState, action) => {
     return produce(state,(draft) => {
         switch (action.type) {
+            case DELETE_CART_PRODUCT_REQUEST:
+                draft.deleteCartProductLoading = true;
+                draft.deleteCartProductDone = false;
+                draft.deleteCartProductError = null;
+            break;
+            case DELETE_CART_PRODUCT_SUCCESS:
+                draft.deleteCartProductLoading = false;
+                draft.deleteCartProductDone = true;
+                const product = draft.userCart.find(v => v.id === action.data.CartItemId);
+                const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500
+                draft.cartTotalDeliveryFee -= productDeliveryFee
+                draft.cartTotalPrice -=(product.totalPrice + productDeliveryFee);
+                draft.userCart = draft.userCart.filter(v => v.id !== action.data.CartItemId)
+            break;
+        
+            case DELETE_CART_PRODUCT_FAILURE:
+                draft.deleteCartProductLoading = false;
+                draft.deleteCartProductDone = false;
+                draft.deleteCartProductError = action.error;
+            break;
+
             case LOAD_CART_PRODUCTS_REQUEST:
                 draft.loadCartProductsLoading = true;
                 draft.loadCartProductsDone = false;
@@ -50,7 +75,7 @@ const reducer = (state = initialState, action) => {
             break;
 
             case CHECK_ALL_PRODUCTS:
-                draft.cartTotalDeliveryFee = draft.userCart.reduce((prev,curr) => (prev.totalPrice > 3000 ? 0 : 2500) + (curr.totalPrice > 3000 ? 0 : 2500),0);
+                draft.cartTotalDeliveryFee = draft.userCart.reduce((prev,curr) => (prev.totalPrice > 39900 ? 0 : 2500) + (curr.totalPrice > 39900 ? 0 : 2500),0);
                 draft.cartTotalPrice = draft.userCart.reduce((prev, curr) => prev + curr.totalPrice, draft.cartTotalDeliveryFee);
             break;
         
@@ -61,14 +86,14 @@ const reducer = (state = initialState, action) => {
         
             case UNCHECK_CART_PRODUCT:{
                 const product = draft.userCart.find(v => v.id === action.data.id);
-                const productDeliveryFee = product.totalPrice > 3000 ? 0 : 2500
+                const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500
                 draft.cartTotalDeliveryFee -= productDeliveryFee
                 draft.cartTotalPrice -=(product.totalPrice + productDeliveryFee);
             break;
         }
             case CHECK_CART_PRODUCT:{
                 const product = draft.userCart.find(v => v.id === action.data.id);
-                const productDeliveryFee = product.totalPrice > 3000 ? 0 : 2500
+                const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500
                 draft.cartTotalDeliveryFee += productDeliveryFee
                 draft.cartTotalPrice += (product.totalPrice + productDeliveryFee);
             break;

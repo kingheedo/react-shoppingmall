@@ -59,4 +59,17 @@ router.post('/', isLoggedIn, async(req, res, next) => {
     }
 })
 
+router.delete('/:cartItemId', isLoggedIn, async(req, res, next) => {
+    try{
+        await Cart.destroy({
+            where: {id : req.params.cartItemId},
+            UserId : req.user.id
+        })
+        res.status(200).json({CartItemId: parseInt(req.params.cartItemId,10)})
+    }catch(error){
+        console.error(error);   
+        next(error)
+    }
+})
+
 module.exports = router;

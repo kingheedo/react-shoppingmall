@@ -1,6 +1,25 @@
 import {call,all, delay, fork, put, throttle, takeLatest } from "redux-saga/effects";
-import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, CHECK_CART_PRODUCT_FAILURE, CHECK_CART_PRODUCT_REQUEST, CHECK_CART_PRODUCT_SUCCESS, LOAD_CART_PRODUCTS_FAILURE, LOAD_CART_PRODUCTS_REQUEST, LOAD_CART_PRODUCTS_SUCCESS, UNCHECK_CART_PRODUCT_FAILURE, UNCHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_SUCCESS } from "../reducers/cart";
+import { ADD_PRODUCT_CART_FAILURE, ADD_PRODUCT_CART_REQUEST, ADD_PRODUCT_CART_SUCCESS, CHECK_CART_PRODUCT_FAILURE, CHECK_CART_PRODUCT_REQUEST, CHECK_CART_PRODUCT_SUCCESS, DELETE_CART_PRODUCT_FAILURE, DELETE_CART_PRODUCT_REQUEST, DELETE_CART_PRODUCT_SUCCESS, LOAD_CART_PRODUCTS_FAILURE, LOAD_CART_PRODUCTS_REQUEST, LOAD_CART_PRODUCTS_SUCCESS, UNCHECK_CART_PRODUCT_FAILURE, UNCHECK_CART_PRODUCT_REQUEST, UNCHECK_CART_PRODUCT_SUCCESS } from "../reducers/cart";
 import axios from 'axios'
+
+function DeleteCartProductApi(data) {
+    return axios.delete(`/cart/${data.id}`, data);
+}
+function* DeleteCartProduct(action) {
+    try {
+        const result = yield call(DeleteCartProductApi, action.data);
+        yield put({
+            type: DELETE_CART_PRODUCT_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+      console.error(err);
+        yield put({
+            type: DELETE_CART_PRODUCT_FAILURE,
+            error: err.response.data,
+        });
+    }
+}
 
 function LoadCartProductsApi(data) {
     return axios.get('/cart', data);
@@ -42,6 +61,9 @@ function* AddProductCart(action) {
     }
 }
 
+    function* watchDeleteCartProduct() {
+    yield throttle(3000, DELETE_CART_PRODUCT_REQUEST, DeleteCartProduct);
+  }
     function* watchLoadCartProducts() {
     yield throttle(3000, LOAD_CART_PRODUCTS_REQUEST, LoadCartProducts);
   }
@@ -51,6 +73,7 @@ function* AddProductCart(action) {
 
   export default function* productSaga() {
     yield all([
+        fork(watchDeleteCartProduct),
         fork(watchLoadCartProducts),
         fork(watchAddProductCart),
     ]);

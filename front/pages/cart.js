@@ -1,13 +1,15 @@
-import { Breadcrumb,Table, Checkbox } from 'antd'
+import { Breadcrumb,Table, Checkbox, Divider } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
 import Link from 'next/link'
 import styled from 'styled-components'
-import { CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, LOAD_CART_PRODUCTS_REQUEST, UNCHECK_ALL_PRODUCTS, UNCHECK_CART_PRODUCT } from '../reducers/cart'
+import { CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, DELETE_CART_PRODUCT_REQUEST, LOAD_CART_PRODUCTS_REQUEST, UNCHECK_ALL_PRODUCTS, UNCHECK_CART_PRODUCT } from '../reducers/cart'
 import Router from 'next/router'
 import Payment from '../components/payment'
 import { LOAD_USER_REQUEST } from '../reducers/user'
+import Paypal from '../components/Paypal'
+import { CloseOutlined } from '@ant-design/icons'
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -101,7 +103,16 @@ const Wrapper = styled.div`
             [checkedProductsList,userCart,checkedProductState],
         )
 
-        
+        const onDeleteCartItem = useCallback(
+            (cartSingleProductId) => (e) => {
+                e.preventDefault();
+                dispatch({
+                    type: DELETE_CART_PRODUCT_REQUEST,
+                    data: {id: cartSingleProductId}
+                })
+            },
+            [],
+        )
     return (
         <AppLayout>
                 <Wrapper>
@@ -118,29 +129,28 @@ const Wrapper = styled.div`
                         </Breadcrumb.Item>
                     </Breadcrumb>
                     <div>
-                    <table style={{width: '1100px', border: '1px solid'}}>
-                        <thead>
+                    <table style={{width: '1100px', }}>
+                        <thead style={{borderBottom: '1px solid'}}>
                             <tr>
                                 {userCart[0] 
                                 ?
                                 (
                                 <>
-                                <th style={{borderRight: '1px solid'}}>
-                                    <Checkbox checked={checkedAllProducts} onChange={onChangeAllCheckedProducts}/>
+                                <th>
+                                    <input type="checkbox" style={{width:'20px',height:'20px',}} checked={checkedAllProducts} onChange={onChangeAllCheckedProducts}/>
                                 </th>
-                                <th style={{borderRight: '1px solid'}}>{' '}</th>
+                                <th>{' '}</th>
                                 </>
 
                                 )
                                 : null
                             }
                                 
-                                <th style={{borderRight: '1px solid'}}>상품정보</th>
-                                <th style={{borderRight: '1px solid'}}>배송정보</th>
-                                <th style={{borderRight: '1px solid'}}>주문금액</th>
+                                <th>상품정보</th>
+                                <th>배송정보</th>
+                                <th>주문금액</th>
                             </tr>
                         </thead>
-                        
                         
                         <tbody style={{height:'10rem', textAlign:'center'}} >
                                 <tr>
@@ -149,12 +159,12 @@ const Wrapper = styled.div`
                                     </td>
                                 </tr>
                         {userCart[0] && userCart.map((cartSingleProduct,index) => 
-                                    (<tr key={cartSingleProduct.id} style={{border: '1px solid'}}>
+                                    (<tr key={cartSingleProduct.id}>
                                         <td>
-                                            <input checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id,index)}/>
+                                            <input style={{width:'20px',height:'20px',}} checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id,index)}/>
                                         </td>
                                         <td>
-                                            <img style={{width: '8rem'}} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`}/>
+                                            <img style={{width: '150px', height: '150px'}} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`}/>
                                         </td>
                                         <td>
                                             {cartSingleProduct.Product.productName}
@@ -163,10 +173,13 @@ const Wrapper = styled.div`
                                             {cartSingleProduct.quantity}개
                                         </td>
                                         <td>
-                                            {cartSingleProduct.totalPrice > 3000 ? '무료배송' : '2500원' }
+                                            {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2500원' }
                                         </td>
                                         <td>
                                             {cartSingleProduct.totalPrice}원
+                                        </td>
+                                        <td>
+                                            <CloseOutlined onClick={onDeleteCartItem(cartSingleProduct.id)} style={{fontSize:'20px', cursor: 'pointer'}} />
                                         </td>
                                     </tr>)
                                     )
@@ -180,7 +193,8 @@ const Wrapper = styled.div`
                             <span>상품금액 <em>{cartTotalPrice-cartTotalDeliveryFee}원</em> + 배송비 <em>{cartTotalDeliveryFee}원 = </em></span>
                             <span>{cartTotalPrice}원</span>
                         </div>
-                       {/* <Payment checkedProducts={checkedProductsList}/> */}
+                       {/* <Payment checkedProductsList={checkedProductsList}/> */}
+                       {userCart[0] && <Paypal checkedProductsList = {checkedProductsList} cartTotalPrice = {cartTotalPrice}/>}
                 </Wrapper>
          </AppLayout>
     )
