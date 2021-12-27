@@ -33,5 +33,6 @@ module.exports = class Cart extends Model{
     static associate (db){
         db.Cart.belongsTo(db.Product)
         db.Cart.belongsTo(db.User)
+        db.Cart.belongsToMany(db.User,{through: {model: db.Payment, as: 'PaymentUser', }})
     }
 }

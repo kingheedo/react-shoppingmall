@@ -5,6 +5,7 @@ const db = {};
 
 const cart = require('./cart')
 const image = require('./image')
+const payment = require('./payment')
 const review = require('./review')
 const product = require('./product')
 const size = require('./size')
@@ -14,6 +15,7 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 
 db.Cart = cart;
 db.Image = image;
+db.Payment = payment;
 db.Review = review;
 db.Product = product;
 db.Size = size;

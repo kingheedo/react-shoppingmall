@@ -20,7 +20,7 @@ const MainProduct = ({product}) => {
     )
     return (
         <Card
-             onClick= {onClickCard(product.id,)}
+             onClick= {onClickCard(product.id)}
              onMouseEnter = {onMouseHover}
              onMouseLeave = {onMouseHover}
              style={{ width: 240, cursor: 'pointer'}}

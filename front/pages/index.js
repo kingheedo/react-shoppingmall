@@ -6,11 +6,12 @@ import { LOAD_PRODUCTS_REQUEST } from '../reducers/product';
 import {useDispatch, useSelector} from 'react-redux';
 import { Col, Row } from 'antd';
 import { useInView } from "react-intersection-observer"
-import { LOAD_USER_REQUEST } from '../reducers/user';
+import { LOAD_USER_REQUEST, RESET_ADD_PAYMENT } from '../reducers/user';
 import { LOAD_CART_PRODUCTS_REQUEST } from '../reducers/cart';
 
 const Home = () => {
     const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
+    const {addPaymentDone} = useSelector(state => state.user)
     const dispatch = useDispatch();
     const [ref, inView] = useInView()
 

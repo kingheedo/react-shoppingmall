@@ -163,6 +163,14 @@ const AppLayout = ({children}) => {
                         }
                     </MenuItem>
 
+                    <MenuItem>
+                        <Button>
+                            <Link href="/mypage">
+                                <a>마이페이지</a>
+                            </Link>
+                        </Button>
+                    </MenuItem>
+
                     <MenuItem >
                         <Link href="/cart">
                             <a>

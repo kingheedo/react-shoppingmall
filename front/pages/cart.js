@@ -10,6 +10,7 @@ import Payment from '../components/payment'
 import { LOAD_USER_REQUEST } from '../reducers/user'
 import Paypal from '../components/Paypal'
 import { CloseOutlined } from '@ant-design/icons'
+import ResultSuccess from '../components/ResultSuccess'
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -19,13 +20,18 @@ const CartTable =  styled(Table)`
 },
 `
 const Wrapper = styled.div`
+    width: 100vw;
+    height : 100vh-60px;
+    display : flex;
+    align-items: left;
+    flex-direction : column;
     margin: 200px;
 `
    
     
     const Cart = () => {
         const {userCart,cartTotalPrice,cartTotalDeliveryFee,} = useSelector(state => state.cart);
-        const {me} = useSelector(state => state.user);
+        const {me,addPaymentDone} = useSelector(state => state.user);
         const dispatch = useDispatch()
         const [checkedProductsList, setcheckedProductsList] = useState(userCart);
         const [checkedAllProducts, setCheckedAllProducts] = useState(true);
@@ -194,7 +200,10 @@ const Wrapper = styled.div`
                             <span>{cartTotalPrice}원</span>
                         </div>
                        {/* <Payment checkedProductsList={checkedProductsList}/> */}
+
                        {userCart[0] && <Paypal checkedProductsList = {checkedProductsList} cartTotalPrice = {cartTotalPrice}/>}
+
+                        {addPaymentDone && <ResultSuccess/>}
                 </Wrapper>
          </AppLayout>
     )

@@ -1,10 +1,12 @@
 const express = require('express');
-const { User } = require('../models');
+const { User, Payment, Cart, Product, Image } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const {} = require('./middlewares')
 const {isLoggedIn, isNotLoggedIn} = require('./middlewares')
+const { Op } = require('sequelize');
+const { findAll } = require('../models/cart');
 
 router.get('/', async(req, res, next) =>{
      try{
@@ -78,6 +80,53 @@ router.post('/', isNotLoggedIn,  async(req, res, next) => {
             password : hashedPassword,
         })
         res.status(201).send('회원가입 성공');
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+router.post('/payment', isLoggedIn,  async(req, res, next) => {
+    try{
+             await Promise.all(
+                req.body.CartItemsId.map(cartItemId => 
+                Payment.create({
+                    cancelled : req.body.payment.cancelled,
+                    email : req.body.payment.email,
+                    paid : req.body.payment.paid,
+                    payerID :req.body.payment.payerID,
+                    paymentID : req.body.payment.paymentID,
+                    paymentToken : req.body.payment.paymentToken,
+                    returnUrl : req.body.payment.returnUrl,
+                    createdAt : req.body.payment.createdAt,
+                    updatedAt : req.body.payment.updatedAt,
+                    UserId : req.user.id,
+                    CartId : cartItemId,
+                    })
+                )
+            )
+        res.status(200).send('결제성공')
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
+    try{
+             const paymentLists = await Payment.findAll({
+                 where : {UserId: req.user.id},
+                 include: [{
+                     model: Cart,
+                     include : [{
+                         model : Product,
+                         attributes : ['id','productName'],
+                         include:[{
+                             model: Image
+                         }]
+                     }]
+                 }]
+             })
+             res.status(202).json(paymentLists)
     } catch (error) {
         console.error(error);
         next(error);
