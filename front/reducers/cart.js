@@ -75,8 +75,8 @@ const reducer = (state = initialState, action) => {
             break;
 
             case CHECK_ALL_PRODUCTS:
-                draft.cartTotalDeliveryFee = draft.userCart.reduce((prev,curr) => (prev.totalPrice > 39900 ? 0 : 2500) + (curr.totalPrice > 39900 ? 0 : 2500),0);
-                draft.cartTotalPrice = draft.userCart.reduce((prev, curr) => prev + curr.totalPrice, draft.cartTotalDeliveryFee);
+                draft.cartTotalDeliveryFee = draft.userCart.reduce((acc,curr) => acc + (curr.totalPrice > 39900 ? 0 : 2500),0);
+                draft.cartTotalPrice = draft.userCart.reduce((acc, curr) => acc + curr.totalPrice, draft.cartTotalDeliveryFee);
             break;
         
             case UNCHECK_ALL_PRODUCTS:

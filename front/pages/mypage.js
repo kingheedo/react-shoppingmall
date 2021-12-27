@@ -84,7 +84,7 @@ const Mypage = () => {
                                                         <br/>
                                                         <span>{`${v.Cart.size} / ${v.Cart.quantity}`}</span>
                                                         <br/>
-                                                        <strong>{v.Cart.totalPrice}</strong>
+                                                        <strong>{v.Cart.totalPrice > 39900 ? v.Cart.totalPrice : (v.Cart.totalPrice + 2500)}</strong>
                                             
                                         </Card>
                                     </a>
