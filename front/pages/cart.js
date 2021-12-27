@@ -196,7 +196,7 @@ const Wrapper = styled.div`
                             </div>
                         <div>
                             <h5>스토어 주문금액 합계</h5>
-                            <span>상품금액 <em>{cartTotalPrice-cartTotalDeliveryFee}원</em> + 배송비 <em>{cartTotalDeliveryFee}원 = </em></span>
+                            <span>상품금액 <em style={{fontStyle: 'normal'}}>{cartTotalPrice-cartTotalDeliveryFee}원</em> + 배송비 <em style={{fontStyle: 'normal'}}>{cartTotalDeliveryFee}원 = </em></span>
                             <span>{cartTotalPrice}원</span>
                         </div>
                        {/* <Payment checkedProductsList={checkedProductsList}/> */}

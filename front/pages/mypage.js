@@ -13,12 +13,18 @@ const { Title } = Typography;
 const { Meta } = Card;
 
 const Wrapper = styled.div`
-    width: 100vw;
+    width: 36vw;
     height : 100vh-60px;
     display : flex;
     align-items: left;
     flex-direction : column;
     margin: 200px;
+
+`
+const CardItem = styled(Card)`
+    .ant-card-body {
+        width: 500px;
+    }
 
 `
 
@@ -73,12 +79,13 @@ const Mypage = () => {
                             paymentLists && paymentLists.map(v =>
                                 <Link href={`/product/${v.Cart.Product.id}`}>
                                     <a>
-                                        <Card
-                                            style={{ width: '458px',display: 'flex', marginBottom: '2rem' }}
-                                            cover={<img alt={`${v.Cart.Product.Images[1]}`} src={`http://localhost:3065/${v.Cart.Product.Images[1].src}`} />}
+                                        <h3>{v.paymentID}</h3>
+                                        <CardItem
+                                            style={{ width: '680px',display: 'flex', marginBottom: '2rem' }}
+                                            cover={<img alt={v.Cart.Product.Images[1]} src={`http://localhost:3065/${v.Cart.Product.Images[1].src}`} />}
                                             
                                         >
-                                                        <Meta style={{float:'left',marginRight: '2rem'}} title={v.Cart.Product.productName}/>
+                                                        <Meta style={{float:'left',}} title={v.Cart.Product.productName}/>
                                                             <p style={{float:'right'}}>{moment(v.createdAt).format('LLL')}</p>
                                                         <br/>
                                                         <br/>
@@ -86,7 +93,7 @@ const Mypage = () => {
                                                         <br/>
                                                         <strong>{v.Cart.totalPrice > 39900 ? v.Cart.totalPrice : (v.Cart.totalPrice + 2500)}</strong>
                                             
-                                        </Card>
+                                        </CardItem>
                                     </a>
                                 </Link>
                                 )
