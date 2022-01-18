@@ -72,12 +72,19 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             
         }
         if(req.body.productSize){
-            const sizes = await Promise.all(
+            if(Array.isArray(req.body.productSize)){
+                const sizes = await Promise.all(
                 req.body.productSize.map(size => Size.create({
                     option: size
                 }))
             );
             await product.addSizes(sizes)
+            }else{
+                const size = await Size.create({
+                    option: req.body.productSize
+                })
+                await product.addSizes(size)
+            }
         }
         const fullProduct = await Product.findOne({
             where: {id : product.id},

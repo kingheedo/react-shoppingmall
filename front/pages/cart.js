@@ -1,4 +1,4 @@
-import { Breadcrumb,Table, Checkbox, Divider } from 'antd'
+import { Breadcrumb,Typography, } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AppLayout from '../components/AppLayout'
@@ -8,17 +8,16 @@ import { CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, DELETE_CART_PRODUCT_REQUEST, LO
 import Router from 'next/router'
 import Payment from '../components/payment'
 import { LOAD_USER_REQUEST } from '../reducers/user'
-import Paypal from '../components/Paypal'
 import { CloseOutlined } from '@ant-design/icons'
 import ResultSuccess from '../components/ResultSuccess'
+import { END } from 'redux-saga'
+import axios from 'axios'
+import wrapper from '../store/configureStore'
+import dynamic from 'next/dynamic'
+const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'),{ ssr: false })
 
-const CheckboxGroup = Checkbox.Group;
+const { Title } = Typography;
 
-const CartTable =  styled(Table)`
-.ant-pagination {
-    display:none;
-},
-`
 const Wrapper = styled.div`
     width: 100vw;
     height : 100vh-60px;
@@ -36,25 +35,14 @@ const Wrapper = styled.div`
         const [checkedProductsList, setcheckedProductsList] = useState(userCart);
         const [checkedAllProducts, setCheckedAllProducts] = useState(true);
         const [checkedProductState, setCheckedProductState] = useState(
-            new Array(userCart.length).fill(true)
+            Array(userCart.length).fill(true)
         )
-        // const checkItem = checkedProductsList.find(v => v.id === cartSingleProduct.id && v.size === cartSingleProduct.size)
-        useEffect(() => {
-            dispatch({
-                type: LOAD_USER_REQUEST
-            })
-        }, [])
-        useEffect(() => {
-            dispatch({
-                type: LOAD_CART_PRODUCTS_REQUEST
-            })
-        }, [])
+        
         useEffect(() => {
             dispatch({
                 type: CHECK_ALL_PRODUCTS,
-            })
-        }, [])
-
+                })
+            }, [])
         useEffect(() => {
             if(!me){
                 Router.push('/signin')
@@ -134,7 +122,12 @@ const Wrapper = styled.div`
                                     장바구니
                         </Breadcrumb.Item>
                     </Breadcrumb>
-                    <div>
+
+                    <Title level={2} style={{marginTop : '3rem'}}>
+                        장바구니
+                    </Title>
+
+                    <div style={{marginTop : '3rem'}}>
                     <table style={{width: '1100px', }}>
                         <thead style={{borderBottom: '1px solid'}}>
                             <tr>
@@ -201,12 +194,28 @@ const Wrapper = styled.div`
                         </div>
                        {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-                       {userCart[0] && <Paypal checkedProductsList = {checkedProductsList} cartTotalPrice = {cartTotalPrice}/>}
+                       {userCart[0] && <DynamicPaypalComponent checkedProductsList = {checkedProductsList} cartTotalPrice = {cartTotalPrice}/>}
 
                         {addPaymentDone && <ResultSuccess/>}
                 </Wrapper>
          </AppLayout>
     )
 }
-
+export const getServerSideProps = wrapper.getServerSideProps( (store) => async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if(context.req && cookie){
+    axios.defaults.headers.Cookie = cookie;
+  }
+  
+  store.dispatch({
+    type: LOAD_USER_REQUEST,
+  })
+  store.dispatch({
+    type: LOAD_CART_PRODUCTS_REQUEST,
+  })
+  
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+})
 export default Cart

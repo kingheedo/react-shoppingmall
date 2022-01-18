@@ -8,6 +8,9 @@ import { Col, Row } from 'antd';
 import { useInView } from "react-intersection-observer"
 import { LOAD_USER_REQUEST, RESET_ADD_PAYMENT } from '../reducers/user';
 import { LOAD_CART_PRODUCTS_REQUEST } from '../reducers/cart';
+import wrapper from '../store/configureStore';
+import { END } from 'redux-saga';
+import axios from 'axios';
 
 const Home = () => {
     const {mainProducts,loadMainProductsLoading,hasMoreProducts} = useSelector(state => state.product)
@@ -15,18 +18,8 @@ const Home = () => {
     const dispatch = useDispatch();
     const [ref, inView] = useInView()
 
+
     useEffect(() => {
-      dispatch({
-        type: LOAD_USER_REQUEST,
-      })
-    }, [])
-    useEffect(() => {
-            dispatch({
-                type: LOAD_CART_PRODUCTS_REQUEST
-            })
-        }, [])
-    useEffect(
-  () => {
         if(inView && hasMoreProducts && !loadMainProductsLoading){
           const lastId = mainProducts[mainProducts.length - 1]?.id
           dispatch({
@@ -60,5 +53,25 @@ const Home = () => {
         </>
     )
 }
-
+export const getServerSideProps = wrapper.getServerSideProps( (store) => async (context) => {
+  
+  console.log('context.req.headers',context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if(context.req && cookie){
+    axios.defaults.headers.Cookie = cookie;
+  }
+  store.dispatch({
+    type: LOAD_USER_REQUEST,
+  })
+  store.dispatch({
+    type: LOAD_PRODUCTS_REQUEST,
+  })
+  
+  store.dispatch({
+    type: LOAD_CART_PRODUCTS_REQUEST,
+  })
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+})
 export default Home

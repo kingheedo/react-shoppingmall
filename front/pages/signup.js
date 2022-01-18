@@ -4,7 +4,7 @@ import useInput from '../hooks/useInput'
 import Router from 'next/router'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
-import { SIGN_UP_REQUEST, SIGN_UP_RESET } from '../reducers/user'
+import { LOG_IN_REQUEST, SIGN_UP_REQUEST, SIGN_UP_RESET } from '../reducers/user'
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -40,14 +40,18 @@ const Signup = () => {
 
 
     useEffect(() => {
-      if(me || signUpDone){
-        alert('회원가입이 완료되었습니다.')
-        Router.push('/')
+      if(signUpDone){
+        dispatch({
+          type : LOG_IN_REQUEST,
+          data : {email, password}
+        })
         dispatch({
           type : SIGN_UP_RESET,
         })
+        alert('회원가입이 완료되었습니다.')
+        Router.push('/')
       }
-    }, [me,signUpDone])
+    }, [signUpDone])
     useEffect(() => {
       if(signUpError){
         alert(signUpError)

@@ -7,10 +7,10 @@ const Paypal = ({checkedProductsList,cartTotalPrice}) => {
         const dispatch = useDispatch();
         const {userCart} = useSelector(state => state.cart)
         const CartItemsId  = checkedProductsList && checkedProductsList.map(v=> v.id)
-        useEffect(() => {
-            console.log('checkedProductsList',checkedProductsList)
-            console.log('CartItemsId',CartItemsId)
-        }, [checkedProductsList,CartItemsId])
+        // useEffect(() => {
+        //     console.log('checkedProductsList',checkedProductsList)
+        //     console.log('CartItemsId',CartItemsId)
+        // }, [checkedProductsList,CartItemsId])
         const onSuccess = useCallback(
             (payment) => {
             console.log("The payment was succeeded!", payment);

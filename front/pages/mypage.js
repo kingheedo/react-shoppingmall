@@ -7,13 +7,17 @@ import { Breadcrumb, Card ,Typography, Divider } from 'antd';
 import { LOAD_PAYMENT_LISTS_REQUEST, LOAD_USER_REQUEST } from '../reducers/user'
 import Link from 'next/link';
 import moment from 'moment';
+import { END } from 'redux-saga'
+import axios from 'axios'
+import wrapper from '../store/configureStore'
+import { LOAD_CART_PRODUCTS_REQUEST } from '../reducers/cart'
 moment.locale('ko');
 const { Title } = Typography;
 
 const { Meta } = Card;
 
 const Wrapper = styled.div`
-    width: 36vw;
+    width: 80vw;
     height : 100vh-60px;
     display : flex;
     align-items: left;
@@ -45,16 +49,12 @@ const Mypage = () => {
             type : LOAD_PAYMENT_LISTS_REQUEST
         })
     }, [])
-
+    
     useEffect(() => {
         if(!me){
-            alert("로그인이 필요합니다.")
-            Router.push('/')
+            Router.push('/signin')
         }
     }, [me])
-
-    
-    
 
     return (
         <AppLayout>
@@ -74,14 +74,14 @@ const Mypage = () => {
                     <Title level={2} style={{marginTop : '3rem'}}>
                         주문내역
                     </Title>
-                    <div style={{marginTop : '4rem'}}>
+                    <div style={{marginTop : '3rem', width: '36vw',}}>
                         {
                             paymentLists && paymentLists.map(v =>
-                                <Link href={`/product/${v.Cart.Product.id}`}>
+                                <Link href={`/product/${v.Cart.Product.id}`} style={{overflow: 'hidden'}}>
                                     <a>
                                         <h3>{v.paymentID}</h3>
                                         <CardItem
-                                            style={{ width: '680px',display: 'flex', marginBottom: '2rem' }}
+                                            style={{ width: '680px',display: 'flex', marginBottom: '2rem', }}
                                             cover={<img alt={v.Cart.Product.Images[1]} src={`http://localhost:3065/${v.Cart.Product.Images[1].src}`} />}
                                             
                                         >
@@ -103,5 +103,22 @@ const Mypage = () => {
         </AppLayout>
     )
 }
-
+export const getServerSideProps = wrapper.getServerSideProps( (store) => async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if(context.req && cookie){
+    axios.defaults.headers.Cookie = cookie;
+  }
+  store.dispatch({
+    type: LOAD_USER_REQUEST,
+  })
+  store.dispatch({
+    type : LOAD_PAYMENT_LISTS_REQUEST
+    })
+    store.dispatch({
+    type: LOAD_CART_PRODUCTS_REQUEST,
+  })
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+})
 export default Mypage

@@ -12,6 +12,9 @@ import { ADD_PRODUCT_CART_REQUEST, LOAD_CART_PRODUCTS_REQUEST } from '../../../r
 import Review from '../../../components/Review';
 import useInput from '../../../hooks/useInput';
 import { LOAD_USER_REQUEST } from '../../../reducers/user';
+import wrapper from '../../../store/configureStore';
+import axios from 'axios';
+import { END } from 'redux-saga';
 
 const Wrapper = styled.div`
     display:flex;
@@ -43,25 +46,6 @@ const Product = () => {
     const [quantity, setQuantity] = useState(1)
     const [visibleModal, setVisibleModal] = useState(false)
 
-    
-    useEffect(() => {
-        dispatch({
-            type: LOAD_PRODUCT_REQUEST,
-            id
-        })
-    }, [id])
-    
-    useEffect(() => {
-      dispatch({
-        type: LOAD_USER_REQUEST,
-      })
-    }, [])
-    
-    useEffect(() => {
-            dispatch({
-                type: LOAD_CART_PRODUCTS_REQUEST
-            })
-        }, [])
     const onhandleModal = useCallback(
         () => {
             setVisibleModal(false)
@@ -179,5 +163,23 @@ const Product = () => {
         
     )
 }
-
+export const getServerSideProps = wrapper.getServerSideProps( (store) => async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if(context.req && cookie){
+    axios.defaults.headers.Cookie = cookie;
+  }
+  store.dispatch({
+    type: LOAD_USER_REQUEST,
+  })
+  store.dispatch({
+    type: LOAD_CART_PRODUCTS_REQUEST,
+  })
+  store.dispatch({
+        type: LOAD_PRODUCT_REQUEST,
+        id : context.params.id
+        })
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+})
 export default Product

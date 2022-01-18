@@ -2,9 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import {
   Form,
-  InputNumber,
   Button,
-  Upload,
   Input,
   Checkbox,
   Divider,
@@ -16,6 +14,9 @@ import { REGISTER_PRODUCT_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '.
 import Router from 'next/router';
 import useInput from '../hooks/useInput';
 import { LOAD_USER_REQUEST } from '../reducers/user';
+import axios from 'axios';
+import wrapper from '../store/configureStore';
+import { END } from 'redux-saga';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -61,15 +62,11 @@ const layout = {
   wrapperCol: { span: 16 },
 };
 
-const validateMessages = {
-  required: '${label} 이 필요합니다!',
-};
-
 const ProductForm = () => {
   const {me, loadUserDone,} = useSelector(state => state.user)
-  const {imagePath} = useSelector(state => state.product)
+  const {imagePath,registerProductDone} = useSelector(state => state.product)
 
-  const [productName, onChangeName] = useInput('')
+  const [productName, onChangeName, setProductName] = useInput('')
   const [productPrice, onChangePrice, setProductPrice] = useInput('')
   const [productStock , onChangeStock, setProductStock] = useInput('')
   const checkedOption = ['SM','M','L','XL'];
@@ -79,17 +76,17 @@ const ProductForm = () => {
   const imageUpload = useRef()
   
   useEffect(() => {
-    console.log(checkedSize)
-   
-  }, [checkedSize])
-  useEffect(() => {
-      dispatch({
-        type: LOAD_USER_REQUEST,
-      })
-    }, [])
+    if(registerProductDone){
+      setProductName('')
+      setProductPrice('')
+      setProductStock('')
+      setAllChecked(false)
+      setCheckedSize([])
+    }
+  }, [registerProductDone])
 
   useEffect(() => {
-    if(!me && !loadUserDone){
+    if(!me){
       Router.push('/')
     }
   }, [me,loadUserDone])
@@ -119,7 +116,7 @@ const ProductForm = () => {
   const onSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
-      if(imagePath.length !== 2 || !productName || !productPrice || !productStock){
+      if(imagePath.length !== 2 || !productName || !productPrice || !productStock || !checkedSize[0]){
         return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.')
       }
       const formData = new FormData();
@@ -137,6 +134,11 @@ const ProductForm = () => {
         type: REGISTER_PRODUCT_REQUEST,
         data : formData
       })
+      setProductName('')
+      setProductPrice('')
+      setProductStock('')
+      setAllChecked(false)
+      setCheckedSize([])
     },
     [imagePath,productName,productPrice,productStock,checkedSize],
   )
@@ -170,7 +172,7 @@ const onChangeAllCheck = useCallback(
 )
     return (
         <AppLayout>
-            <FormLayout onFinish={onSubmitForm} encType="multipart/form-data"  {...layout} name="nest-messages" validateMessages={validateMessages}>
+            <FormLayout onFinish={onSubmitForm} encType="multipart/form-data"  {...layout} name="nest-messages">
                    <ImageContainer>
                      <FormItem>
                     <input type="file" name="image" ref={imageUpload} multiple hidden onChange={onChangeImages}/>
@@ -221,5 +223,17 @@ const onChangeAllCheck = useCallback(
         </AppLayout>
     )
 }
-
+export const getServerSideProps = wrapper.getServerSideProps( (store) => async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if(context.req && cookie){
+    axios.defaults.headers.Cookie = cookie;
+  }
+  store.dispatch({
+    type: LOAD_USER_REQUEST,
+  })
+  
+  store.dispatch(END);
+  await store.sagaTask.toPromise();
+})
 export default ProductForm

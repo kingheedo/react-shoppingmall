@@ -3,10 +3,8 @@ const { User, Payment, Cart, Product, Image } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
-const {} = require('./middlewares')
 const {isLoggedIn, isNotLoggedIn} = require('./middlewares')
 const { Op } = require('sequelize');
-const { findAll } = require('../models/cart');
 
 router.get('/', async(req, res, next) =>{
      try{
