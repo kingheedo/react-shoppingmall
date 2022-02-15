@@ -3,9 +3,6 @@ import {
   all, call, delay, fork, put, throttle, takeLatest, StrictEffect,
 } from 'redux-saga/effects';
 import {
-  // ADD_PRODUCT_REVIEW_FAILURE,
-  // ADD_PRODUCT_REVIEW_REQUEST,
-  // ADD_PRODUCT_REVIEW_SUCCESS,
   LOAD_PRODUCTS_FAILURE,
   LOAD_PRODUCTS_REQUEST,
   LOAD_PRODUCTS_SUCCESS,
@@ -14,9 +11,11 @@ import {
   LOAD_PRODUCT_SUCCESS,
   REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/asyncActionTypes/productType';
+import { ADD_PRODUCT_REVIEW_FAILURE, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS } from '../reducers/asyncActionTypes/userTypes';
 import {
   LoadProduct, LoadProducts, RegisterProduct, UploadImages,
 } from '../reducers/dispatchRequestTypes/productDispatchRequest';
+import { AddProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
 function registerProductAPI(data:FormData) {
   return axios.post('/product', data);
@@ -57,36 +56,26 @@ function* uploadImages(action:UploadImages) {
     });
   }
 }
+function addProductReviewApi(data:{reviewUnique: string, historyCartId: number, productId: number, content: string, paymentToken:string, }) {
+  return axios.post(`/product/${data.productId}/review`, data);
+}
+function* addProductReview(action:AddProductReview) {
+  try {
+    const result:AxiosResponse = yield call(addProductReviewApi, action.data);
+    yield put({
+      type: ADD_PRODUCT_REVIEW_SUCCESS,
+      data: result.data,
+    });
+  } catch (err:any) {
+    console.error(err);
+    yield put({
+      type: ADD_PRODUCT_REVIEW_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
-// function AddProductReviewApi(data) {
-//   return axios.get('api/product', data);
-// }
-// function* AddProductReview(action) {
-//   try {
-//     // const result = yield call(LoadProductsApi, action.data);
-//     yield delay(1000);
-//     yield put({
-//       type: ADD_PRODUCT_REVIEW_SUCCESS,
-//       data: {
-//         id: 1,
-//         content: action.data.Content,
-//         User: {
-//           id: action.data.userId,
-//           email: 'gmlehdhkd@naver.com',
-//         },
-//         rate: action.data.Rate,
-//       },
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     yield put({
-//       type: ADD_PRODUCT_REVIEW_FAILURE,
-//       error: err.response.data,
-//     });
-//   }
-// }
-
-function loadProductsApi(lastId?: number) { // hashtag/name
+function loadProductsApi(lastId?: number) {
   return axios.get(`/products?lastId=${lastId || 0}`);
 }
 function* loadProducts(action:LoadProducts) {
@@ -130,9 +119,9 @@ function* watchRegisterProduct():Generator<StrictEffect> {
 function* watchUploadImages():Generator<StrictEffect> {
   yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
-// function* watchAddProductReview():Generator<StrictEffect> {
-//   yield throttle(3000, ADD_PRODUCT_REVIEW_REQUEST, addProductReview);
-// }
+function* watchAddProductReview():Generator<StrictEffect> {
+  yield throttle(3000, ADD_PRODUCT_REVIEW_REQUEST, addProductReview);
+}
 
 function* watchLoadProducts():Generator<StrictEffect> {
   yield throttle(3000, LOAD_PRODUCTS_REQUEST, loadProducts);
@@ -146,7 +135,7 @@ export default function* productSaga() {
   yield all([
     fork(watchRegisterProduct),
     fork(watchUploadImages),
-    // fork(watchAddProductReview),
+    fork(watchAddProductReview),
     fork(watchLoadProducts),
     fork(watchLoadProduct),
   ]);

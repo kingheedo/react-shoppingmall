@@ -5,9 +5,6 @@ export const REGISTER_PRODUCT_FAILURE = 'REGISTER_PRODUCT_FAILURE' as const;
 export const UPLOAD_IMAGES_REQUEST = 'UPLOAD_IMAGES_REQUEST' as const;
 export const UPLOAD_IMAGES_SUCCESS = 'UPLOAD_IMAGES_SUCCESS' as const;
 export const UPLOAD_IMAGES_FAILURE = 'UPLOAD_IMAGES_FAILURE' as const;
-export const ADD_PRODUCT_REVIEW_REQUEST = 'ADD_PRODUCT_REVIEW_REQUEST' as const;
-export const ADD_PRODUCT_REVIEW_SUCCESS = 'ADD_PRODUCT_REVIEW_SUCCESS' as const;
-export const ADD_PRODUCT_REVIEW_FAILURE = 'ADD_PRODUCT_REVIEW_FAILURE' as const;
 export const LOAD_PRODUCTS_REQUEST = 'LOAD_PRODUCTS_REQUEST' as const;
 export const LOAD_PRODUCTS_SUCCESS = 'LOAD_PRODUCTS_SUCCESS' as const;
 export const LOAD_PRODUCTS_FAILURE = 'LOAD_PRODUCTS_FAILURE' as const;
@@ -22,15 +19,17 @@ export interface MainProducts {
   stock : number;
   UserId: number;
   Images :{src : string}[]
+  Likers : any
 }
 export interface RegisterProduct extends MainProducts {
   Sizes : {option:string}[]
 }
 export interface SingleProduct extends RegisterProduct{
+  Reviews : any
 }
 export interface ProductState {
   mainProducts: MainProducts[];
-  singleProduct: null | SingleProduct;
+  singleProduct: SingleProduct | any;
   imagePath: string[];
   hasMoreProducts: boolean;
   registerProductLoading: boolean;
@@ -45,9 +44,6 @@ export interface ProductState {
   loadProductLoading: boolean;
   loadProductDone: boolean;
   loadProductError: any;
-  addProductReviewLoading: boolean;
-  addProductReviewDone: boolean;
-  addProductReviewError: any;
 }
 
 export interface RegisterProductRequest {
@@ -72,17 +68,7 @@ export interface UploadImagesFailure {
   type: typeof UPLOAD_IMAGES_FAILURE;
   error: Error;
 }
-// export interface AddProductReviewRequest {
-//   type: typeof ADD_PRODUCT_REVIEW_REQUEST;
-// }
-// export interface AddProductReviewSuccess {
-//   type: typeof ADD_PRODUCT_REVIEW_SUCCESS;
-//   data: object;
-// }
-// export interface AddProductReviewFailure {
-//   type: typeof ADD_PRODUCT_REVIEW_FAILURE;
-//   error: Error;
-// }
+
 export interface LoadProductsRequest {
   type: typeof LOAD_PRODUCTS_REQUEST;
 }

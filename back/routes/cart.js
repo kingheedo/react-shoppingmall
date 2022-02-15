@@ -1,7 +1,7 @@
 const express = require('express');
 const { Op } = require('sequelize');
 const Sequelize = require('sequelize')
-const { Product, Cart, User, Image } = require('../models');
+const { Product, Cart, User, Image, HistoryCart } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 const router = express.Router();
@@ -43,6 +43,25 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             totalPrice : req.body.totalPrice,
             quantity: req.body.quantity
         })
+
+        const exHistoryCartItem = await HistoryCart.findOne({
+            where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        })
+        exHistoryCartItem 
+        ?
+            await exHistoryCartItem.increment({
+            totalPrice : req.body.totalPrice,
+            quantity : req.body.quantity
+        })
+        :
+        await HistoryCart.create({
+            UserId : req.user.id,
+            ProductId : parseInt(req.body.productId,10),
+            size: req.body.size,
+            totalPrice : req.body.totalPrice,
+            quantity: req.body.quantity
+        })
+
         const fullCartitem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
             include: [{

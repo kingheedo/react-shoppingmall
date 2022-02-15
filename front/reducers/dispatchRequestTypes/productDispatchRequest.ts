@@ -8,9 +8,7 @@ export interface RegisterProduct extends RegisterProductRequest {
 export interface UploadImages extends UploadImagesRequest{
     data : FormData;
 }
-// export interface AddProductReview extends AddProductReviewRequest{
 
-// }
 export interface LoadProducts extends LoadProductsRequest{
     lastId? : number
 }

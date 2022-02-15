@@ -1,9 +1,9 @@
 import Router from 'next/router';
 import React, { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import {
-  Breadcrumb, Card, Typography,
+  Breadcrumb, Typography,
 } from 'antd';
 import Link from 'next/link';
 import moment from 'moment';
@@ -15,11 +15,10 @@ import { loadPaymentLists, loadUser } from '../reducers/dispatchRequestTypes/use
 import { RootState } from '../reducers';
 import { UserState } from '../reducers/asyncActionTypes/userTypes';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
+import Payment from '../components/Payment';
 
 moment.locale('ko');
 const { Title } = Typography;
-
-const { Meta } = Card;
 
 const Wrapper = styled.div`
     width: 80vw;
@@ -30,16 +29,16 @@ const Wrapper = styled.div`
     margin: 200px;
 
 `;
-const CardItem = styled(Card)`
-    .ant-card-body {
-        width: 500px;
-    }
-
-`;
 
 const Mypage:FC = () => {
   const { me, paymentLists } = useSelector<RootState, UserState>((state) => state.user);
-  const dispatch = useDispatch();
+  const { addProductReviewError } = useSelector<RootState, UserState>((state) => state.product);
+
+  useEffect(() => {
+    if (addProductReviewError) {
+      alert(addProductReviewError);
+    }
+  }, [addProductReviewError]);
   useEffect(() => {
     if (!me) {
       Router.push('/signin');
@@ -65,28 +64,7 @@ const Mypage:FC = () => {
           주문내역
         </Title>
         <div style={{ marginTop: '3rem', width: '36vw' }}>
-          {
-                            paymentLists?.map((v) => (
-                              <Link href={`/product/${v.RecordCart.Product.id}`} style={{ overflow: 'hidden' }}>
-                                <a>
-                                  <h3>{v.paymentID}</h3>
-                                  <CardItem
-                                    style={{ width: '680px', display: 'flex', marginBottom: '2rem' }}
-                                    cover={<img alt={v.RecordCart.Product.Images[1].src} src={`http://localhost:3065/${v.RecordCart.Product.Images[1].src}`} />}
-                                  >
-                                    <Meta style={{ float: 'left' }} title={v.RecordCart.Product.productName} />
-                                    <p style={{ float: 'right' }}>{moment(v.createdAt).format('LLL')}</p>
-                                    <br />
-                                    <br />
-                                    <span>{`${v.RecordCart.size} / ${v.RecordCart.quantity}`}</span>
-                                    <br />
-                                    <strong>{v.RecordCart.totalPrice > 39900 ? v.RecordCart.totalPrice : (v.RecordCart.totalPrice + 2500)}</strong>
-
-                                  </CardItem>
-                                </a>
-                              </Link>
-                            ))
-                        }
+          {paymentLists?.map((payment) => <Payment key={payment.id} payment={payment} />)}
         </div>
       </Wrapper>
     </AppLayout>

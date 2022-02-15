@@ -1,5 +1,5 @@
 const express = require('express');
-const { User, Payment, Cart, Product, Image } = require('../models');
+const { User, Payment, Product, Image, HistoryCart, Review } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const passport = require('passport');
@@ -26,6 +26,34 @@ router.get('/', async(req, res, next) =>{
      }
 })
 
+router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
+    try{
+             const paymentLists = await Payment.findAll({
+                 order : [['createdAt', 'DESC']],
+                 where : {UserId: req.user.id},
+                 include:[{
+                     model : HistoryCart,
+                     include: [{
+                         model : Product,
+                         include: [{
+                         model : Image
+                        },]
+                     },{
+                         model : User,
+                         include: [{
+                             model : Review,
+                             
+                         }]
+                     }]
+                     
+                 }]
+             })
+             res.status(202).json(paymentLists)
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
 router.post('/logout',isLoggedIn, (req, res, next) => {
     req.logout();
     req.session.destroy();
@@ -98,33 +126,11 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     createdAt : req.body.payment.createdAt,
                     updatedAt : req.body.payment.updatedAt,
                     UserId : req.user.id,
-                    CartId : cartItemId,
+                    HistoryCartId : cartItemId
                     })
                 )
             )
         res.status(200).send('결제성공')
-    } catch (error) {
-        console.error(error);
-        next(error);
-    }
-})
-
-router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
-    try{
-             const paymentLists = await Payment.findAll({
-                 where : {UserId: req.user.id},
-                 include: [{
-                     model: Cart,
-                     include : [{
-                         model : Product,
-                         attributes : ['id','productName'],
-                         include:[{
-                             model: Image
-                         }]
-                     }]
-                 }]
-             })
-             res.status(202).json(paymentLists)
     } catch (error) {
         console.error(error);
         next(error);

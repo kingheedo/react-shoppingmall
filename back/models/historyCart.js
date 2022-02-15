@@ -2,7 +2,7 @@ const { INTEGER, DECIMAL } = require('sequelize');
 const DataTypes = require('sequelize');
 const {Model} =  DataTypes;
 
-module.exports = class RecordCart extends Model{
+module.exports = class HistoryCart extends Model{
     static init(sequelize){
         return super.init({
             id: {
@@ -23,16 +23,16 @@ module.exports = class RecordCart extends Model{
                 allowNull : false,
             },
         },{
-            modelName: 'RecordCart',
-            tableName: 'recordCarts',
+            modelName: 'HistoryCart',
+            tableName: 'historyCarts',
             charset: 'utf8',
             collate: 'utf8_general_ci', 
             sequelize,   
         })
     }
     static associate (db){
-        db.RecordCart.belongsTo(db.Product)
-        db.RecordCart.belongsTo(db.User)
-        db.RecordCart.belongsToMany(db.User,{through: {model: db.Payment, unique : false }})
+        db.HistoryCart.belongsTo(db.Product)
+        db.HistoryCart.belongsTo(db.User)
+        db.HistoryCart.belongsToMany(db.User,{through: {model: db.Payment, unique : false }})
     }
 }

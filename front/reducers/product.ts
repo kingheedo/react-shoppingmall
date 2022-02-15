@@ -20,9 +20,6 @@ const initialState:ProductState = {
   loadProductLoading: false,
   loadProductDone: false,
   loadProductError: null,
-  addProductReviewLoading: false,
-  addProductReviewDone: false,
-  addProductReviewError: false,
 
 };
 
@@ -184,24 +181,6 @@ const reducer = (state = initialState, action:ProductAction) => produce(state, (
       draft.uploadImagesLoading = false;
       draft.uploadImagesError = action.error;
       break;
-
-      // case ADD_PRODUCT_REVIEW_REQUEST:
-      //   draft.addProductReviewLoading = true;
-      //   draft.addProductReviewDone = false;
-      //   draft.addProductReviewError = null;
-      //   break;
-      // case ADD_PRODUCT_REVIEW_SUCCESS:
-      //   draft.addProductReviewLoading = false;
-      //   draft.addProductReviewDone = true;
-      //   draft.singleProduct.Reviews.push(action.data);
-      //   const user = draft.singleProduct.notYetReivewers.find((v) => v.id === action.data.User.id);
-      //   draft.singleProduct.notYetReivewers = draft.singleProduct.notYetReivewers.filter((v) => v.id !== user.id);
-      //   break;
-      // case ADD_PRODUCT_REVIEW_FAILURE:
-      //   draft.addProductReviewLoading = false;
-      //   draft.addProductReviewDone = false;
-      //   draft.addProductReviewError = action.error;
-      //   break;
 
     case LOAD_PRODUCTS_REQUEST:
       draft.loadProductsLoading = true;

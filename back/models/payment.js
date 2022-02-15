@@ -46,7 +46,7 @@ module.exports = class Payment extends Model{
         })
     }
     static associate(db){
-        db.Payment.belongsTo(db.Cart)
+        db.Payment.belongsTo(db.HistoryCart)
         db.Payment.belongsTo(db.User)
 
     }

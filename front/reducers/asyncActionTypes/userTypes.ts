@@ -1,3 +1,6 @@
+export const ADD_PRODUCT_REVIEW_REQUEST = 'ADD_PRODUCT_REVIEW_REQUEST' as const;
+export const ADD_PRODUCT_REVIEW_SUCCESS = 'ADD_PRODUCT_REVIEW_SUCCESS' as const;
+export const ADD_PRODUCT_REVIEW_FAILURE = 'ADD_PRODUCT_REVIEW_FAILURE' as const;
 export const LOAD_PAYMENT_LISTS_REQUEST = 'LOAD_PAYMENT_LISTS_REQUEST' as const;
 export const LOAD_PAYMENT_LISTS_SUCCESS = 'LOAD_PAYMENT_LISTS_SUCCESS' as const;
 export const LOAD_PAYMENT_LISTS_FAILURE = 'LOAD_PAYMENT_LISTS_FAILURE' as const;
@@ -28,10 +31,11 @@ paymentID : string;
 paymentToken : string;
 returnUrl : string;
 createdAt : string;
-RecordCartId: number;
+HistoryCartId: number;
 UserId: number;
 CartId : number;
-RecordCart : {
+
+HistoryCart : {
   id:number;
   quantity : number;
 totalPrice : number;
@@ -39,14 +43,25 @@ createdAt: number;
 size : string;
 ProductId: number;
 UserId : number;
+
 Product: {
   id : number;
   productName : string;
-  Images: {src: string}[]
+  Images: {src: string}[];
+}
+
+User : {
+  id: number;
+  email : string;
+  name : string;
+Reviews : {
+  id :number;
+  reviewUnique : string
+}[];
+}
 }
 }
 
-}
 export interface Me {
   email : string;
   name : string;
@@ -54,7 +69,7 @@ export interface Me {
 
 export interface UserState {
   me : null | Me;
-  paymentLists: null | PaymentLists[];
+  paymentLists: PaymentLists[];
   loadUserLoading: boolean,
   loadUserDone: boolean,
   loadUserError: any,
@@ -78,6 +93,21 @@ export interface UserState {
   loadPaymentListsLoading: boolean,
   loadPaymentListsDone: boolean,
   loadPaymentListsError: any,
+
+  addProductReviewLoading: boolean,
+  addProductReviewDone: boolean,
+  addProductReviewError: any,
+}
+export interface AddProductReviewRequest {
+  type: typeof ADD_PRODUCT_REVIEW_REQUEST;
+}
+export interface AddProductReviewSuccess {
+  type: typeof ADD_PRODUCT_REVIEW_SUCCESS;
+  data : any
+}
+export interface AddProductReviewFailure {
+  type: typeof ADD_PRODUCT_REVIEW_FAILURE;
+  error: Error;
 }
 export interface LoadPaymentListsRequest{
   type : typeof LOAD_PAYMENT_LISTS_REQUEST;
@@ -153,4 +183,4 @@ export interface SignUpFailure {
   type : typeof SIGN_UP_FAILURE;
   error: Error;
 }
-export type UserAction = LoadPaymentListsRequest | LoadPaymentListsSuccess | LoadPaymentListsFailure | AddPaymentListsRequest | addPaymentListsSuccess | AddPaymentListsFailure | LoadUserRequest | LoadUserSuccess | LoadUserFailure | LogInRequest | LogInSuccess | LogInFailure | LogOutRequest | LogOutSuccess | LogOutFailure | SignUpReset | ResetAddPayment | SignUpRequest | SignUpSuccess | SignUpFailure
+export type UserAction = AddProductReviewRequest | AddProductReviewSuccess | AddProductReviewFailure | LoadPaymentListsRequest | LoadPaymentListsSuccess | LoadPaymentListsFailure | AddPaymentListsRequest | addPaymentListsSuccess | AddPaymentListsFailure | LoadUserRequest | LoadUserSuccess | LoadUserFailure | LogInRequest | LogInSuccess | LogInFailure | LogOutRequest | LogOutSuccess | LogOutFailure | SignUpReset | ResetAddPayment | SignUpRequest | SignUpSuccess | SignUpFailure

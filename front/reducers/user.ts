@@ -3,12 +3,15 @@ import {
   ADD_PAYMENT_FAILURE,
   ADD_PAYMENT_REQUEST,
   ADD_PAYMENT_SUCCESS,
+  ADD_PRODUCT_REVIEW_FAILURE,
+  ADD_PRODUCT_REVIEW_REQUEST,
+  ADD_PRODUCT_REVIEW_SUCCESS,
   LOAD_PAYMENT_LISTS_FAILURE, LOAD_PAYMENT_LISTS_REQUEST, LOAD_PAYMENT_LISTS_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, RESET_ADD_PAYMENT, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_RESET, SIGN_UP_SUCCESS, UserAction, UserState,
 } from './asyncActionTypes/userTypes';
 
 const initialState:UserState = {
   me: null,
-  paymentLists: null,
+  paymentLists: [],
   loadUserLoading: false,
   loadUserDone: false,
   loadUserError: null,
@@ -33,6 +36,9 @@ const initialState:UserState = {
   loadPaymentListsDone: false,
   loadPaymentListsError: null,
 
+  addProductReviewLoading: false,
+  addProductReviewDone: false,
+  addProductReviewError: false,
 };
 // export const dummyUser = () => ({
 //   id: 5,
@@ -47,6 +53,21 @@ const initialState:UserState = {
 const reducer = (state = initialState, action:UserAction) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case ADD_PRODUCT_REVIEW_REQUEST:
+        draft.addProductReviewLoading = true;
+        draft.addProductReviewDone = false;
+        draft.addProductReviewError = null;
+        break;
+      case ADD_PRODUCT_REVIEW_SUCCESS:
+        draft.addProductReviewLoading = false;
+        draft.addProductReviewDone = true;
+        draft.paymentLists.forEach((v) => v.HistoryCart.User.Reviews.push(action.data.Review));
+        break;
+      case ADD_PRODUCT_REVIEW_FAILURE:
+        draft.addProductReviewLoading = false;
+        draft.addProductReviewDone = false;
+        draft.addProductReviewError = action.error;
+        break;
       case LOAD_PAYMENT_LISTS_REQUEST:
         draft.loadPaymentListsLoading = true;
         draft.loadPaymentListsDone = false;

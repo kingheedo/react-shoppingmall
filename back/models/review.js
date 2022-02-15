@@ -8,9 +8,13 @@ module.exports = class Review extends Model{
                 type : DataTypes.STRING(50),
                 allowNull : false,
             },
-            src: {
-                type : DataTypes.STRING(200),
-                allowNull : true,
+            rate: {
+                type : DataTypes.INTEGER,
+                allowNull: false,
+            },
+            reviewUnique : { 
+                type: DataTypes.STRING(200), 
+                unique: true 
             }
         },{
             modelName: 'Review',

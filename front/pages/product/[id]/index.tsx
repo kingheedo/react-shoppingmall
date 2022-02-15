@@ -10,7 +10,7 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { END } from 'redux-saga';
 import AppLayout from '../../../components/AppLayout';
-import Review from '../../../components/Review';
+import Review from '../../../components/ReviewLists';
 import useInput from '../../../hooks/useInput';
 import wrapper from '../../../store/configureStore';
 import { addProduct, loadCartProducts } from '../../../reducers/dispatchRequestTypes/cartDispatchRequest';
@@ -94,6 +94,24 @@ const Product = () => {
     },
     [id, quantity, size],
   );
+  const onClickBuy = useCallback(
+    (price:number) => () => {
+      const totalPrice = price * quantity;
+      console.log('size', size);
+      if (size === '사이즈') {
+        alert('사이즈를 선택해주세요.');
+        return;
+      }
+
+      if (id) {
+        dispatch(addProduct({
+          productId, size, quantity, totalPrice,
+        }));
+      }
+      setVisibleModal(true);
+    },
+    [id, quantity, size],
+  );
   const noneVisbleModal = useCallback(
     () => {
       setVisibleModal(false);
@@ -142,7 +160,7 @@ const Product = () => {
 
                                   <div style={{ display: 'flex', marginTop: '1rem' }}>
                                     <BtnCart onClick={onClickCart(singleProduct.price)}>장바구니</BtnCart>
-                                    <BtnBuy>바로구매</BtnBuy>
+                                    <BtnBuy onClick={onClickBuy(singleProduct.price)}>바로구매</BtnBuy>
                                   </div>
                                 </ProductInfo>
                                 <Modal
@@ -163,7 +181,7 @@ const Product = () => {
                                 </Modal>
                               </div>
 
-                              {/* <Review product={singleProduct} /> */}
+                              <Review product={singleProduct} />
                             </>
                             )}
 

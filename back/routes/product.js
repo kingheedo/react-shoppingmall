@@ -4,7 +4,8 @@ const multer = require('multer');
 const { isLoggedIn } = require('./middlewares');
 const path = require('path')
 const fs = require('fs');
-const { Product, Review, User, Image, Size } = require('../models');
+const { Product, Review, User, Image, Size, Payment, HistoryCart } = require('../models');
+const { Op } = require('sequelize/dist');
 
 try{
     fs.accessSync('uploads');
@@ -36,7 +37,13 @@ router.get('/', async(req, res, next ) => {
             model : Review,
             include: [{
                 model : User,
-                attributes: ['email']
+                attributes : ['id','email'],
+                include: [{
+                    model : HistoryCart,
+                    attributes: [
+                        'size','quantity'
+                    ],
+                }]
             }]
         },{
             model: User,
@@ -102,8 +109,41 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
         next(error);
     }
 })
+router.post('/:productId/review',isLoggedIn, async(req, res, next) => {
+    try{
 
-
-
+        const exReview  = await Review.findOne({
+            where : {[Op.and] : [{ProductId: parseInt(req.params.productId,10)}, {UserId : req.user.id},{reviewUnique : req.body.reviewUnique}]},
+        })
+            if(exReview){
+                return res.status(404).json('이미 작성하신 리뷰가 존재합니다.')
+            }
+        // const findPayment = await Payment.findOne({
+        // where: {[Op.and] : [{id : req.body.historyCartId},{UserId : req.user.id}, {paymentToken : req.body.paymentToken}]},
+        //  //로그인한 유저의 payment 만 부르기
+        // })
+        // const findHistoryCart = await HistoryCart.findOne({ //히스토리카트를 찾는다. 
+        //     where : {[Op.and] : [{id : findPayment.HistoryCartId}, {UserId: req.user.id}, {ProductId : parseInt(req.params.productId,10)}]}
+        // })
+        await Review.create({
+            content : req.body.content,
+            ProductId : parseInt(req.params.productId, 10),
+            UserId : req.user.id,
+            rate : req.body.rate,
+            reviewUnique : req.body.reviewUnique,
+        })
+//  사진. 
+        const review = await Review.findOne({
+            where : {
+                [Op.and] : [{reviewUnique : req.body.reviewUnique},{ProductId: parseInt(req.params.productId,10)}, {UserId : req.user.id}]
+            },
+            attributes : ['reviewUnique' , 'id']
+        })
+        res.status(201).json({Review : review,})
+    }catch(error){
+        console.error(error);
+        next(error);
+    }
+})
 
 module.exports = router;
