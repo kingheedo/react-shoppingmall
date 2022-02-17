@@ -4,13 +4,19 @@ import { useDispatch } from 'react-redux';
 import { UserCart } from '../reducers/asyncActionTypes/cartTypes';
 import { addPaymentLists } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
-type Props = {
-  checkedProductsList : UserCart[];
+export interface Props {
+  headers?:string;
+  checkedProduct?:UserCart;
+  checkedProductsList? : UserCart[];
   cartTotalPrice: number
 }
-const Paypal: FC<Props> = ({ checkedProductsList, cartTotalPrice }) => {
+
+const Paypal: FC<Props> = ({
+  headers, checkedProduct, checkedProductsList, cartTotalPrice,
+}) => {
   const dispatch = useDispatch();
-  const CartItemsId = checkedProductsList && checkedProductsList.map((v) => v.id);
+  const CartItemsId = checkedProductsList?.map((v) => v.id);
+  const CartItemId = checkedProduct?.id;
   // useEffect(() => {
   //     console.log('checkedProductsList',checkedProductsList)
   //     console.log('CartItemsId',CartItemsId)
@@ -18,11 +24,17 @@ const Paypal: FC<Props> = ({ checkedProductsList, cartTotalPrice }) => {
   const onSuccess = useCallback(
     (payment) => {
       console.log('The payment was succeeded!', payment);
-      dispatch(
-        addPaymentLists({ CartItemsId, payment }),
-      );
+      if (headers === 'buynow') {
+        dispatch(
+          addPaymentLists({ CartItemId, payment }),
+        );
+      } else {
+        dispatch(
+          addPaymentLists({ CartItemsId, payment }),
+        );
+      }
     },
-    [CartItemsId],
+    [CartItemsId, CartItemId],
   );
   const onCancel = useCallback(
     (data) => {

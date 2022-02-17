@@ -1,5 +1,5 @@
 import {
-  call, all, fork, put, throttle, StrictEffect,
+  call, all, fork, put, throttle, StrictEffect, takeLatest,
 } from 'redux-saga/effects';
 import axios, { AxiosResponse } from 'axios';
 import {
@@ -76,7 +76,7 @@ function* watchLoadCartProducts():Generator<StrictEffect> {
   yield throttle(3000, LOAD_CART_PRODUCTS_REQUEST, LoadCartProducts);
 }
 function* watchAddProductCart():Generator<StrictEffect> {
-  yield throttle(3000, ADD_PRODUCT_CART_REQUEST, AddProductCart);
+  yield takeLatest(ADD_PRODUCT_CART_REQUEST, AddProductCart);
 }
 
 export default function* productSaga() {

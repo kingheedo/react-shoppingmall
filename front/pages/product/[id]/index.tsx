@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Router, { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,6 +18,8 @@ import { RootState } from '../../../reducers';
 import { ProductState } from '../../../reducers/asyncActionTypes/productType';
 import { loadUser } from '../../../reducers/dispatchRequestTypes/userDispatchRequest';
 import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispatchRequest';
+import { CartState } from '../../../reducers/asyncActionTypes/cartTypes';
+import { UserState } from '../../../reducers/asyncActionTypes/userTypes';
 
 const Wrapper = styled.div`
     display:flex;
@@ -40,18 +42,64 @@ const ContentWrapper = styled.div`
 `;
 const Product = () => {
   const dispatch = useDispatch();
+  const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
+  const { addProductCartDone, addProductCartError } = useSelector<RootState, CartState>((state) => state.cart);
   const router = useRouter();
   const { id } = router.query;
   const productId = parseInt(router.query.id as string, 10);
   const [size, onSelectSize] = useInput('사이즈');
   const [quantity, setQuantity] = useState(1);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [buyNow, setBuyNow] = useState(true);
+  useEffect(() => {
+    // console.log('buyNow', buyNow);
+    if (buyNow && addProductCartDone) {
+      Router.push('/orderForm');
+    }
+  }, [buyNow, addProductCartDone]);
 
+  useEffect(() => {
+    if (!me && addProductCartError) {
+      alert(addProductCartError);
+      Router.push('/signin');
+    }
+  }, [me, addProductCartError]);
+  const onClickCart = useCallback(
+    (price: number) => () => {
+      const totalPrice = price * quantity;
+      setBuyNow(false);
+      if (size === '사이즈') {
+        alert('사이즈를 선택해주세요.');
+        return;
+      }
+      dispatch(addProduct({
+        productId, size, quantity, totalPrice,
+      }));
+      setVisibleModal(true);
+    },
+    [buyNow, id, quantity, size],
+  );
+  const onClickBuy = useCallback(
+    (price: number) => () => {
+      const totalPrice = price * quantity;
+      setBuyNow(true);
+      if (size === '사이즈') {
+        alert('사이즈를 선택해주세요.');
+        return;
+      }
+      dispatch(addProduct({
+        buyNow, productId, size, quantity, totalPrice,
+      }));
+    },
+    [productId, quantity, size],
+  );
   const onhandleModal = useCallback(
     () => {
+      setTimeout(() => {
+        Router.push('/cart');
+      }, 1000);
       setVisibleModal(false);
-      Router.push('/cart');
     },
     [],
   );
@@ -76,42 +124,7 @@ const Product = () => {
     },
     [quantity],
   );
-  const onClickCart = useCallback(
-    (price:number) => () => {
-      const totalPrice = price * quantity;
-      console.log('size', size);
-      if (size === '사이즈') {
-        alert('사이즈를 선택해주세요.');
-        return;
-      }
 
-      if (id) {
-        dispatch(addProduct({
-          productId, size, quantity, totalPrice,
-        }));
-      }
-      setVisibleModal(true);
-    },
-    [id, quantity, size],
-  );
-  const onClickBuy = useCallback(
-    (price:number) => () => {
-      const totalPrice = price * quantity;
-      console.log('size', size);
-      if (size === '사이즈') {
-        alert('사이즈를 선택해주세요.');
-        return;
-      }
-
-      if (id) {
-        dispatch(addProduct({
-          productId, size, quantity, totalPrice,
-        }));
-      }
-      setVisibleModal(true);
-    },
-    [id, quantity, size],
-  );
   const noneVisbleModal = useCallback(
     () => {
       setVisibleModal(false);

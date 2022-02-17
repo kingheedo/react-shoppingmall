@@ -27,11 +27,12 @@ export interface SignUp extends SignUpRequest{
 }
 export interface AddPaymentLists extends AddPaymentListsRequest {
   data: {
-    CartItemsId : number[],
+    CartItemId? : number,
+    CartItemsId? : number[],
     payment : any
   }
 }
-export const addPaymentLists = (data : {CartItemsId : number[], payment: any}):AddPaymentLists => {
+export const addPaymentLists = (data : {CartItemId? : number, CartItemsId? : number[], payment: any}):AddPaymentLists => {
   return {
     type: ADD_PAYMENT_REQUEST,
     data,

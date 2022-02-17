@@ -10,6 +10,7 @@ router.get('/', isLoggedIn, async(req, res, next) => {
     try{
         const fullCartitem = await Cart.findAll({
             where : {UserId: req.user.id,},
+            order : [['updatedAt', 'DESC']],
             include: [{
                 model: Product,
                 include: [{
@@ -26,14 +27,66 @@ router.get('/', isLoggedIn, async(req, res, next) => {
 
 router.post('/', isLoggedIn, async(req, res, next) => {
     try{
+        if(req.body.buyNow){
+            const exCartItem = await Cart.findOne({
+            where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        })
+        exCartItem 
+        ?
+            await Cart.update({
+            totalPrice : req.body.totalPrice,
+            quantity : req.body.quantity
+        },{
+            where :{[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        })
+        :
+        await Cart.create({
+            UserId : req.user.id,
+            ProductId : parseInt(req.body.productId,10),
+            size: req.body.size,
+            totalPrice : req.body.totalPrice,
+            quantity: req.body.quantity
+        })
+        // const exHistoryCartItem = await HistoryCart.findOne({
+        //     where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        // })
+        // exHistoryCartItem 
+        // ?
+        //     await HistoryCart.update({
+        //     totalPrice : req.body.totalPrice,
+        //     quantity : req.body.quantity
+        // },{
+        //     where :{[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        // })
+        // :
+        await HistoryCart.create({
+            UserId : req.user.id,
+            ProductId : parseInt(req.body.productId,10),
+            size: req.body.size,
+            totalPrice : req.body.totalPrice,
+            quantity: req.body.quantity
+        })
+        const fullCartitem = await Cart.findOne({
+            where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+            include: [{
+                model: Product,
+                include: [{
+                    model: Image,
+                }]
+            }]
+        })
+        return res.status(202).json(fullCartitem)
+        } else{
         const exCartItem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
         })
         exCartItem 
         ?
-            await exCartItem.increment({
+            await Cart.increment({
             totalPrice : req.body.totalPrice,
             quantity : req.body.quantity
+        },{
+            where :{[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
         })
         :
         await Cart.create({
@@ -44,16 +97,18 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             quantity: req.body.quantity
         })
 
-        const exHistoryCartItem = await HistoryCart.findOne({
-            where : {[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
-        })
-        exHistoryCartItem 
-        ?
-            await exHistoryCartItem.increment({
-            totalPrice : req.body.totalPrice,
-            quantity : req.body.quantity
-        })
-        :
+        // const exHistoryCartItem = await HistoryCart.findOne({
+        //     where :{[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        // })
+        // exHistoryCartItem 
+        // ?
+        //     await HistoryCart.increment({
+        //     totalPrice : req.body.totalPrice,
+        //     quantity : req.body.quantity
+        // },{
+        //     where :{[Op.and]: [{UserId: req.user.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        // })
+        // :
         await HistoryCart.create({
             UserId : req.user.id,
             ProductId : parseInt(req.body.productId,10),
@@ -72,6 +127,7 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             }]
         })
         res.status(202).json(fullCartitem)
+        }
     }catch(error){
         console.error(error);   
         next(error)

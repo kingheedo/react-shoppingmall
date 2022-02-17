@@ -3,6 +3,7 @@ import {
 } from '../asyncActionTypes/cartTypes';
 
 export interface AddProductData{
+        buyNow? : boolean,
         productId : number,
         size: string,
         quantity : number,

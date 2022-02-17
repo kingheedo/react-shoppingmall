@@ -27,7 +27,8 @@ function* loadPaymentLists() {
 }
 
 function addpaymentApi(data:{
-    CartItemsId : number[],
+    CartItemId? : number,
+    CartItemsId?: number[],
     payment : any
   }) {
   return axios.post('/user/payment', data);

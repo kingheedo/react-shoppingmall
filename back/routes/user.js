@@ -113,8 +113,34 @@ router.post('/', isNotLoggedIn,  async(req, res, next) => {
 })
 router.post('/payment', isLoggedIn,  async(req, res, next) => {
     try{
-             await Promise.all(
-                req.body.CartItemsId.map(cartItemId => 
+        
+        
+        if(req.body.CartItemId){
+            const findHistoryCartId = await HistoryCart.findOne({
+                where : {id : req.body.CartItemId}
+            })
+            await Payment.create({
+                    cancelled : req.body.payment.cancelled,
+                    email : req.body.payment.email,
+                    paid : req.body.payment.paid,
+                    payerID :req.body.payment.payerID,
+                    paymentID : req.body.payment.paymentID,
+                    paymentToken : req.body.payment.paymentToken,
+                    returnUrl : req.body.payment.returnUrl,
+                    createdAt : req.body.payment.createdAt,
+                    updatedAt : req.body.payment.updatedAt,
+                    UserId : req.user.id,
+                    HistoryCartId : findHistoryCartId.id
+                    })
+        }
+
+        
+        if(req.body.CartItemsId){
+            const findHistoryCart = await HistoryCart.findAll({
+                where : {[Op.and] : [{id : {[Op.or]: req.body.CartItemsId }},{UserId : req.user.id}]},
+            })
+            await Promise.all(
+                req.body.CartItemsId.map((cartItemId,i) => 
                 Payment.create({
                     cancelled : req.body.payment.cancelled,
                     email : req.body.payment.email,
@@ -126,10 +152,13 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     createdAt : req.body.payment.createdAt,
                     updatedAt : req.body.payment.updatedAt,
                     UserId : req.user.id,
-                    HistoryCartId : cartItemId
+                    HistoryCartId : findHistoryCart[i].id
                     })
                 )
             )
+            // await findHistoryCart.addPayments(payments)
+        }
+             
         res.status(200).send('결제성공')
     } catch (error) {
         console.error(error);

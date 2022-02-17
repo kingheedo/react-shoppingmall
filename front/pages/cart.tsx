@@ -118,19 +118,10 @@ const Cart:FC = () => {
           <table style={{ width: '1100px' }}>
             <thead style={{ borderBottom: '1px solid' }}>
               <tr>
-                {userCart[0]
-                  ? (
-                    <>
-                      <th>
-                        <input type="checkbox" style={{ width: '20px', height: '20px' }} checked={checkedAllProducts} onChange={onChangeAllCheckedProducts} />
-                      </th>
-                      <th>{' '}</th>
-                    </>
-
-                  )
-                  : null}
-
-                <th>상품정보</th>
+                <th>
+                  <input type="checkbox" style={{ width: '20px', height: '20px' }} checked={checkedAllProducts} onChange={onChangeAllCheckedProducts} />
+                </th>
+                <th colSpan={2}>상품정보</th>
                 <th>배송정보</th>
                 <th>주문금액</th>
               </tr>
@@ -149,12 +140,17 @@ const Cart:FC = () => {
                     <img style={{ width: '150px', height: '150px' }} alt={cartSingleProduct.Product.Images[1].src} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`} />
                   </td>
                   <td>
-                    {cartSingleProduct.Product.productName}
-                    <br />
-                    {cartSingleProduct.size}
-                    /
-                    {cartSingleProduct.quantity}
-                    개
+                    <div>
+                      <span>{cartSingleProduct.Product.productName}</span>
+                      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+                        <li style={{ listStyle: 'none' }}>
+                          {cartSingleProduct.size}
+                          /
+                          {cartSingleProduct.quantity}
+                          개
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                   <td>
                     {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2500원' }
