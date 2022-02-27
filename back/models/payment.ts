@@ -1,16 +1,27 @@
-const DataTypes = require('sequelize');
-const {Model} =  DataTypes;
+import { Model,DataTypes } from 'sequelize'
+import { dbTtype } from '.';
+import {sequelize} from './sequelize'
 
-module.exports = class Payment extends Model{
-    static init(sequelize){
-        return super.init({
+class Payment extends Model{
+    public readonly id! : number;
+    public readonly cancelled! : boolean;
+    public readonly email! : string;
+    public readonly paid! : boolean;
+    public readonly payerID! : string;
+    public readonly paymentID! : string;
+    public readonly paymentToken! : string;
+    public readonly returnUrl! : string;
+    public readonly createdAt! : Date;
+    public readonly updatedAt! : Date;
+}
+    Payment.init({
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
             cancelled: {
-                type : DataTypes.BOOLEAN(),
+                type : DataTypes.BOOLEAN,
                 allowNull : false,
             },
             email:{
@@ -18,7 +29,7 @@ module.exports = class Payment extends Model{
                 allowNull : false,
             },
             paid: {
-                type: DataTypes.BOOLEAN(),
+                type: DataTypes.BOOLEAN,
                 allowNull : false,
             },
             payerID: {
@@ -44,10 +55,9 @@ module.exports = class Payment extends Model{
             collate: 'utf8_general_ci', 
             sequelize,   
         })
-    }
-    static associate(db){
+    export const associate = (db:dbTtype) =>{
         db.Payment.belongsTo(db.HistoryCart)
         db.Payment.belongsTo(db.User)
 
     }
-}
+    export default Payment

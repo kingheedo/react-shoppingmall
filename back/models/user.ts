@@ -1,9 +1,15 @@
-const DataTypes = require('sequelize');
-const {Model} =  DataTypes;
-
-module.exports = class User extends Model{
-    static init(sequelize){
-        return super.init({
+import {Model,DataTypes} from 'sequelize';
+import { dbTtype } from '.';
+import {sequelize} from './sequelize'
+class User extends Model{
+    public readonly id!:number;
+    public email!:string;
+    public name!:string;
+    public password!:string;
+    public readonly createdAt!:Date;
+    public readonly updatedAt!:Date;
+}
+    User.init({
             email: {
                 type: DataTypes.STRING(30),
                 allowNull : false,
@@ -19,14 +25,13 @@ module.exports = class User extends Model{
                 allowNull : false,
             },
         },{
+            sequelize,  
             modelName: 'User',
             tableName: 'users',
             charset: 'utf8',
             collate: 'utf8_general_ci', 
-            sequelize,   
-        })
-    }
-    static associate(db){
+    })
+    export const associate = (db:dbTtype) => {
         db.User.hasMany(db.Product)
         db.User.hasMany(db.Review)
         db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'})
@@ -34,4 +39,4 @@ module.exports = class User extends Model{
         db.User.belongsToMany(db.Product, {through: {model: db.HistoryCart,unique: false }})
         db.User.belongsToMany(db.HistoryCart,{through: {model: db.Payment,unique : false}})
     }
-}
+    export default User;

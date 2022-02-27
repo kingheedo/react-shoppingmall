@@ -1,13 +1,16 @@
-const express = require('express');
+import * as express from 'express';
+import {Request} from 'express';
 const { Op } = require('sequelize');
-const { Product, Image, Review, User } = require('../models');
+import { Product, Image, Review, User } from '../models';
 const router = express.Router();
 
-router.get('/', async (req, res, next) =>{
+router.get('/', async (req: Request<any,any,any,{lastId : string}>, res, next) =>{
     try{
-        const where = {};
+        let where = {};
         if(parseInt(req.query.lastId,10)){
-            where.id = {[Op.lt] : parseInt(req.query.lastId,10)}
+            where = {
+                id : {[Op.lt] : parseInt(req.query.lastId,10)}
+            }
         }
     const products = await Product.findAll({
         where,
@@ -30,4 +33,4 @@ router.get('/', async (req, res, next) =>{
     }
 })
 
-module.exports = router;
+export default router;

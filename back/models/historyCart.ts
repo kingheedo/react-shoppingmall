@@ -1,10 +1,15 @@
-const { INTEGER, DECIMAL } = require('sequelize');
-const DataTypes = require('sequelize');
-const {Model} =  DataTypes;
-
-module.exports = class HistoryCart extends Model{
-    static init(sequelize){
-        return super.init({
+import { DataTypes, Model } from 'sequelize'
+import { dbTtype } from '.';
+import {sequelize} from './sequelize'
+class HistoryCart extends Model{
+    public readonly id! : number;
+    public quantity! : number;
+    public totalPrice! : number;
+    public size! : string;
+    public readonly createdAt! : Date;
+    public readonly updatedAt! : Date;
+}
+    HistoryCart.init({
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
@@ -23,16 +28,15 @@ module.exports = class HistoryCart extends Model{
                 allowNull : false,
             },
         },{
+            sequelize, 
             modelName: 'HistoryCart',
             tableName: 'historyCarts',
             charset: 'utf8',
             collate: 'utf8_general_ci', 
-            sequelize,   
         })
-    }
-    static associate (db){
+    export const associate =  (db:dbTtype) =>{
         db.HistoryCart.belongsTo(db.Product)
         db.HistoryCart.belongsTo(db.User)
         db.HistoryCart.belongsToMany(db.User,{through: {model: db.Payment, unique : false }})
     }
-}
+export default HistoryCart

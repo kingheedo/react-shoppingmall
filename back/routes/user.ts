@@ -1,10 +1,10 @@
-const express = require('express');
-const { User, Payment, Product, Image, HistoryCart, Review } = require('../models');
+import * as express from 'express'
+import { User, Payment, Product, Image, HistoryCart, Review } from '../models';
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const passport = require('passport');
-const {isLoggedIn, isNotLoggedIn} = require('./middlewares')
-const { Op } = require('sequelize');
+import * as bcrypt from 'bcrypt';
+import * as passport from 'passport';
+import {isLoggedIn, isNotLoggedIn} from './middlewares';
+import { Op } from 'sequelize';
 
 router.get('/', async(req, res, next) =>{
      try{
@@ -30,7 +30,7 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
     try{
              const paymentLists = await Payment.findAll({
                  order : [['createdAt', 'DESC']],
-                 where : {UserId: req.user.id},
+                 where : {UserId: req.user!.id},
                  include:[{
                      model : HistoryCart,
                      include: [{
@@ -43,7 +43,8 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
                          include: [{
                              model : Review,
                              
-                         }]
+                         }],
+                         attributes: ['id', 'email']
                      }]
                      
                  }]
@@ -54,22 +55,24 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
         next(error);
     }
 })
-router.post('/logout',isLoggedIn, (req, res, next) => {
+router.post('/logout',isLoggedIn, (req, res) => {
     req.logout();
-    req.session.destroy();
-    res.status(201).send('로그아웃 완료.')
+    req.session.destroy(() =>{
+        return res.status(201).send('로그아웃 완료.')
+    });
+    
 })
 
 router.post('/login',isNotLoggedIn, (req, res, next) =>{
-    passport.authenticate('local', (err, user, info) =>{
+    passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{
     if(err){
         console.error(err);
         return next(err)
     }
     if(info){
-        return res.status(401).send(info.reason);
+        return res.status(401).send(info.message);
     }
-    return req.logIn(user, async (loginErr) => {
+    return req.logIn(user, async (loginErr:Error) => {
         if(loginErr){
             console.error(loginErr)
             return next(loginErr)
@@ -129,18 +132,18 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     returnUrl : req.body.payment.returnUrl,
                     createdAt : req.body.payment.createdAt,
                     updatedAt : req.body.payment.updatedAt,
-                    UserId : req.user.id,
-                    HistoryCartId : findHistoryCartId.id
+                    UserId : req.user!.id,
+                    HistoryCartId : findHistoryCartId!.id
                     })
         }
 
         
         if(req.body.CartItemsId){
             const findHistoryCart = await HistoryCart.findAll({
-                where : {[Op.and] : [{id : {[Op.or]: req.body.CartItemsId }},{UserId : req.user.id}]},
+                where : {[Op.and] : [{id : {[Op.or]: req.body.CartItemsId }},{UserId : req.user!.id}]},
             })
             await Promise.all(
-                req.body.CartItemsId.map((cartItemId,i) => 
+                req.body.CartItemsId.map((cartItemId:number,i:number) => 
                 Payment.create({
                     cancelled : req.body.payment.cancelled,
                     email : req.body.payment.email,
@@ -151,7 +154,7 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     returnUrl : req.body.payment.returnUrl,
                     createdAt : req.body.payment.createdAt,
                     updatedAt : req.body.payment.updatedAt,
-                    UserId : req.user.id,
+                    UserId : req.user!.id,
                     HistoryCartId : findHistoryCart[i].id
                     })
                 )
@@ -167,4 +170,4 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
 })
 
 
-module.exports = router;
+export default router;

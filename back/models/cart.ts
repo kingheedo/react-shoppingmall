@@ -1,11 +1,16 @@
-const { INTEGER, DECIMAL } = require('sequelize');
-const DataTypes = require('sequelize');
-const {Model} =  DataTypes;
-
-module.exports = class Cart extends Model{
-    static init(sequelize){
-        return super.init({
-            id: {
+import { DataTypes, Model } from 'sequelize';
+import { dbTtype } from '.';
+import {sequelize} from './sequelize'
+class Cart extends Model{
+    public readonly id! : number;
+    public quantity! : number;
+    public totalPrice! : number;
+    public size! : string;
+    public readonly createdAt! : Date;
+    public updatedAt! : Date;
+}
+            Cart.init({
+                id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
@@ -23,15 +28,15 @@ module.exports = class Cart extends Model{
                 allowNull : false,
             },
         },{
+            sequelize,
             modelName: 'Cart',
             tableName: 'carts',
             charset: 'utf8',
             collate: 'utf8_general_ci', 
-            sequelize,   
-        })
-    }
-    static associate (db){
+               
+    })
+    export const associate =  (db:dbTtype) =>{
         db.Cart.belongsTo(db.Product)
         db.Cart.belongsTo(db.User)
     }
-}
+export default Cart
