@@ -21,7 +21,7 @@ import { RootState } from '../reducers';
 import { CartState } from '../reducers/asyncActionTypes/cartTypes';
 import { UserState } from '../reducers/asyncActionTypes/userTypes';
 
-const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
+const DynamicPaypalComponent= dynamic(() => import('../components/Paypal'), { ssr: false });
 
 const { Title } = Typography;
 
@@ -193,7 +193,7 @@ const Cart:FC = () => {
         </div>
         {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-        {userCart[0] && <DynamicPaypalComponent checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} />}
+        {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProduct = '' checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} />}
 
         {addPaymentDone && <ResultSuccess />}
       </Wrapper>

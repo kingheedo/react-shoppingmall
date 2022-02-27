@@ -95,7 +95,7 @@ function* loadProducts(action:LoadProducts) {
 }
 
 function loadSingleProductApi(id:number) { // hashtag/name
-  return axios.get(`/product?id=${id}`);
+  return axios.get(`/product/${id}`);
 }
 function* loadSingleProduct(action: LoadProduct) {
   try {

@@ -13,7 +13,7 @@ export interface LoadProducts extends LoadProductsRequest{
     lastId? : number
 }
 export interface LoadProduct extends LoadProductRequest{
-    id: number
+    id: string
 }
 
 export const registerProduct = (data:FormData):RegisterProduct => {
@@ -49,7 +49,7 @@ export const loadProducts = (lastId?: number):LoadProducts => {
   };
 };
 
-export const loadProduct = (id: number):LoadProduct => {
+export const loadProduct = (id: string):LoadProduct => {
   return {
     type: LOAD_PRODUCT_REQUEST,
     id,

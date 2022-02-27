@@ -4,19 +4,20 @@ import { useDispatch } from 'react-redux';
 import { UserCart } from '../reducers/asyncActionTypes/cartTypes';
 import { addPaymentLists } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
-export interface Props {
-  headers?:string;
-  checkedProduct?:UserCart;
-  checkedProductsList? : UserCart[];
-  cartTotalPrice: number
-}
+// export interface Props {
+//   headers?:string;
+//   checkedProduct?:UserCart;
+//   checkedProductsList? : UserCart[];
+//   cartTotalPrice: number
+// }
 
-const Paypal: FC<Props> = ({
+const Paypal = ({
   headers, checkedProduct, checkedProductsList, cartTotalPrice,
 }) => {
-  const dispatch = useDispatch();
-  const CartItemsId = checkedProductsList?.map((v) => v.id);
+  const CartItemsId = checkedProductsList && checkedProductsList.map((v) => v.id);
   const CartItemId = checkedProduct?.id;
+  const dispatch = useDispatch();
+  
   // useEffect(() => {
   //     console.log('checkedProductsList',checkedProductsList)
   //     console.log('CartItemsId',CartItemsId)

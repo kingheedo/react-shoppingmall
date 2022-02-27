@@ -19,17 +19,17 @@ export interface MainProducts {
   stock : number;
   UserId: number;
   Images :{src : string}[]
-  Likers : any
+  Likers : any[]
 }
 export interface RegisterProduct extends MainProducts {
   Sizes : {option:string}[]
 }
 export interface SingleProduct extends RegisterProduct{
-  Reviews : any
+  Reviews : {id:number, email:string, rate :number}[]
 }
 export interface ProductState {
   mainProducts: MainProducts[];
-  singleProduct: SingleProduct | any;
+  singleProduct: null | SingleProduct;
   imagePath: string[];
   hasMoreProducts: boolean;
   registerProductLoading: boolean;

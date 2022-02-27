@@ -4,7 +4,7 @@ import user from './user';
 import product from './product';
 import cart from './cart';
 
-const rootReducer = (state, action:AnyAction) => {
+const rootReducer = (state:any, action:AnyAction) => {
   switch (action.type) {
     case HYDRATE:
       console.log('HYDRATE', action);

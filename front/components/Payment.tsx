@@ -19,7 +19,7 @@ const CardItem = styled(Card)`
 const Payment: FC<Props> = ({ payment }) => {
   return (
     <>
-      <Link href={`/product/${payment.HistoryCart?.Product?.id}`} style={{ overflow: 'hidden' }}>
+      <Link href="/product/[id]" as={`/product/${payment.HistoryCart?.Product?.id}`}>
         <a>
           <h3>{payment.paymentID}</h3>
           <CardItem
