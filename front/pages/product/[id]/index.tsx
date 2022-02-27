@@ -20,7 +20,6 @@ import { loadUser } from '../../../reducers/dispatchRequestTypes/userDispatchReq
 import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispatchRequest';
 import { CartState } from '../../../reducers/asyncActionTypes/cartTypes';
 import { UserState } from '../../../reducers/asyncActionTypes/userTypes';
-import { ParsedUrlQuery } from 'querystring';
 
 const Wrapper = styled.div`
     display:flex;
@@ -41,9 +40,7 @@ const ContentWrapper = styled.div`
     display: flex;
     flex-direction: column;
 `;
-interface ContextParams extends ParsedUrlQuery {
-  id : string
-}
+
 const Product = () => {
   const dispatch = useDispatch();
   const { me } = useSelector<RootState, UserState>((state) => state.user);
@@ -211,7 +208,7 @@ const Product = () => {
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
   console.log('axios', axios);
 
-  const id  = context.params?.id!
+  const id = context.params?.id!;
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
   if (context.req && cookie) {
