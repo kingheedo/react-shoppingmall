@@ -11,10 +11,22 @@ type Props = {
 }
 const { Meta } = Card;
 const CardItem = styled(Card)`
+    width: 100%;
+    display: flex;
+    marginBottom: 1rem;
     .ant-card-body {
-        width: 500px;
+        width: 100%;
     }
-
+    @media only screen and (max-width: 1116px) {
+        flex-direction: column;
+        }
+`;
+const CardImage = styled.img`
+     width: 100%;
+     min-width: 16vw;
+`;
+const P = styled.p`
+    float: right;
 `;
 const Payment: FC<Props> = ({ payment }) => {
   return (
@@ -23,11 +35,10 @@ const Payment: FC<Props> = ({ payment }) => {
         <a>
           <h3>{payment.paymentID}</h3>
           <CardItem
-            style={{ width: '680px', display: 'flex', marginBottom: '1rem' }}
-            cover={<img alt={payment.HistoryCart?.Product?.Images[1].src} src={`http://localhost:3065/${payment.HistoryCart?.Product?.Images[1].src}`} />}
+            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`http://localhost:3065/${payment.HistoryCart?.Product?.Images[1].src}`} />}
           >
             <Meta style={{ float: 'left' }} title={payment.HistoryCart?.Product?.productName} />
-            <p style={{ float: 'right' }}>{moment(payment.createdAt).format('LLL')}</p>
+            <P>{moment(payment.createdAt).format('LLL')}</P>
             <br />
             <br />
             <span>{`${payment.HistoryCart?.size} / ${payment.HistoryCart?.quantity}`}</span>

@@ -4,6 +4,7 @@ import { Col, Row } from 'antd';
 import { useInView } from 'react-intersection-observer';
 import { END } from 'redux-saga';
 import axios from 'axios';
+import styled, { createGlobalStyle } from 'styled-components';
 import AppLayout from '../components/AppLayout';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
 import MainProduct from '../components/MainProduct';
@@ -14,6 +15,23 @@ import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { ProductState } from '../reducers/asyncActionTypes/productType';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 
+const Global = createGlobalStyle`
+.ant-col-6 {
+  max-width: 100%;
+}
+`;
+const Container = styled.div`
+margin: 20px auto;
+    width: 80vw;
+`;
+const Wrapper = styled.div`
+display: flex;
+flex-direction: column;
+align-items: center;
+`;
+const H2 = styled.h2`
+margin-bottom: 2rem;
+`;
 const Home:FC = () => {
   const { mainProducts, loadProductsLoading, hasMoreProducts } = useSelector<RootState, ProductState>((state) => state.product);
   const dispatch = useDispatch();
@@ -29,20 +47,23 @@ const Home:FC = () => {
 
   return (
     <>
+      <Global />
       <AppLayout>
         <ImageSlider />
-        <div style={{ margin: '2rem 16rem' }}>
-          <h2>Clothes</h2>
-          <Row gutter={[18, 18]}>
+        <Container>
+          <Wrapper>
+            <H2>Clothes</H2>
+            <Row gutter={[16, 16]}>
 
-            {mainProducts.map((product) => (
-              <Col key={product.id} span={6}>
-                <MainProduct product={product} />
-              </Col>
-            ))}
-            <div ref={ref} />
-          </Row>
-        </div>
+              {mainProducts.map((product) => (
+                <Col key={product.id} span={6}>
+                  <MainProduct product={product} />
+                </Col>
+              ))}
+              <div ref={ref} />
+            </Row>
+          </Wrapper>
+        </Container>
 
       </AppLayout>
     </>

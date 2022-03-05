@@ -20,19 +20,27 @@ import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
 import wrapper from '../store/configureStore';
 import { RootState } from '../reducers';
-import { LOAD_USER_REQUEST, UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/asyncActionTypes/userTypes';
 import {
   ProductState,
 } from '../reducers/asyncActionTypes/productType';
 import { registerProduct, removeImages, uploadImages } from '../reducers/dispatchRequestTypes/productDispatchRequest';
+import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
+import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
 const CheckboxGroup = Checkbox.Group;
 
-const FormLayout = styled(Form)`
-    
-}
-    margin: 10rem 40rem;
-`;
+const Container = styled.div`
+    width: 80vw;
+    height: 100%;
+    margin: 6rem auto 0;
+    `;
+
+const Wrapper = styled.div`
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    `;
 
 const FormItem = styled(Form.Item)`
   &: first-child{
@@ -51,18 +59,33 @@ const FirstFormItem = styled.div`
   border: 1px solid black;
   cursor: pointer;
 `;
+
+const TextFormItem = styled.div`
+  .ant-input { 
+    width:  28vw;
+  }
+  @media only screen and (max-width: 1160px) {
+    .ant-input { 
+    width:  40vw;
+`;
 const ImageWrapper = styled.div`
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  margin : 2rem 0;
+  display: flex;
 
 `;
 const ImageContainer = styled.div`
-  display:flex;
-  align-items: center;
-  justify-content: space-evenly;
-
+  display: flex;
+  margin-bottom: 4rem;
+  
+  @media only screen and (max-width: 670px) {
+        flex-direction: column;
+        }
+  
+`;
+const Image = styled.img`
+  width: 200px;
+  height: 200px;
+  margin-right: 0.5rem;
+  display: block;
 `;
 
 const layout = {
@@ -135,7 +158,6 @@ const ProductForm = () => {
       formData.append('productName', productName);
       formData.append('productPrice', productPrice);
       formData.append('productStock', productStock);
-
       dispatch(registerProduct(formData));
       setProductName('');
       setProductPrice('');
@@ -143,7 +165,7 @@ const ProductForm = () => {
       setAllChecked(false);
       setCheckedSize([]);
     },
-    [imagePath, productName, productPrice, productStock, checkedSize],
+    [imagePath, productName, productPrice, productStock, allChecked, checkedSize],
   );
 
   const onDeleteImage = useCallback(
@@ -172,58 +194,61 @@ const ProductForm = () => {
   );
   return (
     <AppLayout>
-      <FormLayout onFinish={onSubmitForm} encType="multipart/form-data" {...layout} name="nest-messages">
-        <ImageContainer>
-          <FormItem>
-            <input type="file" name="image" ref={imageUpload} multiple hidden onChange={onChangeImages} />
-            <FirstFormItem onClick={onClickImageUpload}>
-              <PlusOutlined />
-              Upload
-            </FirstFormItem>
+      <Container>
+        <Wrapper>
+          <Form onFinish={onSubmitForm} encType="multipart/form-data" {...layout} name="nest-messages">
+            <ImageContainer>
+              <FormItem>
+                <input type="file" name="image" ref={imageUpload} multiple hidden onChange={onChangeImages} />
+                <FirstFormItem onClick={onClickImageUpload}>
+                  <PlusOutlined />
+                  Upload
+                </FirstFormItem>
 
-          </FormItem>
-          <ImageWrapper>
-            {imagePath?.map((v, i) => (
-              <div key={v}>
-                <img
-                  src={`http://localhost:3065/${v}`}
-                  style={{
-                    width: '200px', height: '200px', marginRight: '0.5rem', display: 'block',
-                  }}
-                  alt={v}
-                />
-                <Button style={{ marginTop: '0.5rem' }} onClick={onDeleteImage(i)}>삭제</Button>
-              </div>
-            ))}
-          </ImageWrapper>
-        </ImageContainer>
+              </FormItem>
+              <ImageWrapper>
+                {imagePath?.map((v, i) => (
+                  <div key={v}>
+                    <Image
+                      src={`http://localhost:3065/${v}`}
+                      alt={v}
+                    />
+                    <Button style={{ marginTop: '0.5rem' }} onClick={onDeleteImage(i)}>삭제</Button>
+                  </div>
+                ))}
+              </ImageWrapper>
+            </ImageContainer>
 
-        <FormItem name={['name']} label="상품명" rules={[{ type: 'string', required: true }]}>
-          <Input value={productName} onChange={onChangeName} />
-        </FormItem>
+            <TextFormItem>
+              <FormItem name={['name']} label="상품명" rules={[{ type: 'string', required: true }]}>
+                <Input value={productName} onChange={onChangeName} />
+              </FormItem>
 
-        <FormItem name={['price']} label="상품가격" rules={[{ required: true }]}>
-          <Input min="1" value={productPrice} type="number" onChange={onChangePrice} />
-        </FormItem>
+              <FormItem name={['price']} label="상품가격" rules={[{ required: true }]}>
+                <Input min="1" value={productPrice} type="number" onChange={onChangePrice} />
+              </FormItem>
 
-        <FormItem name={['stock']} label="재고수량" rules={[{ required: true }]}>
-          <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
-        </FormItem>
+              <FormItem name={['stock']} label="재고수량" rules={[{ required: true }]}>
+                <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
+              </FormItem>
 
-        <FormItem>
-          <Checkbox onChange={onChangeAllCheck} checked={allChecked}>
-            Check all
-          </Checkbox>
-          <Divider />
-          <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChageCheckBox} />
-        </FormItem>
+              <FormItem>
+                <Checkbox onChange={onChangeAllCheck} checked={allChecked}>
+                  Check all
+                </Checkbox>
+                <Divider />
+                <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChageCheckBox} />
+              </FormItem>
 
-        <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-          <Button onClick={onSubmitForm} type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </FormItem>
-      </FormLayout>
+              <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                <Button onClick={onSubmitForm} type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </FormItem>
+            </TextFormItem>
+          </Form>
+        </Wrapper>
+      </Container>
     </AppLayout>
   );
 };
@@ -233,10 +258,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  store.dispatch({
-    type: LOAD_USER_REQUEST,
-  });
-
+  store.dispatch(loadUser());
+  store.dispatch(loadCartProducts());
   store.dispatch(END);
   await store.sagaTask?.toPromise();
   return {

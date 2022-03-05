@@ -25,12 +25,14 @@ const Container = styled.div`
                 
 `;
 const Wrapper = styled.div`
-    width: 20%;
-    padding: 20px;
     background-color: white;
 `;
 const SignUpButton = styled(Button)`
  float: right;
+`;
+const FormDiv = styled.div`
+    width: 400px;
+    padding: 20px;
 `;
 const Signin:FC = () => {
   const [email, onChangeEmail] = useInput('');
@@ -70,53 +72,55 @@ const Signin:FC = () => {
   return (
     <Container>
       <Wrapper>
-        <Form
-          name="normal_login"
-          className="login-form"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onhandleSubmit}
-        >
-          <h1>LOGIN</h1>
-          <Form.Item
-            name="E-mail"
-            rules={[
-              {
-                required: true,
-                message: '이메일을 입력해주세요!',
-              },
-            ]}
+        <FormDiv>
+          <Form
+            name="normal_login"
+            className="login-form"
+            initialValues={{
+              remember: true,
+            }}
+            onFinish={onhandleSubmit}
           >
-            <Input value={email} onChange={onChangeEmail} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
-          </Form.Item>
-          <Form.Item
-            name="password"
-            rules={[
-              {
-                required: true,
-                message: '비밀번호를 입력해주세요!',
-              },
-            ]}
-          >
-            <Input
-              value={password}
-              onChange={onChangePassword}
-              prefix={<LockOutlined className="site-form-item-icon" />}
-              type="password"
-              placeholder="Password"
-            />
-          </Form.Item>
+            <h1>LOGIN</h1>
+            <Form.Item
+              name="E-mail"
+              rules={[
+                {
+                  required: true,
+                  message: '이메일을 입력해주세요!',
+                },
+              ]}
+            >
+              <Input value={email} onChange={onChangeEmail} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: '비밀번호를 입력해주세요!',
+                },
+              ]}
+            >
+              <Input
+                value={password}
+                onChange={onChangePassword}
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
 
-          <Form.Item>
-            <Button onClick={onhandleSubmit} type="primary" htmlType="submit" className="login-form-button">
-              로그인
-            </Button>
-            <SignUpButton onClick={onhandleSignUp} type="primary" htmlType="submit" className="signup-form-button">
-              회원가입
-            </SignUpButton>
-          </Form.Item>
-        </Form>
+            <Form.Item>
+              <Button onClick={onhandleSubmit} type="primary" htmlType="submit" className="login-form-button">
+                로그인
+              </Button>
+              <SignUpButton onClick={onhandleSignUp} type="primary" htmlType="submit" className="signup-form-button">
+                회원가입
+              </SignUpButton>
+            </Form.Item>
+          </Form>
+        </FormDiv>
       </Wrapper>
     </Container>
   );

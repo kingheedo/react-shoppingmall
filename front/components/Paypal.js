@@ -1,15 +1,8 @@
-import React, { FC, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 import { useDispatch } from 'react-redux';
-import { UserCart } from '../reducers/asyncActionTypes/cartTypes';
+import PropTypes from 'prop-types';
 import { addPaymentLists } from '../reducers/dispatchRequestTypes/userDispatchRequest';
-
-// export interface Props {
-//   headers?:string;
-//   checkedProduct?:UserCart;
-//   checkedProductsList? : UserCart[];
-//   cartTotalPrice: number
-// }
 
 const Paypal = ({
   headers, checkedProduct, checkedProductsList, cartTotalPrice,
@@ -17,11 +10,7 @@ const Paypal = ({
   const CartItemsId = checkedProductsList && checkedProductsList.map((v) => v.id);
   const CartItemId = checkedProduct?.id;
   const dispatch = useDispatch();
-  
-  // useEffect(() => {
-  //     console.log('checkedProductsList',checkedProductsList)
-  //     console.log('CartItemsId',CartItemsId)
-  // }, [checkedProductsList,CartItemsId])
+
   const onSuccess = useCallback(
     (payment) => {
       console.log('The payment was succeeded!', payment);
@@ -82,5 +71,15 @@ const Paypal = ({
       }}
     />
   );
+};
+Paypal.defaultProps = {
+  checkedProduct: null,
+  checkedProductsList: [],
+};
+Paypal.propTypes = {
+  headers: PropTypes.string.isRequired,
+  checkedProduct: PropTypes.object,
+  checkedProductsList: PropTypes.arrayOf(PropTypes.object),
+  cartTotalPrice: PropTypes.number.isRequired,
 };
 export default Paypal;

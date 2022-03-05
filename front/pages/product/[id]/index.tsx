@@ -21,24 +21,76 @@ import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispa
 import { CartState } from '../../../reducers/asyncActionTypes/cartTypes';
 import { UserState } from '../../../reducers/asyncActionTypes/userTypes';
 
-const Wrapper = styled.div`
+const Container = styled.div`
     display:flex;
-    padding: 60px 200px;
+    width: 80vw;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 8rem auto 0;
+        
 `;
 const ProductInfo = styled.div`
    display: flex;
    flex-direction : column;
    padding-left: 30px;
 `;
-const BtnCart = styled(Button)`
+const Btn = styled(Button)`
     width: 160px
 `;
-const BtnBuy = styled(Button)`
-    width: 160px
-`;
-const ContentWrapper = styled.div`
+const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
+    width: 100%;
+`;
+const Content = styled.div`
+    display: flex;
+    .image: {
+      width: 400px;
+      height: 400px;
+    }
+@media only screen and (max-width: 690px) {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+        }
+    
+`;
+const ProductImage = styled(Image)`
+      width: 400px;
+      height: 400px;
+      @media only screen and (max-width: 1075px) {
+        width: 300px;
+        height: 300px;
+        }
+`;
+const H2 = styled.h2`
+      margin: 2rem
+`;
+const Span = styled.span`
+      margin: 2rem
+`;
+const Select = styled.select`
+      margin: 1rem 0;
+      width: 320px;
+      text-align: center;
+`;
+const QuantityBtnGroup = styled.div`
+      display: flex;
+      width: 320px;
+`;
+const Quantity = styled(Input)`
+      text-align: center;
+`;
+const BuyBtnGroup = styled.div`
+       display: flex;
+       margin-top: 1rem;
+`;
+const SelectDiv = styled.div`
+       margin-top: 5rem;
+       @media only screen and (max-width: 690px) {
+        margin-top: 1rem;
+        }
 `;
 
 const Product = () => {
@@ -133,74 +185,72 @@ const Product = () => {
   );
   return (
     <AppLayout>
-      <Wrapper>
-        <ContentWrapper>
+      <Container>
+        <Wrapper>
           {singleProduct
-                            && (
-                            <>
-                              <div style={{ display: 'flex' }}>
-                                <Image alt="singleProduct.Images[0]" style={{ width: '400px', height: '400px' }} src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
-                                <ProductInfo>
-                                  <h2 style={{ margin: '2rem' }}>{singleProduct.productName}</h2>
-                                  {/* <ul>
-                                    {singleProduct && singleProduct.Colors.map(Color =>
-                                        <li>
-                                            <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
-                                                <a>{Color}</a>
-                                            </Link>
-                                        </li>
-                                    )}
-                                </ul> */}
-                                  <span style={{ margin: '2rem 0' }}>{`${singleProduct.price} 원`}</span>
-                                  <em style={{ margin: '2rem 0' }}>{singleProduct.id}</em>
-                                  <select
-                                    style={{ margin: '1rem 0', width: 320, textAlign: 'center' }}
-                                    value={size}
-                                    onChange={onSelectSize}
-                                  >
-                                    <option value="사이즈">사이즈</option>
-                                    {singleProduct && singleProduct.Sizes.map((productSize) => <option value={productSize.option}>{productSize.option}</option>)}
-                                  </select>
+                && (
+                <>
+                  <Content>
+                    <ProductImage className="image" alt="singleProduct.Images[0]" src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
+                    <ProductInfo>
+                      <H2>{singleProduct.productName}</H2>
+                      {/* <ul>
+                        {singleProduct && singleProduct.Colors.map(Color =>
+                            <li>
+                                <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
+                                    <a>{Color}</a>
+                                </Link>
+                            </li>
+                        )}
+                    </ul> */}
+                      <Span>{`${singleProduct.price} 원`}</Span>
+                      <SelectDiv>
+                        <Select
+                          value={size}
+                          onChange={onSelectSize}
+                        >
+                          <option value="사이즈">사이즈</option>
+                          {singleProduct && singleProduct.Sizes.map((productSize) => <option value={productSize.option}>{productSize.option}</option>)}
+                        </Select>
 
-                                  <div style={{ display: 'flex', width: '20rem' }}>
-                                    <Button onClick={ondecline}>
-                                      <MinusOutlined />
-                                    </Button>
-                                    <Input style={{ textAlign: 'center' }} value={quantity} placeholder="Basic usage" />
-                                    <Button onClick={onincrease}>
-                                      <PlusOutlined />
-                                    </Button>
-                                  </div>
+                        <QuantityBtnGroup>
+                          <Button onClick={ondecline}>
+                            <MinusOutlined />
+                          </Button>
+                          <Quantity value={quantity} placeholder="Basic usage" />
+                          <Button onClick={onincrease}>
+                            <PlusOutlined />
+                          </Button>
+                        </QuantityBtnGroup>
 
-                                  <div style={{ display: 'flex', marginTop: '1rem' }}>
-                                    <BtnCart onClick={onClickCart(singleProduct.price)}>장바구니</BtnCart>
-                                    <BtnBuy onClick={onClickBuy(singleProduct.price)}>바로구매</BtnBuy>
-                                  </div>
-                                </ProductInfo>
-                                <Modal
-                                  centered
-                                  visible={visibleModal}
-                                  footer={null}
-                                  onCancel={noneVisbleModal}
-                                >
-                                  <Result
-                                    status="success"
-                                    title={`장바구니에 상품이 담겼습니다.
-                                        장바구니로 이동하시겠습니까?`}
-                                    extra={[
-                                      <Button onClick={onhandleModal} key="move">확인</Button>,
-                                      <Button onClick={noneVisbleModal} key="cancel">취소</Button>,
-                                    ]}
-                                  />
-                                </Modal>
-                              </div>
-
-                              <Review product={singleProduct} />
-                            </>
-                            )}
-
-        </ContentWrapper>
-      </Wrapper>
+                        <BuyBtnGroup>
+                          <Btn className="BtnCart" onClick={onClickCart(singleProduct.price)}>장바구니</Btn>
+                          <Btn className="BtnBuyNow" onClick={onClickBuy(singleProduct.price)}>바로구매</Btn>
+                        </BuyBtnGroup>
+                      </SelectDiv>
+                    </ProductInfo>
+                    <Modal
+                      centered
+                      visible={visibleModal}
+                      footer={null}
+                      onCancel={noneVisbleModal}
+                    >
+                      <Result
+                        status="success"
+                        title={`장바구니에 상품이 담겼습니다.
+                            장바구니로 이동하시겠습니까?`}
+                        extra={[
+                          <Button onClick={onhandleModal} key="move">확인</Button>,
+                          <Button onClick={noneVisbleModal} key="cancel">취소</Button>,
+                        ]}
+                      />
+                    </Modal>
+                  </Content>
+                  <Review product={singleProduct} />
+                </>
+                )}
+        </Wrapper>
+      </Container>
     </AppLayout>
 
   );

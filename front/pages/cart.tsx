@@ -21,19 +21,79 @@ import { RootState } from '../reducers';
 import { CartState } from '../reducers/asyncActionTypes/cartTypes';
 import { UserState } from '../reducers/asyncActionTypes/userTypes';
 
-const DynamicPaypalComponent= dynamic(() => import('../components/Paypal'), { ssr: false });
+const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
 const { Title } = Typography;
 
+const Container = styled.div`
+    width: 80vw;
+    height: 100%;
+    margin: 6rem auto 0;
+`;
+
 const Wrapper = styled.div`
-    width: 100vw;
-    height : 100vh-60px;
     display : flex;
     align-items: left;
     flex-direction : column;
-    margin: 200px;
 `;
-
+const ProductInfo = styled.div`
+    @media only screen and (max-width: 690px) {
+        width: 16vw;
+        }
+    
+`;
+const ProductInfoUl = styled.ul`
+     list-style: none; 
+     margin: 0; 
+     padding: 0;
+    
+`;
+const ProductInfoLi = styled.li`
+     list-style: none;
+    
+`;
+const BreadCrumb = styled(Breadcrumb)`
+     width: 36vw;
+`;
+const PageTitle = styled(Title)`
+     margin-top: 3rem;
+     width: 36vw;
+`;
+const TableDiv = styled.div`
+     margin-top: 3rem;
+`;
+const Table = styled.table`
+     width: 60vw;
+`;
+const Thead = styled.thead`
+     border-bottom: 1px solid;
+`;
+const CheckAll = styled.input`
+    width: 20px; 
+    height: 20px;
+`;
+const Tbody = styled.tbody`
+    height: 10rem;
+    text-align: center;
+`;
+const Check = styled.input`
+     width: 20px;
+     height: 20px;
+`;
+const Image = styled.img`
+    width: 150px
+    height: 150px
+`;
+const DelteBtn = styled(CloseOutlined)`
+    font-size: 20px; 
+    cursor: pointer;
+`;
+const Em = styled.em`
+     font-style: normal
+`;
+const TotalDiv = styled.div`
+    margin-top: 2rem;
+`;
 const Cart:FC = () => {
   const { userCart, cartTotalPrice, cartTotalDeliveryFee } = useSelector<RootState, CartState>((state) => state.cart);
   const { me, addPaymentDone } = useSelector<RootState, UserState>((state) => state.user);
@@ -77,11 +137,9 @@ const Cart:FC = () => {
       if (e.target.checked && checkProduct) {
         setcheckedProductsList([...checkedProductsList, checkProduct]);
         dispatch(checkCartProduct({ id: productId }));
-        console.log('checkedProductsList', checkedProductsList);
       } else {
         setcheckedProductsList(checkedProductsList.filter((v) => v.id !== productId));
         dispatch(uncheckCartProduct({ id: productId }));
-        console.log('checkedProductsList', checkedProductsList);
       }
     },
     [checkedProductsList, userCart, checkedProductState],
@@ -96,107 +154,109 @@ const Cart:FC = () => {
   );
   return (
     <AppLayout>
-      <Wrapper>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link href="/">
-              <a>
-                Home
-              </a>
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
+      <Container>
+        <Wrapper>
+          <BreadCrumb>
+            <Breadcrumb.Item>
+              <Link href="/">
+                <a>
+                  Home
+                </a>
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              장바구니
+            </Breadcrumb.Item>
+          </BreadCrumb>
+
+          <PageTitle level={2}>
             장바구니
-          </Breadcrumb.Item>
-        </Breadcrumb>
+          </PageTitle>
 
-        <Title level={2} style={{ marginTop: '3rem' }}>
-          장바구니
-        </Title>
-
-        <div style={{ marginTop: '3rem' }}>
-          <table style={{ width: '1100px' }}>
-            <thead style={{ borderBottom: '1px solid' }}>
-              <tr>
-                <th>
-                  <input type="checkbox" style={{ width: '20px', height: '20px' }} checked={checkedAllProducts} onChange={onChangeAllCheckedProducts} />
-                </th>
-                <th colSpan={2}>상품정보</th>
-                <th>배송정보</th>
-                <th>주문금액</th>
-              </tr>
-            </thead>
-
-            <tbody style={{ height: '10rem', textAlign: 'center' }}>
-              <tr>
-                <td />
-              </tr>
-              {userCart[0] && userCart.map((cartSingleProduct, index) => (
-                <tr key={cartSingleProduct.id}>
-                  <td>
-                    <input style={{ width: '20px', height: '20px' }} checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id, index)} />
-                  </td>
-                  <td>
-                    <img style={{ width: '150px', height: '150px' }} alt={cartSingleProduct.Product.Images[1].src} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`} />
-                  </td>
-                  <td>
-                    <div>
-                      <span>{cartSingleProduct.Product.productName}</span>
-                      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                        <li style={{ listStyle: 'none' }}>
-                          {cartSingleProduct.size}
-                          /
-                          {cartSingleProduct.quantity}
-                          개
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                  <td>
-                    {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2500원' }
-                  </td>
-                  <td>
-                    {cartSingleProduct.totalPrice}
-                    원
-                  </td>
-                  <td>
-                    <CloseOutlined onClick={onDeleteCartItem(cartSingleProduct.id)} style={{ fontSize: '20px', cursor: 'pointer' }} />
-                  </td>
+          <TableDiv>
+            <Table>
+              <Thead>
+                <tr>
+                  <th>
+                    <CheckAll type="checkbox" checked={checkedAllProducts} onChange={onChangeAllCheckedProducts} />
+                  </th>
+                  <th colSpan={2}>상품정보</th>
+                  <th>배송정보</th>
+                  <th>주문금액</th>
                 </tr>
-              ))}
+              </Thead>
 
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <h5>스토어 주문금액 합계</h5>
-          <span>
-            상품금액
-            {' '}
-            <em style={{ fontStyle: 'normal' }}>
-              {cartTotalPrice - cartTotalDeliveryFee}
-              원
-            </em>
-            {' '}
-            + 배송비
-            {' '}
-            <em style={{ fontStyle: 'normal' }}>
-              {cartTotalDeliveryFee}
-              원 =
+              <Tbody>
+                <tr>
+                  <td />
+                </tr>
+                {userCart[0] && userCart.map((cartSingleProduct, index) => (
+                  <tr key={cartSingleProduct.id}>
+                    <td>
+                      <Check checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id, index)} />
+                    </td>
+                    <td>
+                      <Image alt={cartSingleProduct.Product.Images[1].src} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`} />
+                    </td>
+                    <td>
+                      <ProductInfo>
+                        <span>{cartSingleProduct.Product.productName}</span>
+                        <ProductInfoUl>
+                          <ProductInfoLi>
+                            {cartSingleProduct.size}
+                            /
+                            {cartSingleProduct.quantity}
+                            개
+                          </ProductInfoLi>
+                        </ProductInfoUl>
+                      </ProductInfo>
+                    </td>
+                    <td>
+                      {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2500원'}
+                    </td>
+                    <td>
+                      {cartSingleProduct.totalPrice}
+                      원
+                    </td>
+                    <td>
+                      <DelteBtn onClick={onDeleteCartItem(cartSingleProduct.id)} />
+                    </td>
+                  </tr>
+                ))}
+
+              </Tbody>
+            </Table>
+          </TableDiv>
+          <TotalDiv>
+            <h5>스토어 주문금액 합계</h5>
+            <span>
+              상품금액
               {' '}
-            </em>
-          </span>
-          <span>
-            {cartTotalPrice}
-            원
-          </span>
-        </div>
-        {/* <Payment checkedProductsList={checkedProductsList}/> */}
+              <Em>
+                {cartTotalPrice - cartTotalDeliveryFee}
+                원
+              </Em>
+              {' '}
+              + 배송비
+              {' '}
+              <Em>
+                {cartTotalDeliveryFee}
+                원 =
+                {' '}
+              </Em>
+            </span>
+            <span>
+              {cartTotalPrice}
+              원
+            </span>
+          </TotalDiv>
+          {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-        {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProduct = '' checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} />}
+          {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={null} />}
 
-        {addPaymentDone && <ResultSuccess />}
-      </Wrapper>
+          {addPaymentDone && <ResultSuccess />}
+        </Wrapper>
+      </Container>
     </AppLayout>
   );
 };

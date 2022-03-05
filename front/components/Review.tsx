@@ -2,12 +2,16 @@ import {
   Button, Input, Modal, Rate,
 } from 'antd';
 import React, {
-  FC, useCallback, useEffect, useState,
+  FC, useCallback, useState,
 } from 'react';
 import { useDispatch } from 'react-redux';
+import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { addProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
+const ReviewButton = styled(Button)`
+ margin-top: 1rem
+`;
 type Props = {
   reviewUniqueIds : string[];
   historyCartId : number;
@@ -50,9 +54,8 @@ const Review: FC<Props> = ({
   );
   return (
     <>
-      {exReview ? <Button disabled>작성완료</Button> : <Button onClick={() => setVisibleModal(true)}>리뷰쓰기</Button> }
+      {exReview ? <ReviewButton disabled>작성완료</ReviewButton> : <ReviewButton onClick={() => setVisibleModal(true)}>리뷰쓰기</ReviewButton> }
       <Modal
-        style={{ top: '10rem' }}
         visible={visibleModal}
         footer={
                   [<Button onClick={onClickReview} key="write">작성</Button>,

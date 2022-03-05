@@ -11,7 +11,7 @@ import { RootState } from '../reducers';
 import { CartState } from '../reducers/asyncActionTypes/cartTypes';
 import { LOG_OUT_REQUEST, UserState } from '../reducers/asyncActionTypes/userTypes';
 
-export const Global = createGlobalStyle`
+const Global = createGlobalStyle`
     a{
         color: #111111;
     } 
@@ -22,13 +22,12 @@ export const Global = createGlobalStyle`
  `;
 
 const Container = styled.div`
-        height: 60px;
+    margin: 0 auto;
+    width: 92vw;
+        height: 100%;
         background-color: white;
-        @media only screen and (max-width: 870px) {
-        height: 120px; 
         @media only screen and (max-width: 770px) {
         margin-bottom: 2rem;
-        }
         }
     `;
 const Wrapper = styled.div`
@@ -36,48 +35,43 @@ const Wrapper = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
-        @media only screen and (max-width: 770px) {
+        @media only screen and (max-width: 930px) {
         flex-direction : column;
         }
-
     `;
 const Left = styled.div`
         flex:1;
-
     `;
 const SearchContainer = styled.div`
         display: flex;
         align-items: center;
         padding: 5px;
-
     `;
 const Right = styled.div`
         flex:1;
         display:flex;
         align-item: center;
         justify-content: flex-end;
-
     `;
 const Center = styled.div`
         flex:1;
         text-align: center;
-
     `;
 const Logo = styled.h1`
         font-weight : bold;
         line-height : 1.8;
-
     `;
 const MenuItem = styled.div`
         font-size: 14px;
         margin-left: 25px;
-
     `;
 const SearchIcon = styled(Search)`
         .ant-input-search-button {
             height: 29px;
-
         }
+    `;
+const ShoppingCart = styled(ShoppingCartOutlined)`
+        font-size: 28px;
     `;
 const AppLayout: FC<ReactNode> = ({ children }) => {
   const { me } = useSelector<RootState, UserState>((state) => state.user);
@@ -171,7 +165,7 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
               <Link href="/cart">
                 <a>
                   <Badge count={userCart.length}>
-                    <ShoppingCartOutlined style={{ fontSize: '28px' }} />
+                    <ShoppingCart />
                   </Badge>
                 </a>
               </Link>

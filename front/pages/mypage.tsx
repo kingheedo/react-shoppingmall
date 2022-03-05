@@ -20,14 +20,30 @@ import Payment from '../components/Payment';
 moment.locale('ko');
 const { Title } = Typography;
 
-const Wrapper = styled.div`
+const Container = styled.div`
+    display:flex;
     width: 80vw;
-    height : 100vh-60px;
-    display : flex;
-    align-items: left;
-    flex-direction : column;
-    margin: 200px;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0 auto;
 
+`;
+const Wrapper = styled.div`
+    width: 100%;
+    display : flex;
+    flex-direction : column;
+`;
+const PaymentListDiv = styled.div`
+     margin-top: 3rem;
+     width: 40vw;
+`;
+const BreadCrumb = styled(Breadcrumb)`
+     width: 36vw;
+`;
+const PageTitle = styled(Title)`
+     margin-top: 3rem; 
+     width: 36vw;
 `;
 
 const Mypage:FC = () => {
@@ -47,26 +63,28 @@ const Mypage:FC = () => {
 
   return (
     <AppLayout>
-      <Wrapper>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link href="/">
-              <a>
-                Home
-              </a>
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
-            마이페이지
-          </Breadcrumb.Item>
-        </Breadcrumb>
-        <Title level={2} style={{ marginTop: '3rem' }}>
-          주문내역
-        </Title>
-        <div style={{ marginTop: '3rem', width: '36vw' }}>
-          {paymentLists?.map((payment) => <Payment key={payment.id} payment={payment} />)}
-        </div>
-      </Wrapper>
+      <Container>
+        <Wrapper>
+          <BreadCrumb>
+            <Breadcrumb.Item>
+              <Link href="/">
+                <a>
+                  Home
+                </a>
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              마이페이지
+            </Breadcrumb.Item>
+          </BreadCrumb>
+          <PageTitle level={2}>
+            주문내역
+          </PageTitle>
+          <PaymentListDiv>
+            {paymentLists?.map((payment) => <Payment key={payment.id} payment={payment} />)}
+          </PaymentListDiv>
+        </Wrapper>
+      </Container>
     </AppLayout>
   );
 };

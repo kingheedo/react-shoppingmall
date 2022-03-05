@@ -25,9 +25,11 @@ const Container = styled.div`
                 
 `;
 const Wrapper = styled.div`
-    width: 20%;
-    padding: 20px;
     background-color: white;
+`;
+const FormDiv = styled.div`
+    width: 400px;
+    padding: 20px;
 `;
 const Signup = () => {
   const {
@@ -91,90 +93,92 @@ const Signup = () => {
   return (
     <Container>
       <Wrapper>
-        <Form onFinish={onSubmitForm}>
-          <h1>CREATE AN ACCOUNT</h1>
-          <Form.Item
-            name="email"
-            label="이메일"
-            rules={[
-              {
-                type: 'email',
-                message: '이메일 형식이 아닙니다.',
-              },
-              {
-                required: true,
-                message: '이메일을 입력해 주세요.',
-              },
-            ]}
-          >
-            <Input placeholder="이메일" value={email} onChange={onChangeEmail} />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label="이름"
-            rules={[
-              {
-                required: true,
-                message: '이름을 입력해주세요.',
-                whitespace: true,
-              },
-            ]}
-          >
-            <Input placeholder="이름" value={name} onChange={onChangeName} />
-          </Form.Item>
-          <Form.Item
-            style={{ marginRight: '10px' }}
-            name="password"
-            label="비밀번호"
-            rules={[
-              {
-                required: true,
-                message: '비밀번호를 입력해주세요.',
-              },
-            ]}
-          >
-            <Input.Password placeholder="비밀번호" value={password} onChange={onChangePassword} />
-          </Form.Item>
+        <FormDiv>
+          <Form onFinish={onSubmitForm}>
+            <h1>CREATE AN ACCOUNT</h1>
+            <Form.Item
+              name="email"
+              label="이메일"
+              rules={[
+                {
+                  type: 'email',
+                  message: '이메일 형식이 아닙니다.',
+                },
+                {
+                  required: true,
+                  message: '이메일을 입력해 주세요.',
+                },
+              ]}
+            >
+              <Input placeholder="이메일" value={email} onChange={onChangeEmail} />
+            </Form.Item>
+            <Form.Item
+              name="name"
+              label="이름"
+              rules={[
+                {
+                  required: true,
+                  message: '이름을 입력해주세요.',
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input placeholder="이름" value={name} onChange={onChangeName} />
+            </Form.Item>
+            <Form.Item
+              style={{ marginRight: '10px' }}
+              name="password"
+              label="비밀번호"
+              rules={[
+                {
+                  required: true,
+                  message: '비밀번호를 입력해주세요.',
+                },
+              ]}
+            >
+              <Input.Password placeholder="비밀번호" value={password} onChange={onChangePassword} />
+            </Form.Item>
 
-          <Form.Item
-            name="confirm"
-            label="비밀번호 확인"
-            rules={[
-              {
-                required: true,
-                message: '입력하신 비밀번호가 다릅니다.',
-              },
-            ]}
-          >
-            <Input.Password placeholder="비밀번호 확인" value={confirmpassword} onChange={onChangeConfirmpassword} />
+            <Form.Item
+              name="confirm"
+              label="비밀번호 확인"
+              rules={[
+                {
+                  required: true,
+                  message: '입력하신 비밀번호가 다릅니다.',
+                },
+              ]}
+            >
+              <Input.Password placeholder="비밀번호 확인" value={confirmpassword} onChange={onChangeConfirmpassword} />
 
-          </Form.Item>
+            </Form.Item>
 
-          <Form.Item
-            name="agreement"
-            valuePropName="checked"
-          >
-            <Checkbox checked={check} onChange={onChangeCheck}>
-              I have read the
-              {' '}
-              <a href="">agreement</a>
-            </Checkbox>
-            {checkerror && <div>약관에 동의하세요!</div>}
-          </Form.Item>
+            <Form.Item
+              name="agreement"
+              valuePropName="checked"
+            >
+              <Checkbox checked={check} onChange={onChangeCheck}>
+                I have read the
+                {' '}
+                <a href="">agreement</a>
+              </Checkbox>
+              {checkerror && <div>약관에 동의하세요!</div>}
+            </Form.Item>
 
-          <Form.Item>
-            {signUpLoading ? (
-              <Button type="primary" loading>
-                Loading
-              </Button>
-            )
-              : (
-                <Button onClick={onSubmitForm} type="primary" htmlType="submit">
-                  CREATE
+            <Form.Item>
+              {signUpLoading ? (
+                <Button type="primary" loading>
+                  Loading
                 </Button>
-              )}
-          </Form.Item>
-        </Form>
+              )
+                : (
+                  <Button onClick={onSubmitForm} type="primary" htmlType="submit">
+                    CREATE
+                  </Button>
+                )}
+            </Form.Item>
+          </Form>
+        </FormDiv>
       </Wrapper>
 
     </Container>

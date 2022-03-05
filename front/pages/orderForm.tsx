@@ -24,15 +24,63 @@ const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { s
 
 const { Title } = Typography;
 
+const Container = styled.div`
+    width: 80vw;
+    height: 100%;
+    margin: 6rem auto 0;
+`;
+
 const Wrapper = styled.div`
-    width: 100vw;
-    height : 100vh-60px;
     display : flex;
     align-items: left;
     flex-direction : column;
-    margin: 200px;
 `;
-
+const BreadCrumb = styled(Breadcrumb)`
+     width: 36vw;
+`;
+const PageTitle = styled(Title)`
+     margin-top: 3rem;
+     width: 36vw;
+`;
+const TableDiv = styled.div`
+     margin-top: 3rem;
+`;
+const Table = styled.table`
+     width: 60vw;
+`;
+const Thead = styled.thead`
+     border-bottom: 1px solid;
+`;
+const Tbody = styled.tbody`
+    height: 10rem;
+    text-align: center;
+`;
+const Image = styled.img`
+    width: 150px
+    height: 150px
+`;
+const ProductInfo = styled.div`
+    @media only screen and (max-width: 690px) {
+        width: 16vw;
+        }
+    
+`;
+const ProductInfoUl = styled.ul`
+     list-style: none; 
+     margin: 0; 
+     padding: 0;
+    
+`;
+const ProductInfoLi = styled.li`
+     list-style: none;
+    
+`;
+const Em = styled.em`
+     font-style: normal
+`;
+const TotalDiv = styled.div`
+    margin-top: 2rem;
+`;
 const OrderForm: FC = () => {
   const {
     userCart, cartTotalPrice, cartTotalDeliveryFee,
@@ -52,95 +100,97 @@ const OrderForm: FC = () => {
 
   return (
     <AppLayout>
-      <Wrapper>
-        <Breadcrumb>
-          <Breadcrumb.Item>
-            <Link href="/">
-              <a>
-                Home
-              </a>
-            </Link>
-          </Breadcrumb.Item>
-          <Breadcrumb.Item>
+      <Container>
+        <Wrapper>
+          <BreadCrumb>
+            <Breadcrumb.Item>
+              <Link href="/">
+                <a>
+                  Home
+                </a>
+              </Link>
+            </Breadcrumb.Item>
+            <Breadcrumb.Item>
+              구매
+            </Breadcrumb.Item>
+          </BreadCrumb>
+
+          <PageTitle level={2}>
             구매
-          </Breadcrumb.Item>
-        </Breadcrumb>
+          </PageTitle>
 
-        <Title level={2} style={{ marginTop: '3rem' }}>
-          구매
-        </Title>
+          <TableDiv>
+            <Table>
+              <Thead>
+                <tr>
+                  <th colSpan={2}>상품정보</th>
+                  <th>배송정보</th>
+                  <th>주문금액</th>
+                </tr>
+              </Thead>
 
-        <div style={{ marginTop: '3rem' }}>
-          <table style={{ width: '1100px' }}>
-            <thead style={{ borderBottom: '1px solid' }}>
-              <tr>
-                <th colSpan={2}>상품정보</th>
-                <th>배송정보</th>
-                <th>주문금액</th>
-              </tr>
-            </thead>
+              <Tbody>
+                <tr key={userCart[0]?.id}>
+                  <td>
+                    <Image alt={userCart[0]?.Product.Images[1].src} src={`http://localhost:3065/${userCart[0]?.Product.Images[1].src}`} />
 
-            <tbody style={{ height: '10rem', textAlign: 'center' }}>
-              <tr key={userCart[0]?.id}>
-                <td style={{ width: '20vw' }}>
-                  <img style={{ width: '150px', height: '150px' }} alt={userCart[0]?.Product.Images[1].src} src={`http://localhost:3065/${userCart[0]?.Product.Images[1].src}`} />
+                  </td>
+                  <td>
+                    <ProductInfo>
+                      <span>{userCart[0]?.Product.productName}</span>
+                      <ProductInfoUl>
+                        <ProductInfoLi>
+                          {userCart[0]?.size}
+                          /
+                          {userCart[0]?.quantity}
+                          개
+                        </ProductInfoLi>
+                      </ProductInfoUl>
+                    </ProductInfo>
+                  </td>
 
-                </td>
-                <td>
-                  <div>
-                    <span>{userCart[0]?.Product.productName}</span>
-                    <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                      <li style={{ listStyle: 'none' }}>
-                        {userCart[0]?.size}
-                        /
-                        {userCart[0]?.quantity}
-                        개
-                      </li>
-                    </ul>
-                  </div>
-                </td>
+                  <td>
+                    {userCart[0]?.totalPrice > 39900 ? '무료배송' : '2500원'}
+                  </td>
+                  <td>
+                    {userCart[0]?.totalPrice}
+                    원
+                  </td>
+                </tr>
 
-                <td>
-                  {userCart[0]?.totalPrice > 39900 ? '무료배송' : '2500원'}
-                </td>
-                <td>
-                  {userCart[0]?.totalPrice}
-                  원
-                </td>
-              </tr>
-
-            </tbody>
-          </table>
-        </div>
-        <div>
-          <h5>스토어 주문금액 합계</h5>
-          <span>
-            상품금액
-            {' '}
-            <em style={{ fontStyle: 'normal' }}>
-              {cartTotalPrice - cartTotalDeliveryFee}
-              원
-            </em>
-            {' '}
-            + 배송비
-            {' '}
-            <em style={{ fontStyle: 'normal' }}>
-              {cartTotalDeliveryFee}
-              원 =
+              </Tbody>
+            </Table>
+          </TableDiv>
+          <TotalDiv>
+            <h5>스토어 주문금액 합계</h5>
+            <span>
+              상품금액
               {' '}
-            </em>
-          </span>
-          <span>
-            {cartTotalPrice}
-            원
-          </span>
-        </div>
-        {/* <Payment checkedProductsList={checkedProductsList}/> */}
+              <Em style={{ fontStyle: 'normal' }}>
+                {cartTotalPrice - cartTotalDeliveryFee}
+                원
+              </Em>
+              {' '}
+              + 배송비
+              {' '}
+              <Em style={{ fontStyle: 'normal' }}>
+                {cartTotalDeliveryFee}
+                원 =
+                {' '}
+              </Em>
+            </span>
+            <span>
+              {cartTotalPrice}
+              원
+            </span>
+          </TotalDiv>
+          {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-        {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} checkedProductsList='' cartTotalPrice={cartTotalPrice} />}
+          {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} cartTotalPrice={cartTotalPrice} checkedProductsList={[]} />}
 
-        {addPaymentDone && <ResultSuccess />}
-      </Wrapper>
+          {addPaymentDone && <ResultSuccess />}
+        </Wrapper>
+      </Container>
     </AppLayout>
   );
 };
