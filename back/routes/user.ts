@@ -141,6 +141,7 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
         if(req.body.CartItemsId){
             const findHistoryCart = await HistoryCart.findAll({
                 where : {[Op.and] : [{id : {[Op.or]: req.body.CartItemsId }},{UserId : req.user!.id}]},
+                order : [['id', 'DESC']],
             })
             await Promise.all(
                 req.body.CartItemsId.map((cartItemId:number,i:number) => 
@@ -159,6 +160,8 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     })
                 )
             )
+            console.log('findHistoryCart',findHistoryCart.map(v => v.id))
+            console.log('reqBodyId',req.body.CartItemsId)
             // await findHistoryCart.addPayments(payments)
         }
              
