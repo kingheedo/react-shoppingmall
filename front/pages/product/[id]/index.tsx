@@ -22,12 +22,9 @@ import { CartState } from '../../../reducers/asyncActionTypes/cartTypes';
 import { UserState } from '../../../reducers/asyncActionTypes/userTypes';
 
 const Container = styled.div`
-    display:flex;
     width: 80vw;
-    align-items: center;
-    justify-content: center;
     height: 100%;
-    margin: 8rem auto 0;
+    margin: 6rem auto 0;
         
 `;
 const ProductInfo = styled.div`

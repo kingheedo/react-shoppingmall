@@ -21,16 +21,12 @@ moment.locale('ko');
 const { Title } = Typography;
 
 const Container = styled.div`
-    display:flex;
     width: 80vw;
-    align-items: center;
-    justify-content: center;
     height: 100%;
-    margin: 0 auto;
+    margin: 6rem auto 0;
 
 `;
 const Wrapper = styled.div`
-    width: 100%;
     display : flex;
     flex-direction : column;
 `;

@@ -21,8 +21,9 @@ const Global = createGlobalStyle`
 }
 `;
 const Container = styled.div`
-margin: 20px auto;
     width: 80vw;
+    height: 100%;
+    margin: 6rem auto 0;
 `;
 const Wrapper = styled.div`
 display: flex;
