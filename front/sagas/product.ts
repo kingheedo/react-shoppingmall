@@ -9,13 +9,33 @@ import {
   LOAD_PRODUCT_FAILURE,
   LOAD_PRODUCT_REQUEST,
   LOAD_PRODUCT_SUCCESS,
-  REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS,
+  REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, SEARCH_PRODUCTS_FAILURE, SEARCH_PRODUCTS_REQUEST, SEARCH_PRODUCTS_SUCCESS, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/asyncActionTypes/productType';
 import { ADD_PRODUCT_REVIEW_FAILURE, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS } from '../reducers/asyncActionTypes/userTypes';
 import {
-  LoadProduct, LoadProducts, RegisterProduct, UploadImages,
+  LoadProduct, LoadProducts, RegisterProduct, SearchProducts, UploadImages,
 } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 import { AddProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+
+function searchProductAPI(data:string) {
+  return axios.get(`/product/name/${encodeURIComponent(data)}`);
+}
+
+function* searchProduct(action:SearchProducts) {
+  try {
+    const result:AxiosResponse = yield call(searchProductAPI, action.name);
+    yield put({
+      type: SEARCH_PRODUCTS_SUCCESS,
+      data: result.data,
+    });
+  } catch (err:any) {
+    console.error(err);
+    yield put({
+      type: SEARCH_PRODUCTS_FAILURE,
+      error: err.response.data,
+    });
+  }
+}
 
 function registerProductAPI(data:FormData) {
   return axios.post('/product', data);
@@ -113,6 +133,10 @@ function* loadSingleProduct(action: LoadProduct) {
     });
   }
 }
+
+function* watchSearchProduct():Generator<StrictEffect> {
+  yield takeLatest(SEARCH_PRODUCTS_REQUEST, searchProduct);
+}
 function* watchRegisterProduct():Generator<StrictEffect> {
   yield takeLatest(REGISTER_PRODUCT_REQUEST, registerProduct);
 }
@@ -133,6 +157,7 @@ function* watchLoadProduct():Generator<StrictEffect> {
 
 export default function* productSaga() {
   yield all([
+    fork(watchSearchProduct),
     fork(watchRegisterProduct),
     fork(watchUploadImages),
     fork(watchAddProductReview),

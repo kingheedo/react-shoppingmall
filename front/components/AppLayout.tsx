@@ -2,14 +2,13 @@ import React, { FC, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { Badge, Button } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
-import Search from 'antd/lib/input/Search';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
-import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
 import { CartState } from '../reducers/asyncActionTypes/cartTypes';
 import { LOG_OUT_REQUEST, UserState } from '../reducers/asyncActionTypes/userTypes';
+import SearchInput from './SearchInput';
 
 const Global = createGlobalStyle`
     a{
@@ -65,26 +64,13 @@ const MenuItem = styled.div`
         font-size: 14px;
         margin-left: 25px;
     `;
-const SearchIcon = styled(Search)`
-        .ant-input-search-button {
-            height: 29px;
-        }
-    `;
 const ShoppingCart = styled(ShoppingCartOutlined)`
         font-size: 28px;
     `;
 const AppLayout: FC<ReactNode> = ({ children }) => {
   const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { userCart } = useSelector<RootState, CartState>((state) => state.cart);
-  const [searchvalue, onChangeSearch] = useInput(null);
   const dispatch = useDispatch();
-
-  const onSearch = useCallback(
-    () => {
-      return alert(searchvalue);
-    },
-    [searchvalue],
-  );
 
   const onHandleLogout = useCallback(
     () => {
@@ -103,7 +89,7 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
         <Wrapper>
           <Left>
             <SearchContainer>
-              <SearchIcon onSearch={onSearch} value={searchvalue} onChange={onChangeSearch} allowClear style={{ width: '20rem' }} placeholder="input search text" />
+              <SearchInput />
             </SearchContainer>
           </Left>
           <Center>

@@ -1,7 +1,10 @@
 import {
-  LoadProductRequest, LoadProductsRequest, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCT_REQUEST, RegisterProductRequest, REGISTER_PRODUCT_REQUEST, RemoveImage, REMOVE_IMAGE, UploadImagesRequest, UPLOAD_IMAGES_REQUEST,
+  LoadProductRequest, LoadProductsRequest, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCT_REQUEST, RegisterProductRequest, REGISTER_PRODUCT_REQUEST, RemoveImage, REMOVE_IMAGE, SearchProductsRequest, SEARCH_PRODUCTS_REQUEST, UploadImagesRequest, UPLOAD_IMAGES_REQUEST,
 } from '../asyncActionTypes/productType';
 
+export interface SearchProducts extends SearchProductsRequest {
+  name : string
+}
 export interface RegisterProduct extends RegisterProductRequest {
   data : FormData
 }
@@ -15,6 +18,13 @@ export interface LoadProducts extends LoadProductsRequest{
 export interface LoadProduct extends LoadProductRequest{
     id: string
 }
+
+export const searchProduct = (name:string):SearchProducts => {
+  return {
+    type: SEARCH_PRODUCTS_REQUEST,
+    name,
+  };
+};
 
 export const registerProduct = (data:FormData):RegisterProduct => {
   return {

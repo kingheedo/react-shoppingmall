@@ -1,12 +1,13 @@
 import { produce } from 'immer';
 import {
-  ProductState, LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST, LOAD_PRODUCT_SUCCESS, REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, REMOVE_IMAGE, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, ProductAction,
+  ProductState, LOAD_PRODUCTS_FAILURE, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCTS_SUCCESS, LOAD_PRODUCT_FAILURE, LOAD_PRODUCT_REQUEST, LOAD_PRODUCT_SUCCESS, REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, REMOVE_IMAGE, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS, ProductAction, SEARCH_PRODUCTS_REQUEST, SEARCH_PRODUCTS_SUCCESS, SEARCH_PRODUCTS_FAILURE,
 } from './asyncActionTypes/productType';
 
 const initialState:ProductState = {
   mainProducts: [],
   singleProduct: null,
   imagePath: [],
+  searchProductsList: [],
   hasMoreProducts: true,
   registerProductLoading: false,
   registerProductDone: false,
@@ -20,6 +21,9 @@ const initialState:ProductState = {
   loadProductLoading: false,
   loadProductDone: false,
   loadProductError: null,
+  searchProductLoading: false,
+  searchProductDone: false,
+  searchProductError: null,
 
 };
 
@@ -151,6 +155,21 @@ const initialState:ProductState = {
 // }));
 const reducer = (state = initialState, action:ProductAction) => produce(state, (draft) => {
   switch (action.type) {
+    case SEARCH_PRODUCTS_REQUEST:
+      draft.searchProductLoading = true;
+      draft.searchProductDone = false;
+      draft.searchProductError = null;
+      break;
+    case SEARCH_PRODUCTS_SUCCESS:
+      draft.searchProductLoading = false;
+      draft.searchProductDone = true;
+      draft.searchProductsList = action.data;
+      break;
+    case SEARCH_PRODUCTS_FAILURE:
+      draft.searchProductDone = false;
+      draft.searchProductError = action.error;
+      break;
+
     case REGISTER_PRODUCT_REQUEST:
       draft.registerProductLoading = true;
       draft.registerProductDone = false;

@@ -84,6 +84,24 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
         next(error);
     }
 })
+
+router.get('/name/:letter', async(req, res, next) => {
+    try{
+        const SearchProducts =  await Product.findAll({
+            where : {
+                productName : {
+                    [Op.like] : "%" + decodeURIComponent(req.params.letter) + "%"
+                }
+            },
+            attributes: ['id','productName']
+        })
+        res.status(202).json(SearchProducts)
+    }catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
 router.get('/:postId', async(req, res, next ) => {
     try{
         let where= {};
