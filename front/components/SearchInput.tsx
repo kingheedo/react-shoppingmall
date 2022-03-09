@@ -1,7 +1,9 @@
 import { Input } from 'antd';
 import Link from 'next/link';
 import Router from 'next/router';
-import React, { FC, useCallback, useEffect } from 'react';
+import React, {
+  FC, useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
@@ -11,7 +13,6 @@ import { searchProduct } from '../reducers/dispatchRequestTypes/productDispatchR
 
 const { Search } = Input;
 const SearchWrapper = styled.div`
-      z-index: 1000;
       position: relative;
     `;
 const SearchResult = styled.div`
@@ -22,7 +23,7 @@ const SearchResult = styled.div`
     border-right: 1px solid #d9d9d9;;
     border-bottom: 1px solid #d9d9d9;;
     `;
-const SearchLink = styled.a`
+const SearchLinkAnchor = styled.a`
     padding: 4px 11px;
     display: block;
     `;
@@ -40,17 +41,44 @@ const SearchLi = styled.li`
     `;
 const SearchInput:FC = () => {
   const { searchProductsList } = useSelector<RootState, ProductState>((state) => state.product);
-  const [searchvalue, onChangeSearch] = useInput(null);
+  const [searchvalue, onChangeSearch, setSearchValue] = useInput(null);
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement|null>(null);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    console.log(searchvalue);
     if (searchvalue) {
+      setOpenDropdown(true);
       dispatch(searchProduct(searchvalue));
+    } else {
+      setOpenDropdown(false);
     }
-  }, [searchvalue]);
-  const onEnterLink = useCallback(
+  }, [searchvalue, openDropdown]);
+
+  const onReset = useCallback(
+    () => {
+      setSearchValue('');
+      setOpenDropdown(false);
+    },
+    [searchvalue, openDropdown],
+  );
+
+  useEffect(() => {
+    const onCheckClickOutside = (e:MouseEvent) => {
+      //! ref.current.contains(e.target as Node) 은 SearchResult태그에 이벤트가 발생하지 않았을때를 의미
+      if (searchvalue && searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        onReset();
+      }
+    };
+    document.addEventListener('mousedown', onCheckClickOutside);
+    return () => {
+      // Cleanup the event listener
+      document.removeEventListener('mousedown', onCheckClickOutside);
+    };
+  }, [searchvalue, openDropdown, searchRef.current]);
+
+  const onTabEnterLink = useCallback(
     (id) => (e: React.KeyboardEvent<HTMLLIElement>) => {
-      console.log(e.target);
       if (e.key === 'Enter') {
         Router.push(`/product/${id}`);
       }
@@ -58,42 +86,35 @@ const SearchInput:FC = () => {
     [],
   );
 
-  // useEffect(() => {
-  //   if (Array.isArray(searchProductsList)) {
-  //     searchProductsList.map(
-  //       (v) => <div>{v.productName}</div>,
-  //     );
-  //   } else {
-  //     <div>{searchProductsList.productName}</div>;
-  //   }
-  // }, [searchvalue, searchProductsList]);
+  const onSearchEnter = useCallback(
+    () => {
+      if (searchvalue && openDropdown === true && searchProductsList[0].id) {
+        onReset();
+        Router.push(`/product/${searchProductsList[0].id}`);
+      }
+    },
+    [searchvalue, openDropdown, searchProductsList],
+  );
 
-  // const onSearch = useCallback(
-  //   () => {
-  //     return alert(searchvalue);
-  //   },
-  //   [searchvalue],
-  // );
   return (
     <SearchWrapper>
-      <Search value={searchvalue} onChange={onChangeSearch} allowClear style={{ width: '20rem' }} placeholder="input search text" />
-      <SearchResult>
+      <Search onPressEnter={onSearchEnter} value={searchvalue} onChange={onChangeSearch} allowClear style={{ width: '20rem' }} placeholder="search" />
+      <SearchResult ref={searchRef}>
         <SearchUl>
           {
-            searchvalue && searchProductsList && searchProductsList.map(
+            openDropdown === true && searchProductsList && searchProductsList.map(
               (v) => (
-                <SearchLi tabIndex={0} onKeyPress={onEnterLink(v.id)}>
+                <SearchLi onClick={onReset} tabIndex={0} onKeyPress={onTabEnterLink(v.id)}>
                   <Link href={`/product/${v.id}`}>
-                    <SearchLink>
+                    <SearchLinkAnchor>
                       {v.productName}
-                    </SearchLink>
+                    </SearchLinkAnchor>
                   </Link>
                 </SearchLi>
               ),
             )
           }
         </SearchUl>
-
       </SearchResult>
     </SearchWrapper>
   );
