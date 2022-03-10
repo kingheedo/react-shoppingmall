@@ -53,21 +53,13 @@ const SearchInput:FC = () => {
     } else {
       setOpenDropdown(false);
     }
-  }, [searchvalue, openDropdown]);
-
-  const onReset = useCallback(
-    () => {
-      setSearchValue('');
-      setOpenDropdown(false);
-    },
-    [searchvalue, openDropdown],
-  );
+  }, [searchvalue]);
 
   useEffect(() => {
-    const onCheckClickOutside = (e:MouseEvent) => {
+    const onCheckClickOutside = (e: MouseEvent) => {
       //! ref.current.contains(e.target as Node) 은 SearchResult태그에 이벤트가 발생하지 않았을때를 의미
-      if (searchvalue && searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        onReset();
+      if (searchvalue && openDropdown === true && searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setOpenDropdown(false);
       }
     };
     document.addEventListener('mousedown', onCheckClickOutside);
@@ -76,6 +68,14 @@ const SearchInput:FC = () => {
       document.removeEventListener('mousedown', onCheckClickOutside);
     };
   }, [searchvalue, openDropdown, searchRef.current]);
+
+  const onReset = useCallback(
+    () => {
+      setSearchValue('');
+      setOpenDropdown(false);
+    },
+    [searchvalue, openDropdown],
+  );
 
   const onTabEnterLink = useCallback(
     (id) => (e: React.KeyboardEvent<HTMLLIElement>) => {
