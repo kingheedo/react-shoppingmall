@@ -85,12 +85,12 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
     }
 })
 
-router.get('/name/:letter', async(req, res, next) => {
+router.get('/name/:spelling', async(req, res, next) => {
     try{
         const SearchProducts =  await Product.findAll({
             where : {
                 productName : {
-                    [Op.like] : "%" + decodeURIComponent(req.params.letter) + "%"
+                    [Op.like] : "%" + decodeURIComponent(req.params.spelling) + "%"
                 }
             },
             attributes: ['id','productName']
