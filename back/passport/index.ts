@@ -1,11 +1,11 @@
 import * as passport from 'passport';
 import local from './local';
 import User from '../models/user';
-type tUser ={
+type IUser ={
     id?: number;
 }
 export default() => {
-    passport.serializeUser((user:tUser, done) => {
+    passport.serializeUser((user:IUser, done) => {
 
     done(null, user.id);
 
