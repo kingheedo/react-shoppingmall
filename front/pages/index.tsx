@@ -7,7 +7,7 @@ import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 import AppLayout from '../components/AppLayout';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
-import MainProduct from '../components/MainProduct';
+import Product from '../components/Product';
 import wrapper from '../store/configureStore';
 import { loadProducts } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 import { RootState } from '../reducers';
@@ -33,7 +33,7 @@ align-items: center;
 const H2 = styled.h2`
 margin-bottom: 2rem;
 `;
-const Home:FC = () => {
+const Home: FC = () => {
   const { mainProducts, loadProductsLoading, hasMoreProducts } = useSelector<RootState, ProductState>((state) => state.product);
   const dispatch = useDispatch();
   const [ref, inView] = useInView();
@@ -44,7 +44,7 @@ const Home:FC = () => {
       dispatch(loadProducts(lastId));
     }
   },
-  [inView, hasMoreProducts, loadProductsLoading, mainProducts]);
+    [inView, hasMoreProducts, loadProductsLoading, mainProducts]);
 
   return (
     <>
@@ -58,7 +58,7 @@ const Home:FC = () => {
 
               {mainProducts.map((product) => (
                 <Col key={product.id} span={6}>
-                  <MainProduct product={product} />
+                  <Product product={product} />
                 </Col>
               ))}
               <div ref={ref} />

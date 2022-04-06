@@ -90,7 +90,7 @@ const SelectDiv = styled.div`
         }
 `;
 
-const Product = () => {
+const QueryProduct = () => {
   const dispatch = useDispatch();
   const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
@@ -103,7 +103,6 @@ const Product = () => {
   const [visibleModal, setVisibleModal] = useState(false);
   const [buyNow, setBuyNow] = useState(true);
   useEffect(() => {
-    // console.log('buyNow', buyNow);
     if (buyNow && addProductCartDone) {
       Router.push('/orderForm');
     }
@@ -185,67 +184,58 @@ const Product = () => {
       <Container>
         <Wrapper>
           {singleProduct
-                && (
-                <>
-                  <Content>
-                    <ProductImage className="image" alt="singleProduct.Images[0]" src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
-                    <ProductInfo>
-                      <H2>{singleProduct.productName}</H2>
-                      {/* <ul>
-                        {singleProduct && singleProduct.Colors.map(Color =>
-                            <li>
-                                <Link href="/product/[id]/[color]" as={`/product/${id}/${Color}`}>
-                                    <a>{Color}</a>
-                                </Link>
-                            </li>
-                        )}
-                    </ul> */}
-                      <Span>{`${singleProduct.price} 원`}</Span>
-                      <SelectDiv>
-                        <Select
-                          value={size}
-                          onChange={onSelectSize}
-                        >
-                          <option value="사이즈">사이즈</option>
-                          {singleProduct && singleProduct.Sizes.map((productSize) => <option value={productSize.option}>{productSize.option}</option>)}
-                        </Select>
+            && (
+              <>
+                <Content>
+                  <ProductImage className="image" alt="singleProduct.Images[0]" src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
+                  <ProductInfo>
+                    <H2>{singleProduct.productName}</H2>
+                    <Span>{`${singleProduct.price} 원`}</Span>
+                    <SelectDiv>
+                      <Select
+                        value={size}
+                        onChange={onSelectSize}
+                      >
+                        <option value="사이즈">사이즈</option>
+                        {singleProduct && singleProduct.Sizes.map((productSize) => <option value={productSize.option}>{productSize.option}</option>)}
+                      </Select>
 
-                        <QuantityBtnGroup>
-                          <Button onClick={ondecline}>
-                            <MinusOutlined />
-                          </Button>
-                          <Quantity value={quantity} placeholder="Basic usage" />
-                          <Button onClick={onincrease}>
-                            <PlusOutlined />
-                          </Button>
-                        </QuantityBtnGroup>
+                      <QuantityBtnGroup>
+                        <Button onClick={ondecline}>
+                          <MinusOutlined />
+                        </Button>
+                        <Quantity value={quantity} placeholder="Basic usage" />
+                        <Button onClick={onincrease}>
+                          <PlusOutlined />
+                        </Button>
+                      </QuantityBtnGroup>
 
-                        <BuyBtnGroup>
-                          <Btn className="BtnCart" onClick={onClickCart(singleProduct.price)}>장바구니</Btn>
-                          <Btn className="BtnBuyNow" onClick={onClickBuy(singleProduct.price)}>바로구매</Btn>
-                        </BuyBtnGroup>
-                      </SelectDiv>
-                    </ProductInfo>
-                    <Modal
-                      centered
-                      visible={visibleModal}
-                      footer={null}
-                      onCancel={noneVisbleModal}
-                    >
-                      <Result
-                        status="success"
-                        title={`장바구니에 상품이 담겼습니다.
+                      <BuyBtnGroup>
+                        <Btn className="BtnCart" onClick={onClickCart(singleProduct.price)}>장바구니</Btn>
+                        <Btn className="BtnBuyNow" onClick={onClickBuy(singleProduct.price)}>바로구매</Btn>
+                      </BuyBtnGroup>
+                    </SelectDiv>
+                  </ProductInfo>
+                  <Modal
+                    centered
+                    visible={visibleModal}
+                    footer={null}
+                    onCancel={noneVisbleModal}
+                  >
+                    <Result
+                      status="success"
+                      title={`장바구니에 상품이 담겼습니다.
                             장바구니로 이동하시겠습니까?`}
-                        extra={[
-                          <Button onClick={onhandleModal} key="move">확인</Button>,
-                          <Button onClick={noneVisbleModal} key="cancel">취소</Button>,
-                        ]}
-                      />
-                    </Modal>
-                  </Content>
-                  <Review product={singleProduct} />
-                </>
-                )}
+                      extra={[
+                        <Button onClick={onhandleModal} key="move">확인</Button>,
+                        <Button onClick={noneVisbleModal} key="cancel">취소</Button>,
+                      ]}
+                    />
+                  </Modal>
+                </Content>
+                <Review product={singleProduct} />
+              </>
+            )}
         </Wrapper>
       </Container>
     </AppLayout>
@@ -272,4 +262,4 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
     props: {},
   };
 });
-export default Product;
+export default QueryProduct;

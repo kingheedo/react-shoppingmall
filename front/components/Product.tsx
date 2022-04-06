@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import Router from 'next/router';
 import { Card } from 'antd';
 import styled from 'styled-components';
-import { MainProducts } from '../reducers/asyncActionTypes/productType';
+import { MainProduct } from '../reducers/asyncActionTypes/productType';
 
 const CardItem = styled(Card)`
   width: 240px;
@@ -14,9 +14,9 @@ const ProductInfo = styled.div`
 `;
 
 type Props = {
-  product: MainProducts
+  product: MainProduct
 }
-const MainProduct: FC<Props> = ({ product }) => {
+const Product: FC<Props> = ({ product }) => {
   const [show, setShow] = useState(false);
   const onMouseHover = useCallback(
     () => {
@@ -25,7 +25,7 @@ const MainProduct: FC<Props> = ({ product }) => {
     [show],
   );
   const onClickCard = useCallback(
-    (id:number) => () => {
+    (id: number) => () => {
       Router.push(`/product/${id}`);
     },
     [],
@@ -45,4 +45,4 @@ const MainProduct: FC<Props> = ({ product }) => {
   );
 };
 
-export default MainProduct;
+export default Product;
