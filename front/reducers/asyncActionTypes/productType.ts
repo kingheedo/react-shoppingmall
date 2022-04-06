@@ -15,7 +15,7 @@ export const LOAD_PRODUCT_REQUEST = 'LOAD_PRODUCT_REQUEST' as const;
 export const LOAD_PRODUCT_SUCCESS = 'LOAD_PRODUCT_SUCCESS' as const;
 export const LOAD_PRODUCT_FAILURE = 'LOAD_PRODUCT_FAILURE' as const;
 
-export interface MainProducts {
+export interface MainProduct {
     id:number;
   productName: string;
   price : number;
@@ -24,7 +24,7 @@ export interface MainProducts {
   Images :{src : string}[]
   Likers : any[]
 }
-export interface RegisterProduct extends MainProducts {
+export interface RegisterProduct extends MainProduct {
   Sizes : {option:string}[]
 }
 export interface SingleProduct extends RegisterProduct{
@@ -35,7 +35,7 @@ export interface SearchProducts {
   productName : string;
 }
 export interface ProductState {
-  mainProducts: MainProducts[];
+  mainProducts: MainProduct[];
   singleProduct: null | SingleProduct;
   imagePath: string[];
   searchProductsList: SearchProducts[];
@@ -96,7 +96,7 @@ export interface LoadProductsRequest {
 }
 export interface LoadProductsSuccess {
   type: typeof LOAD_PRODUCTS_SUCCESS;
-  data: MainProducts[];
+  data: MainProduct[];
 }
 export interface LoadProductsFailure {
   type: typeof LOAD_PRODUCTS_FAILURE;
