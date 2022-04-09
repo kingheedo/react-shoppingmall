@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 declare module 'react-paypal-express-checkout' {
-  function PaypalExpressBtn(prop:{
+  declare function PaypalExpressBtn(prop:{
   env: string;
     client:{
       sandbox: string;
