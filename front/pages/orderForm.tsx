@@ -186,7 +186,7 @@ const OrderForm: FC = () => {
           </TotalDiv>
           {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-          {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} cartTotalPrice={cartTotalPrice} checkedProductsList={[]} />}
+          {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} cartTotalPrice={cartTotalPrice} checkedProductsList={undefined} />}
 
           {addPaymentDone && <ResultSuccess />}
         </Wrapper>

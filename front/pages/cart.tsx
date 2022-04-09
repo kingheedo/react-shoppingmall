@@ -94,7 +94,7 @@ const Em = styled.em`
 const TotalDiv = styled.div`
     margin-top: 2rem;
 `;
-const Cart:FC = () => {
+const Cart: FC = () => {
   const { userCart, cartTotalPrice, cartTotalDeliveryFee } = useSelector<RootState, CartState>((state) => state.cart);
   const { me, addPaymentDone } = useSelector<RootState, UserState>((state) => state.user);
   const dispatch = useDispatch();
@@ -129,7 +129,7 @@ const Cart:FC = () => {
     [checkedProductsList, userCart],
   );
   const onChangeCheck = useCallback(
-    (productId, index) => (e:React.ChangeEvent<HTMLInputElement>) => {
+    (productId, index) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const updateCheckState = checkedProductState.map((productState, i) => (i === index ? !productState : productState));
       setCheckedProductState(updateCheckState);
       setCheckedAllProducts(updateCheckState.every((v) => v === true));
@@ -146,7 +146,7 @@ const Cart:FC = () => {
   );
 
   const onDeleteCartItem = useCallback(
-    (cartSingleProductId) => (e:React.MouseEvent) => {
+    (cartSingleProductId) => (e: React.MouseEvent) => {
       e.preventDefault();
       dispatch(deleteCartProduct({ id: cartSingleProductId }));
     },
@@ -252,7 +252,7 @@ const Cart:FC = () => {
           </TotalDiv>
           {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
-          {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={null} />}
+          {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={undefined} />}
 
           {addPaymentDone && <ResultSuccess />}
         </Wrapper>

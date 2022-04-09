@@ -109,8 +109,8 @@ const ProductForm = () => {
   useEffect(() => {
     if (registerProductDone) {
       setProductName('');
-      setProductPrice('');
-      setProductStock('');
+      setProductPrice(0);
+      setProductStock(0);
       setAllChecked(false);
       setCheckedSize([]);
     }
@@ -130,7 +130,7 @@ const ProductForm = () => {
   );
 
   const onChangeImages = useCallback(
-    (e:React.ChangeEvent<HTMLInputElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log('images', e.target.files);
       const imageFormData = new FormData();
       if (e.target.files) {
@@ -152,7 +152,7 @@ const ProductForm = () => {
       imagePath.forEach((image) => {
         formData.append('image', image);
       });
-      checkedSize.forEach((productSize:any) => {
+      checkedSize.forEach((productSize: any) => {
         formData.append('productSize', productSize);
       });
       formData.append('productName', productName);
@@ -169,7 +169,7 @@ const ProductForm = () => {
   );
 
   const onDeleteImage = useCallback(
-    (index:number) => () => {
+    (index: number) => () => {
       dispatch(removeImages(index));
     },
     [],
