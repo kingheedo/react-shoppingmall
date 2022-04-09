@@ -190,7 +190,7 @@ const QueryProduct = () => {
                   <ProductImage className="image" alt="singleProduct.Images[0]" src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
                   <ProductInfo>
                     <H2>{singleProduct.productName}</H2>
-                    <Span>{`${singleProduct.price} 원`}</Span>
+                    <Span>{`${singleProduct.price.toLocaleString('ko-KR')} 원`}</Span>
                     <SelectDiv>
                       <Select
                         value={size}

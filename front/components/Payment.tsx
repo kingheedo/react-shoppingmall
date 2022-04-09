@@ -43,12 +43,14 @@ const Payment: FC<Props> = ({ payment }) => {
             <br />
             <span>{`${payment.HistoryCart?.size} / ${payment.HistoryCart?.quantity}`}</span>
             <br />
-            <strong>{payment.HistoryCart?.totalPrice > 39900 ? payment.HistoryCart?.totalPrice : (payment.HistoryCart?.totalPrice + 2500)}</strong>
+            <strong>
+              {payment.HistoryCart?.totalPrice > 39900 ? payment.HistoryCart?.totalPrice.toLocaleString('ko-KR') : (payment.HistoryCart?.totalPrice + 2500).toLocaleString('ko-KR')}
+              원
+            </strong>
 
           </CardItem>
         </a>
       </Link>
-      {/* <Review reviewUnique={payment.HistoryCart.User.Reviews[index]?.reviewUnique} historyCartId={payment.HistoryCart.id} productId={payment.HistoryCart.Product.id} paymentToken={payment.paymentToken} /> */}
       <Review reviewUniqueIds={payment.HistoryCart?.User?.Reviews?.map((v) => v.reviewUnique)} historyCartId={payment.HistoryCart?.id} productId={payment.HistoryCart?.Product.id} paymentToken={payment.paymentToken} />
       <br />
       <br />

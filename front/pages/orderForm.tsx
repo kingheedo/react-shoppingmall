@@ -150,7 +150,7 @@ const OrderForm: FC = () => {
                   </td>
 
                   <td>
-                    {userCart[0]?.totalPrice > 39900 ? '무료배송' : '2500원'}
+                    {userCart[0]?.totalPrice > 39900 ? '무료배송' : '2,500원'}
                   </td>
                   <td>
                     {userCart[0]?.totalPrice}
@@ -167,20 +167,20 @@ const OrderForm: FC = () => {
               상품금액
               {' '}
               <Em style={{ fontStyle: 'normal' }}>
-                {cartTotalPrice - cartTotalDeliveryFee}
+                {(cartTotalPrice - cartTotalDeliveryFee).toLocaleString('ko-KR')}
                 원
               </Em>
               {' '}
               + 배송비
               {' '}
               <Em style={{ fontStyle: 'normal' }}>
-                {cartTotalDeliveryFee}
+                {cartTotalDeliveryFee.toLocaleString('ko-KR')}
                 원 =
                 {' '}
               </Em>
             </span>
             <span>
-              {cartTotalPrice}
+              {cartTotalPrice.toLocaleString('ko-KR')}
               원
             </span>
           </TotalDiv>

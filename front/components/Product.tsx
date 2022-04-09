@@ -39,7 +39,11 @@ const Product: FC<Props> = ({ product }) => {
     >
       <ProductInfo>
         <span>{product && product.productName}</span>
-        <strong>{product && product.price}</strong>
+        <strong>
+          {product && product.price.toLocaleString('ko-KR')}
+          {' '}
+          원
+        </strong>
       </ProductInfo>
     </CardItem>
   );

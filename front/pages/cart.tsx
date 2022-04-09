@@ -81,8 +81,8 @@ const Check = styled.input`
      height: 20px;
 `;
 const Image = styled.img`
-    width: 150px
-    height: 150px
+    width: 150px;
+    height: 150px;
 `;
 const DelteBtn = styled(CloseOutlined)`
     font-size: 20px; 
@@ -212,10 +212,10 @@ const Cart: FC = () => {
                       </ProductInfo>
                     </td>
                     <td>
-                      {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2500원'}
+                      {cartSingleProduct.totalPrice > 39900 ? '무료배송' : '2,500원'}
                     </td>
                     <td>
-                      {cartSingleProduct.totalPrice}
+                      {cartSingleProduct.totalPrice.toLocaleString('ko-KR')}
                       원
                     </td>
                     <td>
@@ -233,20 +233,20 @@ const Cart: FC = () => {
               상품금액
               {' '}
               <Em>
-                {cartTotalPrice - cartTotalDeliveryFee}
+                {(cartTotalPrice - cartTotalDeliveryFee).toLocaleString('ko-KR')}
                 원
               </Em>
               {' '}
               + 배송비
               {' '}
               <Em>
-                {cartTotalDeliveryFee}
+                {cartTotalDeliveryFee.toLocaleString('ko-KR')}
                 원 =
                 {' '}
               </Em>
             </span>
             <span>
-              {cartTotalPrice}
+              {cartTotalPrice.toLocaleString('ko-KR')}
               원
             </span>
           </TotalDiv>
