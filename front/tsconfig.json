@@ -3,12 +3,7 @@
     "strict": true,
     "allowJs": true,
     "target": "ES5",
-    "lib": [
-      "es5",
-      "es6",
-      "es7",
-      "dom"
-    ],
+    "lib": ["es5", "es6", "es7", "dom"],
     "jsx": "preserve",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
@@ -21,12 +16,6 @@
     "typeRoots": ["./types"],
     "outDir": "dist"
   },
-  "exclude": [
-    "node_modules",
-    "Paypal.js"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx" ]
+  "exclude": ["node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
