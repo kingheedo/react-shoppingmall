@@ -1,8 +1,8 @@
 import React, { FC, useCallback } from 'react';
-import { PaypalExpressBtn } from 'react-paypal-express-checkout';
+import PaypalExpressBtn from 'react-paypal-express-checkout';
 import { useDispatch } from 'react-redux';
 import { addPaymentLists } from '../reducers/dispatchRequestTypes/userDispatchRequest';
-import { UserCart } from '../reducers/asyncActionTypes/cartTypes';
+import { UserCart } from '../reducers/reducerTypes/cartTypes';
 
 type Props = {
   headers: string;
@@ -24,7 +24,8 @@ const Paypal: FC<Props> = ({
         dispatch(
           addPaymentLists({ CartItemId, payment }),
         );
-      } else {
+      }
+      if (headers === 'buylater') {
         dispatch(
           addPaymentLists({ CartItemsId, payment }),
         );

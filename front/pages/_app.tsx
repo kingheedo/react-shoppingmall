@@ -8,6 +8,7 @@ const ShoppingMall = ({ Component, pageProps }: AppProps) => (
   <>
     <Head>
       <meta charSet="utf-8" />
+      <link rel="icon" type="image/x-icon" href="../public/favicon.ico" />
       <title>ShoppingMall</title>
     </Head>
     <Component {...pageProps} />

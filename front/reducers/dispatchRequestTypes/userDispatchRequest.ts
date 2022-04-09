@@ -1,6 +1,6 @@
 import {
   AddPaymentListsRequest, AddProductReviewRequest, ADD_PAYMENT_REQUEST, ADD_PRODUCT_REVIEW_REQUEST, LoadPaymentListsRequest, LoadUserRequest, LOAD_PAYMENT_LISTS_REQUEST, LOAD_USER_REQUEST, LogInRequest, LogOutRequest, LOG_IN_REQUEST, LOG_OUT_REQUEST, ResetAddPayment, RESET_ADD_PAYMENT, SignUpRequest, SignUpReset, SIGN_UP_REQUEST, SIGN_UP_RESET,
-} from '../asyncActionTypes/userTypes';
+} from '../reducerTypes/userTypes';
 
 export interface AddProductReview extends AddProductReviewRequest{
   data :{

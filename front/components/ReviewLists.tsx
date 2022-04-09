@@ -2,10 +2,10 @@ import {
   Divider, List, Rate,
 } from 'antd';
 import React, { FC } from 'react';
-import { SingleProduct } from '../reducers/asyncActionTypes/productType';
+import { SingleProduct } from '../reducers/reducerTypes/productType';
 
 type Props = {
-  product : SingleProduct
+  product: SingleProduct
 }
 const ReviewLists: FC<Props> = ({ product }) => {
   return (
@@ -21,16 +21,16 @@ const ReviewLists: FC<Props> = ({ product }) => {
           pageSize: 3,
         }}
         dataSource={product?.Reviews}
-        renderItem={(item:any) => (
+        renderItem={(item: any) => (
           <List.Item
             key={item.id}
-            // extra={(
-            //   <img
-            //     width={272}
-            //     alt="logo"
-            //     src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-            //   />
-            //       )}
+          // extra={(
+          //   <img
+          //     width={272}
+          //     alt="logo"
+          //     src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+          //   />
+          //       )}
           >
             <List.Item.Meta
               description={item.User?.email}

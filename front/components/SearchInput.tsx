@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
-import { ProductState } from '../reducers/asyncActionTypes/productType';
+import { ProductState } from '../reducers/reducerTypes/productType';
 import { searchProduct } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 
 const { Search } = Input;
@@ -39,11 +39,11 @@ const SearchLi = styled.li`
     }
     
     `;
-const SearchInput:FC = () => {
+const SearchInput: FC = () => {
   const { searchProductsList } = useSelector<RootState, ProductState>((state) => state.product);
   const [searchvalue, onChangeSearch, setSearchValue] = useInput(null);
   const [openDropdown, setOpenDropdown] = useState(false);
-  const searchRef = useRef<HTMLDivElement|null>(null);
+  const searchRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useDispatch();
 
   useEffect(() => {

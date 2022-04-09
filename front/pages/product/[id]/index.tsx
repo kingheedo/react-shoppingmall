@@ -15,11 +15,11 @@ import useInput from '../../../hooks/useInput';
 import wrapper from '../../../store/configureStore';
 import { addProduct, loadCartProducts } from '../../../reducers/dispatchRequestTypes/cartDispatchRequest';
 import { RootState } from '../../../reducers';
-import { ProductState } from '../../../reducers/asyncActionTypes/productType';
+import { ProductState } from '../../../reducers/reducerTypes/productType';
 import { loadUser } from '../../../reducers/dispatchRequestTypes/userDispatchRequest';
 import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispatchRequest';
-import { CartState } from '../../../reducers/asyncActionTypes/cartTypes';
-import { UserState } from '../../../reducers/asyncActionTypes/userTypes';
+import { CartState } from '../../../reducers/reducerTypes/cartTypes';
+import { UserState } from '../../../reducers/reducerTypes/userTypes';
 
 const Container = styled.div`
     width: 80vw;

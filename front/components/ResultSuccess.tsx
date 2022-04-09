@@ -2,10 +2,10 @@ import { Result, Button, Modal } from 'antd';
 import React, { FC, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../reducers';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 import { resetAddPayment } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
-const ResultSuccess:FC = () => {
+const ResultSuccess: FC = () => {
   const { addPaymentDone } = useSelector<RootState, UserState>((state) => state.user);
   const [visible, setVisible] = useState(addPaymentDone);
   const dispatch = useDispatch();

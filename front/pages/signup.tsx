@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import { logIn, signUp, signUpReset } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { RootState } from '../reducers';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 
 const Container = styled.div`
   width: 100vw;

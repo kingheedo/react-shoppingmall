@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import Router from 'next/router';
 import { Card } from 'antd';
 import styled from 'styled-components';
-import { MainProduct } from '../reducers/asyncActionTypes/productType';
+import { MainProduct } from '../reducers/reducerTypes/productType';
 
 const CardItem = styled(Card)`
   width: 240px;

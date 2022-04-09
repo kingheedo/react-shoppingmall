@@ -6,8 +6,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
 import { RootState } from '../reducers';
-import { CartState } from '../reducers/asyncActionTypes/cartTypes';
-import { LOG_OUT_REQUEST, UserState } from '../reducers/asyncActionTypes/userTypes';
+import { CartState } from '../reducers/reducerTypes/cartTypes';
+import { LOG_OUT_REQUEST, UserState } from '../reducers/reducerTypes/userTypes';
 import SearchInput from './SearchInput';
 
 const Global = createGlobalStyle`

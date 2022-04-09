@@ -12,7 +12,7 @@ import wrapper from '../store/configureStore';
 import { loadProducts } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 import { RootState } from '../reducers';
 import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
-import { ProductState } from '../reducers/asyncActionTypes/productType';
+import { ProductState } from '../reducers/reducerTypes/productType';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 
 const Global = createGlobalStyle`

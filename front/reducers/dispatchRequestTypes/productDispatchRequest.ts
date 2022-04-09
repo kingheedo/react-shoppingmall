@@ -1,6 +1,6 @@
 import {
   LoadProductRequest, LoadProductsRequest, LOAD_PRODUCTS_REQUEST, LOAD_PRODUCT_REQUEST, RegisterProductRequest, REGISTER_PRODUCT_REQUEST, RemoveImage, REMOVE_IMAGE, SearchProductsRequest, SEARCH_PRODUCTS_REQUEST, UploadImagesRequest, UPLOAD_IMAGES_REQUEST,
-} from '../asyncActionTypes/productType';
+} from '../reducerTypes/productType';
 
 export interface SearchProducts extends SearchProductsRequest {
   name : string

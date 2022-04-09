@@ -20,10 +20,10 @@ import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
 import wrapper from '../store/configureStore';
 import { RootState } from '../reducers';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 import {
   ProductState,
-} from '../reducers/asyncActionTypes/productType';
+} from '../reducers/reducerTypes/productType';
 import { registerProduct, removeImages, uploadImages } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';

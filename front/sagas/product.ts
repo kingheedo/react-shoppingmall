@@ -10,8 +10,8 @@ import {
   LOAD_PRODUCT_REQUEST,
   LOAD_PRODUCT_SUCCESS,
   REGISTER_PRODUCT_FAILURE, REGISTER_PRODUCT_REQUEST, REGISTER_PRODUCT_SUCCESS, SEARCH_PRODUCTS_FAILURE, SEARCH_PRODUCTS_REQUEST, SEARCH_PRODUCTS_SUCCESS, UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST, UPLOAD_IMAGES_SUCCESS,
-} from '../reducers/asyncActionTypes/productType';
-import { ADD_PRODUCT_REVIEW_FAILURE, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS } from '../reducers/asyncActionTypes/userTypes';
+} from '../reducers/reducerTypes/productType';
+import { ADD_PRODUCT_REVIEW_FAILURE, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS } from '../reducers/reducerTypes/userTypes';
 import {
   LoadProduct, LoadProducts, RegisterProduct, SearchProducts, UploadImages,
 } from '../reducers/dispatchRequestTypes/productDispatchRequest';

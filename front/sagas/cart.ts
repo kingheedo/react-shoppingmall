@@ -7,7 +7,7 @@ import {
   ADD_PRODUCT_CART_REQUEST,
   ADD_PRODUCT_CART_SUCCESS,
   DELETE_CART_PRODUCT_FAILURE, DELETE_CART_PRODUCT_REQUEST, DELETE_CART_PRODUCT_SUCCESS, LOAD_CART_PRODUCTS_FAILURE, LOAD_CART_PRODUCTS_REQUEST, LOAD_CART_PRODUCTS_SUCCESS,
-} from '../reducers/asyncActionTypes/cartTypes';
+} from '../reducers/reducerTypes/cartTypes';
 import {
   Addproduct, AddProductData, DeleteCartProduct,
 } from '../reducers/dispatchRequestTypes/cartDispatchRequest';

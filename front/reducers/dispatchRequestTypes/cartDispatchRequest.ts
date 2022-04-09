@@ -1,6 +1,6 @@
 import {
   AddProductCartRequest, ADD_PRODUCT_CART_REQUEST, CheckAllProducts, CheckCartProduct, CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, DeleteCartProductRequest, DELETE_CART_PRODUCT_REQUEST, LoadCartProductsRequest, LOAD_CART_PRODUCTS_REQUEST, UncheckAllProducts, UncheckCartProduct, UNCHECK_ALL_PRODUCTS, UNCHECK_CART_PRODUCT,
-} from '../asyncActionTypes/cartTypes';
+} from '../reducerTypes/cartTypes';
 
 export interface AddProductData{
         buyNow? : boolean,

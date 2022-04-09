@@ -17,8 +17,8 @@ import {
 } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { RootState } from '../reducers';
-import { CartState } from '../reducers/asyncActionTypes/cartTypes';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { CartState } from '../reducers/reducerTypes/cartTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 

@@ -4,7 +4,7 @@ import {
 } from 'redux-saga/effects';
 import {
   ADD_PAYMENT_FAILURE, ADD_PAYMENT_REQUEST, ADD_PAYMENT_SUCCESS, LOAD_PAYMENT_LISTS_FAILURE, LOAD_PAYMENT_LISTS_REQUEST, LOAD_PAYMENT_LISTS_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS,
-} from '../reducers/asyncActionTypes/userTypes';
+} from '../reducers/reducerTypes/userTypes';
 import { AddPaymentLists, LogIn, SignUp } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
 function loadPaymentListsApi() {

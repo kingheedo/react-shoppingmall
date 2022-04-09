@@ -8,7 +8,7 @@ import Router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 import { logIn } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 
 const Container = styled.div`
@@ -34,7 +34,7 @@ const FormDiv = styled.div`
     width: 400px;
     padding: 20px;
 `;
-const Signin:FC = () => {
+const Signin: FC = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const { me, loginError } = useSelector<RootState, UserState>((state) => state.user);
@@ -54,7 +54,7 @@ const Signin:FC = () => {
   }, [me]);
 
   const onhandleSubmit = useCallback(
-    (e:React.MouseEvent<HTMLInputElement>) => {
+    (e: React.MouseEvent<HTMLInputElement>) => {
       e.preventDefault();
       dispatch(
         logIn({ email, password }),

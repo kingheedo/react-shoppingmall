@@ -13,7 +13,7 @@ import AppLayout from '../components/AppLayout';
 import wrapper from '../store/configureStore';
 import { loadPaymentLists, loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { RootState } from '../reducers';
-import { UserState } from '../reducers/asyncActionTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 import Payment from '../components/Payment';
 
@@ -42,7 +42,7 @@ const PageTitle = styled(Title)`
      width: 36vw;
 `;
 
-const Mypage:FC = () => {
+const Mypage: FC = () => {
   const { me, paymentLists } = useSelector<RootState, UserState>((state) => state.user);
   const { addProductReviewError } = useSelector<RootState, UserState>((state) => state.product);
 

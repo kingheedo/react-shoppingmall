@@ -4,10 +4,10 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import moment from 'moment';
 import Review from './Review';
-import { PaymentLists } from '../reducers/asyncActionTypes/userTypes';
+import { PaymentLists } from '../reducers/reducerTypes/userTypes';
 
 type Props = {
-    payment : PaymentLists;
+  payment: PaymentLists;
 }
 const { Meta } = Card;
 const CardItem = styled(Card)`
