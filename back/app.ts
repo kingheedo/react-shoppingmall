@@ -49,7 +49,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET))
 
 if(prod){
     app.use(cors({
-        origin: 'http://13.125.244.11/',
+        origin: 'http://13.125.244.11',
         credentials: true,
     }))
 }else{
@@ -58,10 +58,6 @@ if(prod){
         credentials: true,
     }))
     }
-app.use(cors({
-    origin : ['http://localhost:3060','reactshoppingmall.com'],
-    credentials: true,
-}))
 
 app.use('/user', userRouter)
 app.use('/product',productRouter)
