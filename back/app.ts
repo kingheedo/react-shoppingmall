@@ -47,6 +47,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
+if(prod){
+    app.use(cors({
+        origin: 'http://13.125.244.11/',
+        credentials: true,
+    }))
+}else{
+    app.use(cors({
+        origin: true,
+        credentials: true,
+    }))
+    }
 app.use(cors({
     origin : ['http://localhost:3060','reactshoppingmall.com'],
     credentials: true,
