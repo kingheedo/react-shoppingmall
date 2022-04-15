@@ -3,6 +3,7 @@ import Router from 'next/router';
 import { Card } from 'antd';
 import styled from 'styled-components';
 import { MainProduct } from '../reducers/reducerTypes/productType';
+import { backUrl } from '../config/backUrl';
 
 const CardItem = styled(Card)`
   width: 240px;
@@ -35,7 +36,7 @@ const Product: FC<Props> = ({ product }) => {
       onClick={onClickCard(product.id)}
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
-      cover={show ? <img alt="Images[0]" src={`http://localhost:3065/${product.Images[0].src}`} /> : <img alt="Images[1]" src={`http://localhost:3065/${product.Images[1].src}`} />}
+      cover={show ? <img alt="Images[0]" src={`${backUrl}/${product.Images[0].src}`} /> : <img alt="Images[1]" src={`${backUrl}/${product.Images[1].src}`} />}
     >
       <ProductInfo>
         <span>{product && product.productName}</span>

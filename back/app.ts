@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
 app.use(cors({
-    origin : 'http://localhost:3060',
+    origin : ['http://localhost:3060','reactshoppingmall.com'],
     credentials: true,
 }))
 

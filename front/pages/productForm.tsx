@@ -27,6 +27,7 @@ import {
 import { registerProduct, removeImages, uploadImages } from '../reducers/dispatchRequestTypes/productDispatchRequest';
 import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
 import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { backUrl } from '../config/backUrl';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -210,7 +211,7 @@ const ProductForm = () => {
                 {imagePath?.map((v, i) => (
                   <div key={v}>
                     <Image
-                      src={`http://localhost:3065/${v}`}
+                      src={`${backUrl}/${v}`}
                       alt={v}
                     />
                     <Button style={{ marginTop: '0.5rem' }} onClick={onDeleteImage(i)}>삭제</Button>

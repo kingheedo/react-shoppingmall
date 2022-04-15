@@ -19,6 +19,7 @@ import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { RootState } from '../reducers';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';
+import { backUrl } from '../config/backUrl';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -132,7 +133,7 @@ const OrderForm: FC = () => {
               <Tbody>
                 <tr key={userCart[0]?.id}>
                   <td>
-                    <Image alt={userCart[0]?.Product.Images[1].src} src={`http://localhost:3065/${userCart[0]?.Product.Images[1].src}`} />
+                    <Image alt={userCart[0]?.Product.Images[1].src} src={`${backUrl}/${userCart[0]?.Product.Images[1].src}`} />
 
                   </td>
                   <td>

@@ -20,6 +20,7 @@ import { loadUser } from '../../../reducers/dispatchRequestTypes/userDispatchReq
 import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispatchRequest';
 import { CartState } from '../../../reducers/reducerTypes/cartTypes';
 import { UserState } from '../../../reducers/reducerTypes/userTypes';
+import { backUrl } from '../../../config/backUrl';
 
 const Container = styled.div`
     width: 80vw;
@@ -187,7 +188,7 @@ const QueryProduct = () => {
             && (
               <>
                 <Content>
-                  <ProductImage className="image" alt="singleProduct.Images[0]" src={`http://localhost:3065/${singleProduct.Images[0].src}`} />
+                  <ProductImage className="image" alt="singleProduct.Images[0]" src={`${backUrl}/${singleProduct.Images[0].src}`} />
                   <ProductInfo>
                     <H2>{singleProduct.productName}</H2>
                     <Span>{`${singleProduct.price.toLocaleString('ko-KR')} 원`}</Span>

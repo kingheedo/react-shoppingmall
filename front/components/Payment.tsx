@@ -5,6 +5,7 @@ import Link from 'next/link';
 import moment from 'moment';
 import Review from './Review';
 import { PaymentLists } from '../reducers/reducerTypes/userTypes';
+import { backUrl } from '../config/backUrl';
 
 type Props = {
   payment: PaymentLists;
@@ -35,7 +36,7 @@ const Payment: FC<Props> = ({ payment }) => {
         <a>
           <h3>{payment.paymentID}</h3>
           <CardItem
-            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`http://localhost:3065/${payment.HistoryCart?.Product?.Images[1].src}`} />}
+            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`${backUrl}/${payment.HistoryCart?.Product?.Images[1].src}`} />}
           >
             <Meta style={{ float: 'left' }} title={payment.HistoryCart?.Product?.productName} />
             <P>{moment(payment.createdAt).format('LLL')}</P>

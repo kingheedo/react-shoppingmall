@@ -20,6 +20,7 @@ import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
 import { RootState } from '../reducers';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';
+import { backUrl } from '../config/backUrl';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -196,7 +197,7 @@ const Cart: FC = () => {
                       <Check checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id, index)} />
                     </td>
                     <td>
-                      <Image alt={cartSingleProduct.Product.Images[1].src} src={`http://localhost:3065/${cartSingleProduct.Product.Images[1].src}`} />
+                      <Image alt={cartSingleProduct.Product.Images[1].src} src={`${backUrl}/${cartSingleProduct.Product.Images[1].src}`} />
                     </td>
                     <td>
                       <ProductInfo>
