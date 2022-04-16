@@ -12,6 +12,9 @@ import * as cookieParser from 'cookie-parser'
 import * as passport from 'passport'
 import * as dotenv from 'dotenv'
 import * as path from 'path'
+import helmet from 'helmet'
+import * as morgan from 'morgan'
+import * as hpp from 'hpp'
 const prod = process.env.NODE_ENV === 'production';
 
 dotenv.config();
@@ -48,11 +51,15 @@ app.use(passport.session());
 app.use(cookieParser(process.env.COOKIE_SECRET))
 
 if(prod){
+    app.use(morgan('combined'));
+    app.use(hpp());
+    app.use(helmet());
     app.use(cors({
         origin: ['http://reactshoppingmall.com'],
         credentials: true,
     }))
 }else{
+    app.use(morgan('dev'));
     app.use(cors({
         origin: true,
         credentials: true,
