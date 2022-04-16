@@ -49,7 +49,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET))
 
 if(prod){
     app.use(cors({
-        origin: 'http://13.125.244.11',
+        origin: 'http://3.34.47.54',
         credentials: true,
     }))
 }else{
