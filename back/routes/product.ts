@@ -3,6 +3,8 @@ import * as multer from 'multer';
 import { isLoggedIn } from './middlewares';
 import * as path from 'path'
 import * as fs from 'fs';
+import * as AWS from 'aws-sdk'
+import * as multerS3 from 'multer-s3'
 import { Product, Review, User, Image, Size, HistoryCart } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
@@ -14,16 +16,19 @@ try{
     fs.mkdirSync('uploads');
 }
 
+AWS.config.update({
+    accessKeyId: process.env.AWSAccessKeyId,
+    secretAccessKey: process.env.AWSSecretKey,
+    region: 'ap-northeast-2',
+})
+
 const upload = multer({
-    storage: multer.diskStorage({
-        destination(req, file, done){
-            done(null, 'uploads')
-        },
-        filename(req, file, done){
-            const ext = path.extname(file.originalname)
-            const basename = path.basename(file.originalname,ext)
-            done(null, basename + '_' + new Date().getTime() + ext);;
-        },
+    storage: multerS3({
+        s3: new AWS.S3(),
+        bucket: 'reactshoppingmall-s3',
+        key(rep,file,cb){
+            cb(null, `orignal/${Date.now()}_${path.basename(file.originalname)}`)
+        }
     }),
     limits : {fileSize: 20 * 1024 * 1024, files: 2}
 });
@@ -31,7 +36,7 @@ const upload = multer({
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
     console.log('req.files',req.files);
     if(Array.isArray(req.files)){
-    res.json(req.files.map((v:Express.Multer.File) => v.filename))
+    res.json(req.files.map((v:Express.Multer.File) => v.location))
     }
 })
 
