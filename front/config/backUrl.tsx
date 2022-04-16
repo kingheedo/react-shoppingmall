@@ -1,1 +1,1 @@
-export const backUrl = 'http://api.reactshoppngmall.com';
+export const backUrl = 'http://api.reactshoppingmall.com';
