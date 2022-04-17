@@ -36,7 +36,7 @@ const upload = multer({
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
     console.log('req.files',req.files);
     if(Array.isArray(req.files)){
-    res.json(req.files.map((v:Express.Multer.File) => v.location))
+    res.json((req.files as Express.MulterS3.File[]).map((v) => v.location))
     }
 })
 
