@@ -30,6 +30,23 @@ sequelize.sync({force: false})
     });
 passportConfig();
 
+if(prod){
+    app.use(morgan('combined'));
+    app.use(hpp());
+    app.use(helmet());
+    app.use(cors({
+        origin: 'http://reactshoppingmall.com',
+        credentials: true,
+    }))
+}else{
+    app.use(morgan('dev'));
+    app.use(cors({
+        origin: true,
+        credentials: true,
+    }))
+    }
+
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use('/', express.static(path.join(__dirname,'uploads')))
 app.use(express.json());
 app.use(express.urlencoded({extended: true}))
@@ -48,23 +65,8 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cookieParser(process.env.COOKIE_SECRET))
 
-if(prod){
-    app.use(morgan('combined'));
-    app.use(hpp());
-    app.use(helmet());
-    app.use(cors({
-        origin: 'http://reactshoppingmall.com',
-        credentials: true,
-    }))
-}else{
-    app.use(morgan('dev'));
-    app.use(cors({
-        origin: true,
-        credentials: true,
-    }))
-    }
+
 
 app.use('/user', userRouter)
 app.use('/product',productRouter)
