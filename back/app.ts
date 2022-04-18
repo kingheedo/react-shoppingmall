@@ -15,11 +15,9 @@ import * as path from 'path'
 import helmet from 'helmet'
 import * as morgan from 'morgan'
 import * as hpp from 'hpp'
-const prod = process.env.NODE_ENV === 'production';
 
 dotenv.config();
 const app = express();
-app.set('port',prod ? process.env.PORT : 3065 );
 
 sequelize.sync({force: false})
     .then(() =>{
@@ -30,7 +28,7 @@ sequelize.sync({force: false})
     });
 passportConfig();
 
-if(prod){
+if(process.env.NODE_ENV === 'production'){
     app.use(morgan('combined'));
     app.use(hpp());
     app.use(helmet());
@@ -58,7 +56,7 @@ app.use(session({
     cookie:{
         httpOnly : true,
         secure: false,
-        domain: prod ? '.reactshoppingmall.com' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? '.reactshoppingmall.com' : undefined,
     },
     name: 'rnbck',
 }))
@@ -80,6 +78,6 @@ app.use((err: any, req:express.Request, res:express.Response, next:express.NextF
     console.error(err);
     res.status(500).send('서버 에러 발생')
 })
-app.listen(app.get('port'), () => {
+app.listen(80, () => {
     console.log('서버 실행 중')
 })
