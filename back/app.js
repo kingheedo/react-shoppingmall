@@ -70,6 +70,6 @@ app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).send('서버 에러 발생');
 });
-app.listen(80, () => {
+app.listen(3065, () => {
     console.log('서버 실행 중');
 });

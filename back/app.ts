@@ -34,7 +34,7 @@ if(prod){
     app.use(hpp());
     app.use(helmet());
     app.use(cors({
-        origin: 'http://reactshoppingmall.com',
+        origin: 'https://reactshoppingmall.com',
         credentials: true,
     }))
 }else{
@@ -79,6 +79,6 @@ app.use((err: any, req:express.Request, res:express.Response, next:express.NextF
     console.error(err);
     res.status(500).send('서버 에러 발생')
 })
-app.listen(prod ? process.env.PORT : 3065, () => {
+app.listen(3065, () => {
     console.log('서버 실행 중')
 })
