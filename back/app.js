@@ -18,6 +18,7 @@ const morgan = require("morgan");
 const hpp = require("hpp");
 dotenv.config();
 const app = express();
+const prod = process.env.NODE_ENV === 'production';
 models_1.sequelize.sync({ force: false })
     .then(() => {
     console.log('db 연결 성공');
@@ -26,12 +27,12 @@ models_1.sequelize.sync({ force: false })
     console.error(err);
 });
 (0, passport_1.default)();
-if (process.env.NODE_ENV === 'production') {
+if (prod) {
     app.use(morgan('combined'));
     app.use(hpp());
     app.use((0, helmet_1.default)());
     app.use(cors({
-        origin: 'http://reactshoppingmall.com',
+        origin: 'https://reactshoppingmall.com',
         credentials: true,
     }));
 }
