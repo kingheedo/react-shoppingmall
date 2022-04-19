@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon",
-    "start": "tsc && cross-env PORT=80 NODE_ENV=production pm2 start app.js"
+    "start": "tsc && cross-env NODE_ENV=production pm2 start app.js"
   },
   "author": "heedo",
   "license": "ISC",
