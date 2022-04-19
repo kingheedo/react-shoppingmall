@@ -18,6 +18,7 @@ import * as hpp from 'hpp'
 
 dotenv.config();
 const app = express();
+const prod = process.env.NODE_ENV === 'production';
 
 sequelize.sync({force: false})
     .then(() =>{
@@ -28,7 +29,7 @@ sequelize.sync({force: false})
     });
 passportConfig();
 
-if(process.env.NODE_ENV === 'production'){
+if(prod){
     app.use(morgan('combined'));
     app.use(hpp());
     app.use(helmet());
@@ -78,6 +79,6 @@ app.use((err: any, req:express.Request, res:express.Response, next:express.NextF
     console.error(err);
     res.status(500).send('서버 에러 발생')
 })
-app.listen(80, () => {
+app.listen(prod ? process.env.PORT : 3065, () => {
     console.log('서버 실행 중')
 })
