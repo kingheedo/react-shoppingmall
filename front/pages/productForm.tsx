@@ -108,11 +108,8 @@ const ProductForm = () => {
 
   useEffect(() => {
     if (registerProductDone) {
-      setProductName('');
-      setProductPrice(0);
-      setProductStock(0);
-      setAllChecked(false);
-      setCheckedSize([]);
+      alert('정상 등록되었습니다!');
+      Router.push('/');
     }
   }, [registerProductDone]);
 
