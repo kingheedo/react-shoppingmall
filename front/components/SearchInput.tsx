@@ -88,17 +88,17 @@ const SearchInput: FC = () => {
 
   const onSearchEnter = useCallback(
     () => {
-      if (searchvalue && openDropdown === true && searchProductsList[0].id) {
+      if (searchvalue && searchProductsList[0].id) {
         onReset();
         Router.push(`/product/${searchProductsList[0].id}`);
       }
     },
-    [searchvalue, openDropdown, searchProductsList],
+    [searchvalue, searchProductsList],
   );
 
   return (
     <SearchWrapper>
-      <Search onPressEnter={onSearchEnter} value={searchvalue} onChange={onChangeSearch} allowClear style={{ width: '20rem' }} placeholder="search" />
+      <Search onSearch={onSearchEnter} onPressEnter={onSearchEnter} value={searchvalue} onChange={onChangeSearch} allowClear style={{ width: '20rem' }} placeholder="search" />
       <SearchResult ref={searchRef}>
         <SearchUl>
           {
