@@ -38,9 +38,9 @@ const Product: FC<Props> = ({ product }) => {
       cover={show ? <img alt="Images[0]" src={`${product.Images[0].src}`} /> : <img alt="Images[1]" src={`${product.Images[1].src}`} />}
     >
       <ProductInfo>
-        <span>{product && product.productName}</span>
+        <span>{product?.productName}</span>
         <strong>
-          {product && product.price.toLocaleString('ko-KR')}
+          {product.price?.toLocaleString('ko-KR')}
           {' '}
           원
         </strong>

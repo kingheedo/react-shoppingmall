@@ -102,7 +102,7 @@ const SearchInput: FC = () => {
       <SearchResult ref={searchRef}>
         <SearchUl>
           {
-            openDropdown === true && searchProductsList && searchProductsList.map(
+            openDropdown && searchProductsList?.map(
               (v) => (
                 <SearchLi onClick={onReset} tabIndex={0} onKeyPress={onTabEnterLink(v.id)}>
                   <Link href={`/product/${v.id}`}>

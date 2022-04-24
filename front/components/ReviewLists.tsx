@@ -35,9 +35,9 @@ const ReviewLists: FC<Props> = ({ product }) => {
             <List.Item.Meta
               description={item.User?.email}
             />
-            <Rate disabled value={item.rate} />
+            <Rate disabled value={item?.rate} />
             <br />
-            {item.content}
+            {item?.content}
 
             <br />
           </List.Item>
