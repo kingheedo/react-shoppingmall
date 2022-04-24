@@ -10,7 +10,6 @@ import { CloseOutlined } from '@ant-design/icons';
 import { END } from 'redux-saga';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import ResultSuccess from '../components/ResultSuccess';
 import wrapper from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
 import {
@@ -96,7 +95,7 @@ const TotalDiv = styled.div`
 `;
 const Cart: FC = () => {
   const { userCart, cartTotalPrice, cartTotalDeliveryFee } = useSelector<RootState, CartState>((state) => state.cart);
-  const { me, addPaymentDone } = useSelector<RootState, UserState>((state) => state.user);
+  const { me } = useSelector<RootState, UserState>((state) => state.user);
   const dispatch = useDispatch();
   const [checkedProductsList, setcheckedProductsList] = useState(userCart);
   const [checkedAllProducts, setCheckedAllProducts] = useState(true);
@@ -253,8 +252,6 @@ const Cart: FC = () => {
           {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
           {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={undefined} />}
-
-          {addPaymentDone && <ResultSuccess />}
         </Wrapper>
       </Container>
     </AppLayout>

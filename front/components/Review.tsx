@@ -8,15 +8,16 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { addProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { modalCountDown } from './ResultSuccessModal';
 
 const ReviewButton = styled(Button)`
  margin-top: 1rem
 `;
 type Props = {
-  reviewUniqueIds : string[];
-  historyCartId : number;
-  productId : number;
-  paymentToken : string;
+  reviewUniqueIds: string[];
+  historyCartId: number;
+  productId: number;
+  paymentToken: string;
 
 }
 const Review: FC<Props> = ({
@@ -35,7 +36,7 @@ const Review: FC<Props> = ({
       if (reviewContent === '') {
         return alert('내용을 입력하세요');
       }
-      if (reviewContent.length <= 20) {
+      if (reviewContent.length < 20) {
         return alert('최소 20글자를 입력해주세요 ');
       }
       if (reviewRate === 0) {
@@ -49,19 +50,20 @@ const Review: FC<Props> = ({
         ),
       );
       setVisibleModal(false);
+      modalCountDown('isReview');
     },
     [historyCartId, reviewContent, reviewRate, paymentToken],
   );
   return (
     <>
-      {exReview ? <ReviewButton disabled>작성완료</ReviewButton> : <ReviewButton onClick={() => setVisibleModal(true)}>리뷰쓰기</ReviewButton> }
+      {exReview ? <ReviewButton disabled>작성완료</ReviewButton> : <ReviewButton onClick={() => setVisibleModal(true)}>리뷰쓰기</ReviewButton>}
       <Modal
         visible={visibleModal}
         footer={
-                  [<Button onClick={onClickReview} key="write">작성</Button>,
-                    <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
-                  ]
-              }
+          [<Button onClick={onClickReview} key="write">작성</Button>,
+          <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
+          ]
+        }
         onCancel={() => setVisibleModal(false)}
       >
         <Rate value={reviewRate} onChange={onChangeRate} />

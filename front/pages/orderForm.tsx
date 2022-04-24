@@ -9,7 +9,6 @@ import Router from 'next/router';
 import { END } from 'redux-saga';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import ResultSuccess from '../components/ResultSuccess';
 import wrapper from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
 import {
@@ -85,7 +84,7 @@ const OrderForm: FC = () => {
   const {
     userCart, cartTotalPrice, cartTotalDeliveryFee,
   } = useSelector<RootState, CartState>((state) => state.cart);
-  const { me, addPaymentDone } = useSelector<RootState, UserState>((state) => state.user);
+  const { me } = useSelector<RootState, UserState>((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -187,8 +186,6 @@ const OrderForm: FC = () => {
           {/* <Payment checkedProductsList={checkedProductsList}/> */}
 
           {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} cartTotalPrice={cartTotalPrice} checkedProductsList={undefined} />}
-
-          {addPaymentDone && <ResultSuccess />}
         </Wrapper>
       </Container>
     </AppLayout>
