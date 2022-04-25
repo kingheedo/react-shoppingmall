@@ -192,7 +192,7 @@ const Cart: FC = () => {
                 {userCart[0] && userCart.map((cartSingleProduct, index) => (
                   <tr key={cartSingleProduct.id}>
                     <td>
-                      <Check checked={checkedProductState[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id, index)} />
+                      <Check checked={checkedProductStates[index]} type="checkbox" onChange={onChangeCheck(cartSingleProduct.id, index)} />
                     </td>
                     <td>
                       <Image alt={cartSingleProduct.Product.Images[1].src} src={`${cartSingleProduct.Product.Images[1].src}`} />
