@@ -99,7 +99,7 @@ const Cart: FC = () => {
   const dispatch = useDispatch();
   const [checkedProductsList, setcheckedProductsList] = useState(userCart);
   const [checkedAllProducts, setCheckedAllProducts] = useState(true);
-  const [checkedProductState, setCheckedProductState] = useState(
+  const [checkedProductStates, setCheckedProductStates] = useState(
     Array(userCart.length).fill(true),
   );
 
@@ -116,11 +116,11 @@ const Cart: FC = () => {
     (e) => {
       setCheckedAllProducts((prev) => !prev);
       if (e.target.checked) {
-        setCheckedProductState(checkedProductState.fill(true));
+        setCheckedProductStates(checkedProductStates.fill(true));
         setcheckedProductsList(userCart);
         dispatch(checkAllProduct());
       } else {
-        setCheckedProductState(checkedProductState.fill(false));
+        setCheckedProductStates(checkedProductStates.fill(false));
         setcheckedProductsList([]);
         dispatch(unCheckAllProduct());
       }
@@ -129,9 +129,9 @@ const Cart: FC = () => {
   );
   const onChangeCheck = useCallback(
     (productId, index) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      const updateCheckState = checkedProductState.map((productState, i) => (i === index ? !productState : productState));
-      setCheckedProductState(updateCheckState);
-      setCheckedAllProducts(updateCheckState.every((v) => v === true));
+      const updatedCheckedProducts = checkedProductStates.map((productState, i) => (i === index ? !productState : productState));
+      setCheckedProductStates(updatedCheckedProducts);
+      setCheckedAllProducts(updatedCheckedProducts.every((v) => v === true));
       const checkProduct = userCart.find((product) => product.id === productId);
       if (e.target.checked && checkProduct) {
         setcheckedProductsList([...checkedProductsList, checkProduct]);
@@ -141,7 +141,7 @@ const Cart: FC = () => {
         dispatch(uncheckCartProduct({ id: productId }));
       }
     },
-    [checkedProductsList, userCart, checkedProductState],
+    [checkedProductsList, userCart, checkedProductStates],
   );
 
   const onDeleteCartItem = useCallback(
@@ -249,8 +249,6 @@ const Cart: FC = () => {
               원
             </span>
           </TotalDiv>
-          {/* <Payment checkedProductsList={checkedProductsList}/> */}
-
           {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={undefined} />}
         </Wrapper>
       </Container>
