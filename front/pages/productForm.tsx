@@ -146,6 +146,7 @@ const ProductForm = () => {
       if (imagePath.length !== 2 || !productName || !productPrice || !productStock || !checkedSize[0]) {
         return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.');
       }
+
       const formData = new FormData();
       imagePath.forEach((image) => {
         formData.append('image', image);
@@ -223,11 +224,11 @@ const ProductForm = () => {
                 <Input value={productName} onChange={onChangeName} />
               </FormItem>
 
-              <FormItem name={['상품가격']} label="상품가격" rules={[{ required: true, message: '상품가격을 입력해주세요.' }]}>
+              <FormItem name={['상품가격']} label="상품가격" rules={[{ type: 'number', required: true, message: '상품가격을 입력해주세요.' }]}>
                 <Input value={productPrice} type="number" onChange={onChangePrice} />
               </FormItem>
 
-              <FormItem name={['재고수량']} label="재고수량" rules={[{ required: true, message: '재고수량을 입력해주세요.' }]}>
+              <FormItem name={['재고수량']} label="재고수량" rules={[{ type: 'number', required: true, message: '재고수량을 입력해주세요.' }]}>
                 <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
               </FormItem>
 
