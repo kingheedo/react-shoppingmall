@@ -100,6 +100,7 @@ const ProductForm = () => {
   const [productName, onChangeName, setProductName] = useInput('');
   const [productPrice, onChangePrice, setProductPrice] = useInput(0);
   const [productStock, onChangeStock, setProductStock] = useInput(0);
+  const [indeterminate, setIndeterminate] = useState(true);
   const checkedOption = ['SM', 'M', 'L', 'XL'];
   const [allChecked, setAllChecked] = useState(false);
   const [checkedSize, setCheckedSize] = useState<CheckboxValueType[]>([]);
@@ -174,10 +175,10 @@ const ProductForm = () => {
 
   const onChageCheckBox = useCallback(
     (check: CheckboxValueType[]) => {
+      console.log('checked', check);
       setCheckedSize(check);
-      if (checkedSize.length === checkedOption.length) {
-        setAllChecked((prev) => !prev);
-      }
+      setIndeterminate(!!check.length && check.length < checkedOption.length);
+      setAllChecked(check.length === checkedOption.length);
     },
     [checkedSize],
   );
@@ -185,7 +186,8 @@ const ProductForm = () => {
   const onChangeAllCheck = useCallback(
     (e: CheckboxChangeEvent) => {
       setCheckedSize(e.target.checked ? checkedOption : []);
-      setAllChecked((prev) => !prev);
+      setAllChecked(e.target.checked);
+      setIndeterminate(false);
     },
     [],
   );
@@ -217,20 +219,20 @@ const ProductForm = () => {
             </ImageContainer>
 
             <TextFormItem>
-              <FormItem name={['name']} label="상품명" rules={[{ type: 'string', required: true }]}>
+              <FormItem name={['상품명']} label="상품명" rules={[{ type: 'string', required: true, message: '상품명을 입력해주세요.' }]}>
                 <Input value={productName} onChange={onChangeName} />
               </FormItem>
 
-              <FormItem name={['price']} label="상품가격" rules={[{ required: true }]}>
-                <Input min="1" value={productPrice} type="number" onChange={onChangePrice} />
+              <FormItem name={['상품가격']} label="상품가격" rules={[{ required: true, message: '상품가격을 입력해주세요.' }]}>
+                <Input value={productPrice} type="number" onChange={onChangePrice} />
               </FormItem>
 
-              <FormItem name={['stock']} label="재고수량" rules={[{ required: true }]}>
+              <FormItem name={['재고수량']} label="재고수량" rules={[{ required: true, message: '재고수량을 입력해주세요.' }]}>
                 <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
               </FormItem>
 
               <FormItem>
-                <Checkbox onChange={onChangeAllCheck} checked={allChecked}>
+                <Checkbox indeterminate={indeterminate} onChange={onChangeAllCheck} checked={allChecked}>
                   Check all
                 </Checkbox>
                 <Divider />
