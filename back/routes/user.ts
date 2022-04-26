@@ -160,11 +160,7 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     })
                 )
             )
-            console.log('findHistoryCart',findHistoryCart.map(v => v.id))
-            console.log('reqBodyId',req.body.CartItemsId)
-            // await findHistoryCart.addPayments(payments)
         }
-             
         res.status(200).send('결제성공')
     } catch (error) {
         console.error(error);

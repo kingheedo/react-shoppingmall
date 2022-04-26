@@ -11,10 +11,10 @@ import { END } from 'redux-saga';
 import axios from 'axios';
 import AppLayout from '../components/AppLayout';
 import wrapper from '../store/configureStore';
-import { loadPaymentLists, loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { loadPaymentLists, loadUser } from '../reducers/requestTypes/userRequest';
 import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
-import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
+import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
 import Payment from '../components/Payment';
 
 moment.locale('ko');

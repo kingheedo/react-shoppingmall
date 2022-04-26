@@ -14,8 +14,8 @@ import {
 import { ADD_PRODUCT_REVIEW_FAILURE, ADD_PRODUCT_REVIEW_REQUEST, ADD_PRODUCT_REVIEW_SUCCESS } from '../reducers/reducerTypes/userTypes';
 import {
   LoadProduct, LoadProducts, RegisterProduct, SearchProducts, UploadImages,
-} from '../reducers/dispatchRequestTypes/productDispatchRequest';
-import { AddProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+} from '../reducers/requestTypes/productRequest';
+import { AddProductReview } from '../reducers/requestTypes/userRequest';
 
 function searchProductAPI(data:string) {
   return axios.get(`/product/name/${encodeURIComponent(data)}`);

@@ -13,11 +13,11 @@ import AppLayout from '../../../components/AppLayout';
 import Review from '../../../components/ReviewLists';
 import useInput from '../../../hooks/useInput';
 import wrapper from '../../../store/configureStore';
-import { addProduct, loadCartProducts } from '../../../reducers/dispatchRequestTypes/cartDispatchRequest';
+import { addProduct, loadCartProducts } from '../../../reducers/requestTypes/cartRequest';
 import { RootState } from '../../../reducers';
 import { ProductState } from '../../../reducers/reducerTypes/productType';
-import { loadUser } from '../../../reducers/dispatchRequestTypes/userDispatchRequest';
-import { loadProduct } from '../../../reducers/dispatchRequestTypes/productDispatchRequest';
+import { loadUser } from '../../../reducers/requestTypes/userRequest';
+import { loadProduct } from '../../../reducers/requestTypes/productRequest';
 import { CartState } from '../../../reducers/reducerTypes/cartTypes';
 import { UserState } from '../../../reducers/reducerTypes/userTypes';
 

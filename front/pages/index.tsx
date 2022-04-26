@@ -9,11 +9,11 @@ import AppLayout from '../components/AppLayout';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
 import Product from '../components/Product';
 import wrapper from '../store/configureStore';
-import { loadProducts } from '../reducers/dispatchRequestTypes/productDispatchRequest';
+import { loadProducts } from '../reducers/requestTypes/productRequest';
 import { RootState } from '../reducers';
-import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { loadUser } from '../reducers/requestTypes/userRequest';
 import { ProductState } from '../reducers/reducerTypes/productType';
-import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
+import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
 
 const Global = createGlobalStyle`
 .ant-col-6 {

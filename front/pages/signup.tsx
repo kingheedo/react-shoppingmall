@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
 import useInput from '../hooks/useInput';
-import { logIn, signUp, signUpReset } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { logIn, signUp, signUpReset } from '../reducers/requestTypes/userRequest';
 import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
 

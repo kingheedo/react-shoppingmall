@@ -10,7 +10,7 @@ import {
 } from '../reducers/reducerTypes/cartTypes';
 import {
   Addproduct, AddProductData, DeleteCartProduct,
-} from '../reducers/dispatchRequestTypes/cartDispatchRequest';
+} from '../reducers/requestTypes/cartRequest';
 
 function deleteCartProductApi(data:any) {
   return axios.delete(`/cart/${data.id}`, data);

@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { RootState } from '../reducers';
 import { ProductState } from '../reducers/reducerTypes/productType';
-import { searchProduct } from '../reducers/dispatchRequestTypes/productDispatchRequest';
+import { searchProduct } from '../reducers/requestTypes/productRequest';
 
 const { Search } = Input;
 const SearchWrapper = styled.div`

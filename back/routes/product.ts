@@ -39,7 +39,6 @@ router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) 
     res.json((req.files as Express.MulterS3.File[]).map((v) => v.location))
     }
 })
-
 router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
         const product = await Product.create({

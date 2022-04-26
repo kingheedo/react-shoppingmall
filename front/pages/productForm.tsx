@@ -24,9 +24,9 @@ import { UserState } from '../reducers/reducerTypes/userTypes';
 import {
   ProductState,
 } from '../reducers/reducerTypes/productType';
-import { registerProduct, removeImages, uploadImages } from '../reducers/dispatchRequestTypes/productDispatchRequest';
-import { loadCartProducts } from '../reducers/dispatchRequestTypes/cartDispatchRequest';
-import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { registerProduct, removeImages, uploadImages } from '../reducers/requestTypes/productRequest';
+import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
+import { loadUser } from '../reducers/requestTypes/userRequest';
 
 const CheckboxGroup = Checkbox.Group;
 

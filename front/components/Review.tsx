@@ -7,7 +7,7 @@ import React, {
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
-import { addProductReview } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { addProductReview } from '../reducers/requestTypes/userRequest';
 import { modalCountDown } from './ResultSuccessModal';
 
 const ReviewButton = styled(Button)`

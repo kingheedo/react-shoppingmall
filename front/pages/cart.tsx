@@ -14,8 +14,8 @@ import wrapper from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
 import {
   checkAllProduct, checkCartProduct, deleteCartProduct, loadCartProducts, unCheckAllProduct, uncheckCartProduct,
-} from '../reducers/dispatchRequestTypes/cartDispatchRequest';
-import { loadUser } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+} from '../reducers/requestTypes/cartRequest';
+import { loadUser } from '../reducers/requestTypes/userRequest';
 import { RootState } from '../reducers';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';

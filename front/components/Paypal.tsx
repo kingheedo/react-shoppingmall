@@ -1,7 +1,7 @@
 import React, { FC, useCallback } from 'react';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 import { useDispatch } from 'react-redux';
-import { addPaymentLists } from '../reducers/dispatchRequestTypes/userDispatchRequest';
+import { addPaymentLists } from '../reducers/requestTypes/userRequest';
 import { UserCart } from '../reducers/reducerTypes/cartTypes';
 import { modalCountDown } from './ResultSuccessModal';
 
