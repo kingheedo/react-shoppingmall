@@ -159,9 +159,6 @@ router.post('/payment', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(
                 UserId: req.user.id,
                 HistoryCartId: findHistoryCart[i].id
             })));
-            console.log('findHistoryCart', findHistoryCart.map(v => v.id));
-            console.log('reqBodyId', req.body.CartItemsId);
-            // await findHistoryCart.addPayments(payments)
         }
         res.status(200).send('결제성공');
     }
