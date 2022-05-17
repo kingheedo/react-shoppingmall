@@ -7,18 +7,17 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import Router from 'next/router';
 import { CloseOutlined } from '@ant-design/icons';
-import { END } from 'redux-saga';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import wrapper from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
-import {
-  checkAllProduct, checkCartProduct, deleteCartProduct, loadCartProducts, unCheckAllProduct, uncheckCartProduct,
-} from '../reducers/requestTypes/cartRequest';
-import { loadUser } from '../reducers/requestTypes/userRequest';
-import { RootState } from '../reducers';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';
+import { deleteProductInCart, loadProductsInCart } from '../reducers/asyncRequest/cart';
+import { loadUser } from '../reducers/asyncRequest/user';
+import {
+  checkAllProducts, checkProduct, unCheckAllProducts, uncheckProduct,
+} from '../reducers/cart';
+import wrapper, { RootState } from '../store/configureStore';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -102,15 +101,15 @@ const Cart: FC = () => {
   const [checkedProductStates, setCheckedProductStates] = useState(
     Array(userCart.length).fill(true),
   );
-
-  useEffect(() => {
-    dispatch(checkAllProduct());
-  }, []);
   useEffect(() => {
     if (!me) {
       Router.push('/signin');
     }
   }, [me]);
+
+  useEffect(() => {
+    dispatch(checkAllProducts());
+  }, []);
 
   const onChangeAllCheckedProducts = useCallback(
     (e) => {
@@ -118,11 +117,11 @@ const Cart: FC = () => {
       if (e.target.checked) {
         setCheckedProductStates(checkedProductStates.fill(true));
         setcheckedProductsList(userCart);
-        dispatch(checkAllProduct());
+        dispatch(checkAllProducts());
       } else {
         setCheckedProductStates(checkedProductStates.fill(false));
         setcheckedProductsList([]);
-        dispatch(unCheckAllProduct());
+        dispatch(unCheckAllProducts());
       }
     },
     [checkedProductsList, userCart],
@@ -132,13 +131,14 @@ const Cart: FC = () => {
       const updatedCheckedProducts = checkedProductStates.map((productState, i) => (i === index ? !productState : productState));
       setCheckedProductStates(updatedCheckedProducts);
       setCheckedAllProducts(updatedCheckedProducts.every((v) => v === true));
-      const checkProduct = userCart.find((product) => product.id === productId);
-      if (e.target.checked && checkProduct) {
-        setcheckedProductsList([...checkedProductsList, checkProduct]);
-        dispatch(checkCartProduct({ id: productId }));
+
+      const checkedProduct = userCart.find((product) => product.id === productId);
+      if (e.target.checked && checkedProduct) {
+        setcheckedProductsList([...checkedProductsList, checkedProduct]);
+        dispatch(checkProduct({ id: productId }));
       } else {
         setcheckedProductsList(checkedProductsList.filter((v) => v.id !== productId));
-        dispatch(uncheckCartProduct({ id: productId }));
+        dispatch(uncheckProduct({ id: productId }));
       }
     },
     [checkedProductsList, userCart, checkedProductStates],
@@ -147,7 +147,7 @@ const Cart: FC = () => {
   const onDeleteCartItem = useCallback(
     (cartSingleProductId) => (e: React.MouseEvent) => {
       e.preventDefault();
-      dispatch(deleteCartProduct({ id: cartSingleProductId }));
+      dispatch(deleteProductInCart({ id: cartSingleProductId }));
     },
     [],
   );
@@ -262,11 +262,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
     axios.defaults.headers.Cookie = cookie;
   }
 
-  store.dispatch(loadUser());
-  store.dispatch(loadCartProducts());
-
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
+  await store.dispatch(loadUser());
+  await store.dispatch(loadProductsInCart());
   return {
     props: {},
   };

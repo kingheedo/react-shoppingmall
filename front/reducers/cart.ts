@@ -1,118 +1,107 @@
-import produce from 'immer';
-import {
-  ADD_PRODUCT_CART_FAILURE,
-  ADD_PRODUCT_CART_REQUEST,
-  ADD_PRODUCT_CART_SUCCESS,
-  CartAction, CartState, CHECK_ALL_PRODUCTS, CHECK_CART_PRODUCT, DELETE_CART_PRODUCT_FAILURE, DELETE_CART_PRODUCT_REQUEST, DELETE_CART_PRODUCT_SUCCESS, LOAD_CART_PRODUCTS_FAILURE, LOAD_CART_PRODUCTS_REQUEST, LOAD_CART_PRODUCTS_SUCCESS, UNCHECK_ALL_PRODUCTS, UNCHECK_CART_PRODUCT, UserCart,
-} from './reducerTypes/cartTypes';
+import { createSlice } from '@reduxjs/toolkit';
+import { addProductToCart, deleteProductInCart, loadProductsInCart } from './asyncRequest/cart';
+import { CartState, UserCart } from './reducerTypes/cartTypes';
 
-export const initialState:CartState = {
-  userCart: [],
-  cartTotalPrice: 0,
-  cartTotalDeliveryFee: 0,
-  loadCartProductsLoading: false,
-  loadCartProductsDone: false,
-  loadCartProductsError: null,
-  addProductCartLoading: false,
-  addProductCartDone: false,
-  addProductCartError: null,
-  deleteCartProductLoading: false,
-  deleteCartProductDone: false,
-  deleteCartProductError: null,
-};
-
-const reducer = (state = initialState, action:CartAction) => {
-  return produce(state, (draft) => {
-    switch (action.type) {
-      case DELETE_CART_PRODUCT_REQUEST:
-        draft.deleteCartProductLoading = true;
-        draft.deleteCartProductDone = false;
-        draft.deleteCartProductError = null;
-        break;
-      case DELETE_CART_PRODUCT_SUCCESS:
-        draft.deleteCartProductLoading = false;
-        draft.deleteCartProductDone = true;
-        const product = draft.userCart.find((v) => v.id === action.data.CartItemId) as UserCart;
-        const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500;
-        draft.cartTotalDeliveryFee -= productDeliveryFee;
-        draft.cartTotalPrice -= (product.totalPrice + productDeliveryFee);
-        draft.userCart = draft.userCart.filter((v) => v.id !== action.data.CartItemId);
-        break;
-
-      case DELETE_CART_PRODUCT_FAILURE:
-        draft.deleteCartProductLoading = false;
-        draft.deleteCartProductDone = false;
-        draft.deleteCartProductError = action.error;
-        break;
-
-      case LOAD_CART_PRODUCTS_REQUEST:
-        draft.loadCartProductsLoading = true;
-        draft.loadCartProductsDone = false;
-        draft.loadCartProductsError = null;
-        break;
-      case LOAD_CART_PRODUCTS_SUCCESS:
-        draft.loadCartProductsLoading = false;
-        draft.loadCartProductsDone = true;
-        draft.userCart = action.data;
-        break;
-
-      case LOAD_CART_PRODUCTS_FAILURE:
-        draft.loadCartProductsLoading = false;
-        draft.loadCartProductsDone = false;
-        draft.loadCartProductsError = action.error;
-        break;
-
-      case CHECK_ALL_PRODUCTS:
-        draft.cartTotalDeliveryFee = draft.userCart.reduce((acc, curr) => acc + (curr.totalPrice > 39900 ? 0 : 2500), 0);
-        draft.cartTotalPrice = draft.userCart.reduce((acc, curr) => acc + curr.totalPrice, draft.cartTotalDeliveryFee);
-        break;
-
-      case UNCHECK_ALL_PRODUCTS:
-        draft.cartTotalPrice = 0;
-        draft.cartTotalDeliveryFee = 0;
-        break;
-
-      case UNCHECK_CART_PRODUCT: {
-        const product = draft.userCart.find((v:UserCart) => v.id === action.data.id);
-        const productDeliveryFee = product!.totalPrice > 39900 ? 0 : 2500;
-        draft.cartTotalDeliveryFee -= productDeliveryFee;
-        draft.cartTotalPrice -= (product!.totalPrice + productDeliveryFee);
-        break;
+export const cartSlice = createSlice({
+  name: 'cart',
+  initialState: {
+    userCart: [],
+    cartTotalPrice: 0,
+    cartTotalDeliveryFee: 0,
+    loadProductsInCartLoading: false,
+    loadProductsInCartDone: false,
+    loadProductsInCartError: null,
+    addProductToCartLoading: false,
+    addProductToCartDone: false,
+    addProductToCartError: null,
+    deleteProductInCartLoading: false,
+    deleteProductInCartDone: false,
+    deleteProductInCartError: null,
+} as CartState,
+reducers: {
+  checkProduct: (state, action) => {
+    const product = state.userCart.find((v) => v.id === action.payload.id) as UserCart;
+    const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500;
+        state.cartTotalDeliveryFee += productDeliveryFee;
+        state.cartTotalPrice += (product.totalPrice + productDeliveryFee);
+  },
+  uncheckProduct: (state, action) => {
+    const product = state.userCart.find((v: UserCart) => v.id === action.payload.id);
+    const productDeliveryFee = product!.totalPrice > 39900 ? 0 : 2500;
+      state.cartTotalDeliveryFee -= productDeliveryFee;
+      state.cartTotalPrice -= (product!.totalPrice + productDeliveryFee);
+  },
+  checkAllProducts: (state) => {
+      if (state.userCart) {
+        state.cartTotalDeliveryFee = state.userCart.reduce((acc, curr) => acc + (curr.totalPrice > 39900 ? 0 : 2500), 0);
+        state.cartTotalPrice = state.userCart.reduce((acc, curr) => acc + curr.totalPrice, state.cartTotalDeliveryFee);
       }
-      case CHECK_CART_PRODUCT: {
-        const product = draft.userCart.find((v) => v.id === action.data.id) as UserCart;
-        const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500;
-        draft.cartTotalDeliveryFee += productDeliveryFee;
-        draft.cartTotalPrice += (product.totalPrice + productDeliveryFee);
-        break;
-      }
-      case ADD_PRODUCT_CART_REQUEST:
-        draft.addProductCartLoading = true;
-        draft.addProductCartDone = false;
-        draft.addProductCartError = null;
-        break;
-      case ADD_PRODUCT_CART_SUCCESS: {
-        draft.addProductCartLoading = false;
-        draft.addProductCartDone = true;
-        const exproduct = draft.userCart.find((v) => (v.UserId === action.data.UserId) && (v.ProductId === action.data.ProductId) && (v.size === action.data.size));
+  },
+  unCheckAllProducts: (state) => {
+      state.cartTotalPrice = 0;
+      state.cartTotalDeliveryFee = 0;
+  },
+},
+extraReducers: {
+  [deleteProductInCart.pending as any]: (state) => {
+    state.deleteProductInCartLoading = true;
+    state.deleteProductInCartDone = false;
+    state.deleteProductInCartError = false;
+  },
+  [deleteProductInCart.fulfilled as any]: (state, action) => {
+    state.deleteProductInCartLoading = false;
+    state.deleteProductInCartDone = true;
+    const product = state.userCart.find((v) => v.id === action.payload.CartItemId) as UserCart;
+      const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500;
+      state.cartTotalDeliveryFee -= productDeliveryFee;
+      state.cartTotalPrice -= (product.totalPrice + productDeliveryFee);
+      state.userCart.filter((v) => v.id !== action.payload.CartItemId);
+  },
+  [deleteProductInCart.rejected as any]: (state, action) => {
+    state.deleteProductInCartLoading = false;
+    state.deleteProductInCartDone = false;
+    state.deleteProductInCartError = action.error.message;
+  },
+  [loadProductsInCart.pending as any]: (state) => {
+    state.loadProductsInCartLoading = true;
+    state.loadProductsInCartDone = false;
+    state.loadProductsInCartError = false;
+  },
+  [loadProductsInCart.fulfilled as any]: (state, action) => {
+    state.loadProductsInCartLoading = false;
+    state.loadProductsInCartDone = true;
+    state.userCart = action.payload;
+  },
+  [loadProductsInCart.rejected as any]: (state, action) => {
+    state.loadProductsInCartLoading = false;
+    state.loadProductsInCartDone = false;
+    state.loadProductsInCartError = action.error.message;
+  },
+
+  [addProductToCart.pending as any]: (state) => {
+    state.addProductToCartLoading = true;
+    state.addProductToCartDone = false;
+    state.addProductToCartError = false;
+  },
+  [addProductToCart.fulfilled as any]: (state, action) => {
+    state.addProductToCartLoading = false;
+    state.addProductToCartDone = true;
+    const exproduct = state.userCart.find((v) => (v.UserId === action.payload.UserId) && (v.ProductId === action.payload.ProductId) && (v.size === action.payload.size));
         if (exproduct) {
-          exproduct.quantity = action.data.quantity;
-          exproduct.totalPrice = action.data.totalPrice;
+          exproduct.quantity = action.payload.quantity;
+          exproduct.totalPrice = action.payload.totalPrice;
         } else {
-          draft.userCart.push(action.data);
+          state.userCart.push(action.payload);
         }
-        break;
-      }
-      case ADD_PRODUCT_CART_FAILURE:
-        draft.addProductCartLoading = false;
-        draft.addProductCartDone = false;
-        draft.addProductCartError = action.error;
-        break;
-
-      default:
-        break;
-    }
-  });
-};
-
-export default reducer;
+  },
+  [addProductToCart.rejected as any]: (state, action) => {
+    state.addProductToCartLoading = false;
+    state.addProductToCartDone = false;
+    state.addProductToCartError = action.error.message;
+  },
+},
+});
+export const {
+ checkProduct, uncheckProduct, checkAllProducts, unCheckAllProducts,
+} = cartSlice.actions;
+export default cartSlice.reducer;

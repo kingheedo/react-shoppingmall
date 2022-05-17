@@ -13,20 +13,19 @@ import { PlusOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
 import axios from 'axios';
-import { END } from 'redux-saga';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
-import wrapper from '../store/configureStore';
-import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
 import {
   ProductState,
 } from '../reducers/reducerTypes/productType';
-import { registerProduct, removeImages, uploadImages } from '../reducers/requestTypes/productRequest';
-import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
-import { loadUser } from '../reducers/requestTypes/userRequest';
+import { loadUser } from '../reducers/asyncRequest/user';
+import { loadProductsInCart } from '../reducers/asyncRequest/cart';
+import { registerProduct, uploadImages } from '../reducers/asyncRequest/product';
+import { removeImage } from '../reducers/product';
+import wrapper, { RootState } from '../store/configureStore';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -169,12 +168,12 @@ const ProductForm = () => {
 
   const onDeleteImage = useCallback(
     (index: number) => () => {
-      dispatch(removeImages(index));
+      dispatch(removeImage(index));
     },
     [],
   );
 
-  const onChageCheckBox = useCallback(
+  const onChangeCheckBox = useCallback(
     (check: CheckboxValueType[]) => {
       console.log('checked', check);
       setCheckedSize(check);
@@ -237,7 +236,7 @@ const ProductForm = () => {
                   Check all
                 </Checkbox>
                 <Divider />
-                <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChageCheckBox} />
+                <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChangeCheckBox} />
               </FormItem>
 
               <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
@@ -258,10 +257,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  store.dispatch(loadUser());
-  store.dispatch(loadCartProducts());
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
+  await store.dispatch(loadUser());
+  await store.dispatch(loadProductsInCart());
   return {
     props: {},
   };

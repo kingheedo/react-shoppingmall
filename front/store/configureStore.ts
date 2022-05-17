@@ -1,30 +1,24 @@
+import { Action, configureStore, ThunkAction } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
-import {
-  createStore, applyMiddleware, compose, Dispatch, AnyAction, MiddlewareAPI,
-} from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import createSagaMiddleware from 'redux-saga';
+import logger from 'redux-logger';
 import reducer from '../reducers';
-import rootSaga from '../sagas';
 
-const loggerMiddleware = (store : MiddlewareAPI) => (next:Dispatch<AnyAction>) => (action:AnyAction) => {
-  console.log(action);
-  return next(action);
-};
-const configureStore = () => {
-  const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [sagaMiddleware, loggerMiddleware];
-  const enhancer = process.env.NODE_ENV === 'production'
-    ? compose(applyMiddleware(...middlewares))
-    : composeWithDevTools(applyMiddleware(...middlewares));
+const store = configureStore({
+    reducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+});
+const makeStore = () => store;
 
-  const store = createStore(reducer, enhancer);
-  store.sagaTask = sagaMiddleware.run(rootSaga);
-  return store;
-};
-
-const wrapper = createWrapper(configureStore, {
-  debug: process.env.NODE_ENV === 'development',
+export type AppStore = ReturnType<typeof makeStore>;
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action
+>;
+const wrapper = createWrapper(makeStore, {
+    debug: process.env.NODE_ENV === 'development',
 });
 
 export default wrapper;

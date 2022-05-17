@@ -5,10 +5,11 @@ import { ShoppingCartOutlined } from '@ant-design/icons';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
-import { RootState } from '../reducers';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
-import { LOG_OUT_REQUEST, UserState } from '../reducers/reducerTypes/userTypes';
+import { UserState } from '../reducers/reducerTypes/userTypes';
 import SearchInput from './SearchInput';
+import { logOut } from '../reducers/asyncRequest/user';
+import { RootState } from '../store/configureStore';
 
 const Global = createGlobalStyle`
     a{
@@ -74,9 +75,7 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
 
   const onHandleLogout = useCallback(
     () => {
-      dispatch({
-        type: LOG_OUT_REQUEST,
-      });
+      dispatch(logOut());
       Router.push('/');
     },
     [],

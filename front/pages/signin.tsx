@@ -7,9 +7,9 @@ import styled from 'styled-components';
 import Router from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
-import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
-import { logIn } from '../reducers/requestTypes/userRequest';
+import { logIn } from '../reducers/asyncRequest/user';
+import { RootState } from '../store/configureStore';
 
 const Container = styled.div`
   width: 100vw;
@@ -37,21 +37,20 @@ const FormDiv = styled.div`
 const Signin: FC = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { me, loginError } = useSelector<RootState, UserState>((state) => state.user);
+  const { me, logInError } = useSelector<RootState, UserState>((state) => state.user);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (loginError) {
-      alert(loginError);
-    }
-  }, [loginError]);
 
   useEffect(() => {
     if (me) {
       Router.back();
     }
   }, [me]);
+  useEffect(() => {
+    if (logInError) {
+      alert(logInError);
+    }
+  }, [logInError]);
 
   const onhandleSubmit = useCallback(
     (e: React.MouseEvent<HTMLInputElement>) => {

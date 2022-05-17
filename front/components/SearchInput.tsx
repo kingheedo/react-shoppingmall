@@ -7,9 +7,9 @@ import React, {
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
-import { RootState } from '../reducers';
 import { ProductState } from '../reducers/reducerTypes/productType';
-import { searchProduct } from '../reducers/requestTypes/productRequest';
+import { searchProducts } from '../reducers/asyncRequest/product';
+import { RootState } from '../store/configureStore';
 
 const { Search } = Input;
 const SearchWrapper = styled.div`
@@ -49,7 +49,7 @@ const SearchInput: FC = () => {
   useEffect(() => {
     if (searchvalue) {
       setOpenDropdown(true);
-      dispatch(searchProduct(searchvalue));
+      dispatch(searchProducts(searchvalue));
     } else {
       setOpenDropdown(false);
     }

@@ -8,18 +8,16 @@ import {
 } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import { END } from 'redux-saga';
 import AppLayout from '../../../components/AppLayout';
 import Review from '../../../components/ReviewLists';
 import useInput from '../../../hooks/useInput';
-import wrapper from '../../../store/configureStore';
-import { addProduct, loadCartProducts } from '../../../reducers/requestTypes/cartRequest';
-import { RootState } from '../../../reducers';
 import { ProductState } from '../../../reducers/reducerTypes/productType';
-import { loadUser } from '../../../reducers/requestTypes/userRequest';
-import { loadProduct } from '../../../reducers/requestTypes/productRequest';
 import { CartState } from '../../../reducers/reducerTypes/cartTypes';
 import { UserState } from '../../../reducers/reducerTypes/userTypes';
+import { addProductToCart, loadProductsInCart } from '../../../reducers/asyncRequest/cart';
+import { loadUser } from '../../../reducers/asyncRequest/user';
+import { loadSingleProduct } from '../../../reducers/asyncRequest/product';
+import wrapper, { RootState } from '../../../store/configureStore';
 
 const Container = styled.div`
     width: 80vw;
@@ -94,7 +92,7 @@ const QueryProduct = () => {
   const dispatch = useDispatch();
   const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
-  const { addProductCartDone, addProductCartError } = useSelector<RootState, CartState>((state) => state.cart);
+  const { addProductToCartDone, addProductToCartError } = useSelector<RootState, CartState>((state) => state.cart);
   const router = useRouter();
   const { id } = router.query;
   const productId = parseInt(router.query.id as string, 10);
@@ -103,31 +101,35 @@ const QueryProduct = () => {
   const [visibleModal, setVisibleModal] = useState(false);
   const [buyNow, setBuyNow] = useState(true);
   useEffect(() => {
-    if (buyNow && addProductCartDone) {
+    if (buyNow && addProductToCartDone) {
       Router.push('/orderForm');
     }
-  }, [buyNow, addProductCartDone]);
+  }, [buyNow, addProductToCartDone]);
 
   useEffect(() => {
-    if (!me && addProductCartError) {
-      alert(addProductCartError);
+    if (!me && addProductToCartError) {
+      alert(addProductToCartError);
       Router.push('/signin');
     }
-  }, [me, addProductCartError]);
+  }, [me, addProductToCartError]);
   const onClickCart = useCallback(
     (price: number) => () => {
+      if (!me) {
+        alert('로그인이 필요합니다.');
+        return Router.push('/signin');
+      }
       const totalPrice = price * quantity;
       setBuyNow(false);
       if (size === '사이즈') {
         alert('사이즈를 선택해주세요.');
         return;
       }
-      dispatch(addProduct({
+      dispatch(addProductToCart({
         productId, size, quantity, totalPrice,
       }));
       setVisibleModal(true);
     },
-    [buyNow, id, quantity, size],
+    [me, buyNow, id, quantity, size],
   );
   const onClickBuy = useCallback(
     (price: number) => () => {
@@ -137,7 +139,7 @@ const QueryProduct = () => {
         alert('사이즈를 선택해주세요.');
         return;
       }
-      dispatch(addProduct({
+      dispatch(addProductToCart({
         buyNow, productId, size, quantity, totalPrice,
       }));
     },
@@ -243,21 +245,17 @@ const QueryProduct = () => {
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
-  console.log('axios', axios);
-
   const id = context.params?.id!;
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  store.dispatch(loadUser());
-  store.dispatch(loadCartProducts());
-  store.dispatch(
-    loadProduct(id),
+  await store.dispatch(loadUser());
+  await store.dispatch(loadProductsInCart());
+  await store.dispatch(
+    loadSingleProduct(id),
   );
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
   return {
     props: {},
   };

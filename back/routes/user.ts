@@ -15,9 +15,9 @@ router.get('/', async(req, res, next) =>{
              exclude : ['password']
          }
         })
-        res.status(200).json(user);
+        return res.status(200).json(user);
          }else{
-             res.status(200).json(null);
+             return res.status(200).json(null);
          }
          
      }catch(error){
@@ -49,7 +49,7 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
                      
                  }]
              })
-             res.status(202).json(paymentLists)
+             return res.status(202).json(paymentLists)
     } catch (error) {
         console.error(error);
         next(error);
@@ -156,12 +156,12 @@ router.post('/payment', isLoggedIn,  async(req, res, next) => {
                     createdAt : req.body.payment.createdAt,
                     updatedAt : req.body.payment.updatedAt,
                     UserId : req.user!.id,
-                    HistoryCartId : findHistoryCart[i].id
+                    HistoryCartId : findHistoryCart[i]!.id
                     })
                 )
             )
         }
-        res.status(200).send('결제성공')
+        return res.status(200).send('결제성공')
     } catch (error) {
         console.error(error);
         next(error);

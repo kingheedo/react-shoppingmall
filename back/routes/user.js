@@ -25,10 +25,10 @@ router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
                     exclude: ['password']
                 }
             });
-            res.status(200).json(user);
+            return res.status(200).json(user);
         }
         else {
-            res.status(200).json(null);
+            return res.status(200).json(null);
         }
     }
     catch (error) {

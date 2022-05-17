@@ -1,28 +1,27 @@
-import produce from 'immer';
+import { createSlice } from '@reduxjs/toolkit';
+import { addProductReview } from './asyncRequest/product';
 import {
-  ADD_PAYMENT_FAILURE,
-  ADD_PAYMENT_REQUEST,
-  ADD_PAYMENT_SUCCESS,
-  ADD_PRODUCT_REVIEW_FAILURE,
-  ADD_PRODUCT_REVIEW_REQUEST,
-  ADD_PRODUCT_REVIEW_SUCCESS,
-  LOAD_PAYMENT_LISTS_FAILURE, LOAD_PAYMENT_LISTS_REQUEST, LOAD_PAYMENT_LISTS_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS, RESET_ADD_PAYMENT, SIGN_UP_FAILURE, SIGN_UP_REQUEST, SIGN_UP_RESET, SIGN_UP_SUCCESS, UserAction, UserState,
-} from './reducerTypes/userTypes';
+  addPayment,
+ loadPaymentLists, loadUser, logIn, logOut, signUp,
+} from './asyncRequest/user';
+import { UserState } from './reducerTypes/userTypes';
 
-const initialState:UserState = {
+export const userSlice = createSlice({
+  name: 'user',
+  initialState: {
   me: null,
   paymentLists: [],
   loadUserLoading: false,
   loadUserDone: false,
   loadUserError: null,
 
-  loginLoading: false,
-  loginDone: false,
-  loginError: null,
+  logInLoading: false,
+  logInDone: false,
+  logInError: null,
 
-  logoutLoading: false,
-  logoutDone: false,
-  logoutError: null,
+  logOutLoading: false,
+  logOutDone: false,
+  logOutError: null,
 
   signUpLoading: false,
   signUpDone: false,
@@ -39,135 +38,117 @@ const initialState:UserState = {
   addProductReviewLoading: false,
   addProductReviewDone: false,
   addProductReviewError: false,
-};
-// export const dummyUser = () => ({
-//   id: 5,
-//   User: {
-//     id: 1,
-//     name: '사용자2',
-//   },
-//   Images: [{ src: 'https://cdn.pixabay.com/photo/2021/01/24/20/47/mountains-5946500_1280.jpg' }],
-//   Comments: ['댓글테스트'],
-// });
-
-const reducer = (state = initialState, action:UserAction) => {
-  return produce(state, (draft) => {
-    switch (action.type) {
-      case ADD_PRODUCT_REVIEW_REQUEST:
-        draft.addProductReviewLoading = true;
-        draft.addProductReviewDone = false;
-        draft.addProductReviewError = null;
-        break;
-      case ADD_PRODUCT_REVIEW_SUCCESS:
-        draft.addProductReviewLoading = false;
-        draft.addProductReviewDone = true;
-        draft.paymentLists.forEach((v) => v.HistoryCart.User.Reviews.push(action.data.Review));
-        break;
-      case ADD_PRODUCT_REVIEW_FAILURE:
-        draft.addProductReviewLoading = false;
-        draft.addProductReviewDone = false;
-        draft.addProductReviewError = action.error;
-        break;
-      case LOAD_PAYMENT_LISTS_REQUEST:
-        draft.loadPaymentListsLoading = true;
-        draft.loadPaymentListsDone = false;
-        draft.loadPaymentListsError = null;
-        break;
-      case LOAD_PAYMENT_LISTS_SUCCESS:
-        draft.loadPaymentListsLoading = false;
-        draft.loadPaymentListsDone = true;
-        draft.paymentLists = action.data;
-        break;
-      case LOAD_PAYMENT_LISTS_FAILURE:
-        draft.loadPaymentListsLoading = false;
-        draft.loadPaymentListsError = action.error;
-        break;
-
-      case ADD_PAYMENT_REQUEST:
-        draft.addPaymentLoading = true;
-        draft.addPaymentDone = false;
-        draft.addPaymentError = null;
-        break;
-      case ADD_PAYMENT_SUCCESS:
-        draft.addPaymentLoading = false;
-        draft.addPaymentDone = true;
-        break;
-      case ADD_PAYMENT_FAILURE:
-        draft.addPaymentLoading = false;
-        draft.addPaymentError = action.error;
-        break;
-
-      case LOAD_USER_REQUEST:
-        draft.loadUserLoading = true;
-        draft.loadUserDone = false;
-        draft.loadUserError = null;
-        break;
-      case LOAD_USER_SUCCESS:
-        draft.loadUserLoading = false;
-        draft.loadUserDone = true;
-        draft.me = action.data;
-        break;
-      case LOAD_USER_FAILURE:
-        draft.loadUserLoading = false;
-        draft.loadUserError = action.error;
-        break;
-
-      case LOG_OUT_REQUEST:
-        draft.logoutLoading = true;
-        draft.logoutDone = false;
-        draft.logoutError = null;
-        break;
-      case LOG_OUT_SUCCESS:
-        draft.logoutLoading = false;
-        draft.logoutDone = true;
-        draft.me = null;
-        break;
-      case LOG_OUT_FAILURE:
-        draft.logoutLoading = false;
-        draft.logoutError = action.error;
-        break;
-
-      case LOG_IN_REQUEST:
-        draft.loginLoading = true;
-        draft.loginDone = false;
-        draft.loginError = null;
-        break;
-      case LOG_IN_SUCCESS:
-        draft.loginLoading = false;
-        draft.loginDone = true;
-        draft.me = action.data;
-        break;
-      case LOG_IN_FAILURE:
-        draft.loginLoading = false;
-        draft.loginError = action.error;
-        break;
-
-      case SIGN_UP_REQUEST:
-        draft.signUpLoading = true;
-        draft.signUpDone = false;
-        draft.signUpError = null;
-        break;
-      case SIGN_UP_SUCCESS:
-        draft.signUpLoading = false;
-        draft.signUpDone = true;
-        break;
-      case SIGN_UP_FAILURE:
-        draft.signUpLoading = false;
-        draft.signUpError = action.error;
-        break;
-
-      case SIGN_UP_RESET:
-        draft.signUpDone = false;
-        break;
-
-      case RESET_ADD_PAYMENT:
-        draft.addPaymentDone = false;
-        break;
-
-      default:
-        break;
-    }
-  });
-};
-
-export default reducer;
+} as UserState,
+reducers: {
+  signUpReset: (state) => {
+    state.signUpDone = false;
+  },
+},
+extraReducers: {
+  [addProductReview.pending as any]: (state) => {
+    state.addProductReviewLoading = true;
+    state.addProductReviewDone = false;
+    state.addProductReviewError = false;
+  },
+ [addProductReview.fulfilled as any]: (state, action) => {
+    state.addProductReviewLoading = false;
+    state.addProductReviewDone = true;
+    state.paymentLists.forEach((v) => v.HistoryCart.User.Reviews.push(action.payload.Review));
+  },
+  [addProductReview.rejected as any]: (state, action) => {
+    state.addProductReviewLoading = false;
+    state.addProductReviewDone = false;
+    state.addProductReviewError = action.error.message;
+  },
+  [loadPaymentLists.pending as any]: (state) => {
+    state.loadPaymentListsLoading = true;
+    state.loadPaymentListsDone = false;
+    state.loadPaymentListsError = false;
+  },
+ [loadPaymentLists.fulfilled as any]: (state, action) => {
+    state.loadPaymentListsLoading = false;
+    state.loadPaymentListsDone = true;
+    state.paymentLists = action.payload;
+  },
+  [loadPaymentLists.rejected as any]: (state, action) => {
+    state.loadPaymentListsLoading = false;
+    state.loadPaymentListsDone = false;
+    state.loadPaymentListsError = action.error.message;
+  },
+  [addPayment.pending as any]: (state) => {
+    state.addPaymentLoading = true;
+    state.addPaymentDone = false;
+    state.addPaymentError = false;
+  },
+ [addPayment.fulfilled as any]: (state) => {
+    state.addPaymentLoading = false;
+    state.addPaymentDone = true;
+  },
+  [addPayment.rejected as any]: (state, action) => {
+    state.addPaymentLoading = false;
+    state.addPaymentDone = false;
+    state.addPaymentError = action.error.message;
+  },
+  [loadUser.pending as any]: (state) => {
+    state.loadUserLoading = true;
+    state.loadUserDone = false;
+    state.loadUserError = false;
+  },
+ [loadUser.fulfilled as any]: (state, action) => {
+    state.loadUserLoading = false;
+    state.loadUserDone = true;
+    state.me = action.payload;
+  },
+  [loadUser.rejected as any]: (state, action) => {
+    state.loadUserLoading = false;
+    state.loadUserDone = false;
+    state.loadUserError = action.error.message;
+  },
+  [logOut.pending as any]: (state) => {
+    state.logOutLoading = true;
+    state.logOutDone = false;
+    state.logOutError = false;
+  },
+ [logOut.fulfilled as any]: (state) => {
+    state.logOutLoading = false;
+    state.logOutDone = true;
+    state.me = null;
+  },
+  [logOut.rejected as any]: (state, action) => {
+    state.logOutLoading = false;
+    state.logOutDone = false;
+    state.logOutError = action.error.message;
+  },
+  [logIn.pending as any]: (state) => {
+    state.logInLoading = true;
+    state.logInDone = false;
+    state.logInError = false;
+  },
+ [logIn.fulfilled as any]: (state, action) => {
+    state.logInLoading = false;
+    state.logInDone = true;
+    state.me = action.payload;
+  },
+  [logIn.rejected as any]: (state, action) => {
+    state.logInLoading = false;
+    state.logInDone = false;
+    state.logInError = action.error.message;
+  },
+  [signUp.pending as any]: (state) => {
+    state.signUpLoading = true;
+    state.signUpDone = false;
+    state.signUpError = false;
+  },
+  [signUp.fulfilled as any]: (state) => {
+    state.signUpLoading = false;
+    state.signUpDone = true;
+  },
+  [signUp.rejected as any]: (state, action) => {
+    state.signUpLoading = false;
+    state.signUpDone = false;
+    state.signUpError = action.error.message;
+  },
+},
+});
+export const { signUpReset } = userSlice.actions;
+export default userSlice.reducer;

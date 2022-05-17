@@ -7,15 +7,13 @@ import {
 } from 'antd';
 import Link from 'next/link';
 import moment from 'moment';
-import { END } from 'redux-saga';
 import axios from 'axios';
 import AppLayout from '../components/AppLayout';
-import wrapper from '../store/configureStore';
-import { loadPaymentLists, loadUser } from '../reducers/requestTypes/userRequest';
-import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
-import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
 import Payment from '../components/Payment';
+import { loadPaymentLists, loadUser } from '../reducers/asyncRequest/user';
+import { loadProductsInCart } from '../reducers/asyncRequest/cart';
+import wrapper, { RootState } from '../store/configureStore';
 
 moment.locale('ko');
 const { Title } = Typography;
@@ -43,8 +41,7 @@ const PageTitle = styled(Title)`
 `;
 
 const Mypage: FC = () => {
-  const { me, paymentLists } = useSelector<RootState, UserState>((state) => state.user);
-  const { addProductReviewError } = useSelector<RootState, UserState>((state) => state.product);
+  const { me, paymentLists, addProductReviewError } = useSelector<RootState, UserState>((state) => state.user);
 
   useEffect(() => {
     if (addProductReviewError) {
@@ -90,11 +87,9 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  store.dispatch(loadUser());
-  store.dispatch(loadPaymentLists());
-  store.dispatch(loadCartProducts());
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
+  await store.dispatch(loadUser());
+  await store.dispatch(loadPaymentLists());
+  await store.dispatch(loadProductsInCart());
   return {
     props: {},
   };

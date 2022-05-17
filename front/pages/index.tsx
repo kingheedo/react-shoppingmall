@@ -2,18 +2,16 @@ import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Col, Row } from 'antd';
 import { useInView } from 'react-intersection-observer';
-import { END } from 'redux-saga';
 import axios from 'axios';
 import styled, { createGlobalStyle } from 'styled-components';
 import AppLayout from '../components/AppLayout';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
 import Product from '../components/Product';
-import wrapper from '../store/configureStore';
-import { loadProducts } from '../reducers/requestTypes/productRequest';
-import { RootState } from '../reducers';
-import { loadUser } from '../reducers/requestTypes/userRequest';
+import { loadProductsInCart } from '../reducers/asyncRequest/cart';
+import { loadProducts } from '../reducers/asyncRequest/product';
+import { loadUser } from '../reducers/asyncRequest/user';
 import { ProductState } from '../reducers/reducerTypes/productType';
-import { loadCartProducts } from '../reducers/requestTypes/cartRequest';
+import wrapper, { RootState } from '../store/configureStore';
 
 const Global = createGlobalStyle`
 .ant-col-6 {
@@ -40,7 +38,7 @@ const Home: FC = () => {
 
   useEffect(() => {
     if (inView && hasMoreProducts && !loadProductsLoading) {
-      const lastId = mainProducts[mainProducts.length - 1]?.id;
+      const lastId: number = mainProducts[mainProducts.length - 1]?.id;
       dispatch(loadProducts(lastId));
     }
   },
@@ -77,12 +75,9 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  store.dispatch(loadUser());
-  store.dispatch(loadProducts());
-
-  store.dispatch(loadCartProducts());
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
+  await store.dispatch(loadUser());
+  await store.dispatch(loadProducts());
+  await store.dispatch(loadProductsInCart());
   return {
     props: {},
   };

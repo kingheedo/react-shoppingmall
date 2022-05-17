@@ -7,9 +7,10 @@ import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
 import useInput from '../hooks/useInput';
-import { logIn, signUp, signUpReset } from '../reducers/requestTypes/userRequest';
-import { RootState } from '../reducers';
 import { UserState } from '../reducers/reducerTypes/userTypes';
+import { logIn, signUp } from '../reducers/asyncRequest/user';
+import { signUpReset } from '../reducers/user';
+import { RootState } from '../store/configureStore';
 
 const Container = styled.div`
   width: 100vw;

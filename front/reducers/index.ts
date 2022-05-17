@@ -1,23 +1,22 @@
 import { HYDRATE } from 'next-redux-wrapper';
-import { AnyAction, combineReducers } from 'redux';
+import { AnyAction } from 'redux';
+import { combineReducers } from '@reduxjs/toolkit';
+import cart from './cart';
 import user from './user';
 import product from './product';
-import cart from './cart';
 
-const rootReducer = (state:any, action:AnyAction) => {
-  switch (action.type) {
-    case HYDRATE:
-      console.log('HYDRATE', action);
-      return action.payload;
-    default: {
-      const combineReducer = combineReducers({
-        user,
-        product,
-        cart,
-      });
-      return combineReducer(state, action);
+const reducer = (state:any, action:AnyAction) => {
+    if (action.type === HYDRATE) {
+        return {
+            ...state,
+            ...action.payload,
+        };
     }
-  }
+    return combineReducers({
+        user,
+        cart,
+        product,
+    })(state, action);
 };
-export type RootState = ReturnType<typeof rootReducer>
-export default rootReducer;
+
+export default reducer;

@@ -6,18 +6,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import styled from 'styled-components';
 import Router from 'next/router';
-import { END } from 'redux-saga';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import wrapper from '../store/configureStore';
 import AppLayout from '../components/AppLayout';
-import {
-  checkCartProduct, loadCartProducts,
-} from '../reducers/requestTypes/cartRequest';
-import { loadUser } from '../reducers/requestTypes/userRequest';
-import { RootState } from '../reducers';
+import { loadUser } from '../reducers/asyncRequest/user';
+import { loadProductsInCart } from '../reducers/asyncRequest/cart';
 import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';
+import { checkProduct } from '../reducers/cart';
+import wrapper, { RootState } from '../store/configureStore';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -88,7 +85,7 @@ const OrderForm: FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(checkCartProduct({ id: userCart[0]?.id }));
+    dispatch(checkProduct({ id: userCart[0]?.id }));
   }, [userCart]);
 
   useEffect(() => {
@@ -198,11 +195,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async (c
     axios.defaults.headers.Cookie = cookie;
   }
 
-  store.dispatch(loadUser());
-  store.dispatch(loadCartProducts());
-
-  store.dispatch(END);
-  await store.sagaTask?.toPromise();
+  await store.dispatch(loadUser());
+  await store.dispatch(loadProductsInCart());
   return {
     props: {},
   };

@@ -1,9 +1,9 @@
 import React, { FC, useCallback } from 'react';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
 import { useDispatch } from 'react-redux';
-import { addPaymentLists } from '../reducers/requestTypes/userRequest';
 import { UserCart } from '../reducers/reducerTypes/cartTypes';
 import { modalCountDown } from './ResultSuccessModal';
+import { addPayment } from '../reducers/asyncRequest/user';
 
 type Props = {
   headers: string;
@@ -22,13 +22,14 @@ const Paypal: FC<Props> = ({
     (payment) => {
       console.log('The payment was succeeded!', payment);
       if (headers === 'buynow') {
+        console.log('addPayment', { CartItemId, payment });
         dispatch(
-          addPaymentLists({ CartItemId, payment }),
+          addPayment({ CartItemId, payment }),
         );
       }
       if (headers === 'buylater') {
         dispatch(
-          addPaymentLists({ CartItemsId, payment }),
+          addPayment({ CartItemsId, payment }),
         );
       }
       modalCountDown();
