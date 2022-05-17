@@ -91,9 +91,12 @@ extraReducers: {
   [loadProducts.fulfilled as any]: (state, action) => {
     state.loadProductsLoading = false;
     state.loadProductsDone = true;
-    const newMainProducts = state.mainProducts.concat(action.payload);
-    state.mainProducts = newMainProducts;
     state.hasMoreProducts = action.payload.length === 4;
+    if (state.hasMoreProducts) {
+      state.mainProducts.concat(action.payload);
+    } else {
+      state.mainProducts = action.payload;
+    }
   },
   [loadProducts.rejected as any]: (state, action) => {
     state.loadProductsLoading = false;
