@@ -65,6 +65,13 @@ const Table = styled.table`
 `;
 const Thead = styled.thead`
      border-bottom: 1px solid;
+     & th:nth-child(3){
+       min-width: 58px;
+     }
+     & th:nth-child(4){
+       min-width: 58px;
+     }
+     
 `;
 const CheckAll = styled.input`
     width: 20px; 
@@ -73,6 +80,12 @@ const CheckAll = styled.input`
 const Tbody = styled.tbody`
     height: 10rem;
     text-align: center;
+    & td{
+      min-width: 58px;
+      @media only screen and (max-width: 800px) {
+        min-width: 20px;
+        }
+    }
 `;
 const Check = styled.input`
      width: 20px;
@@ -83,10 +96,15 @@ const Image = styled.img`
         height: 500px;
 @media only screen and (max-width: 1160px) {
         width: 442px;
+        height: 442px;
+        }
+@media only screen and (max-width: 760px) {
+        width: 390px;
+        height: 390px;
         }
 @media only screen and (max-width: 690px) {
-        width: 290px;
-        height: 290px;
+        width: 214px;
+        height: 214px;
         }
 `;
 const DelteBtn = styled(CloseOutlined)`
@@ -194,9 +212,6 @@ const Cart: FC = () => {
               </Thead>
 
               <Tbody>
-                <tr>
-                  <td />
-                </tr>
                 {userCart[0] && userCart.map((cartSingleProduct, index) => (
                   <tr key={cartSingleProduct.id}>
                     <td>
