@@ -8,6 +8,8 @@ class Cart extends Model{
     public size! : string;
     public readonly createdAt! : Date;
     public updatedAt! : Date;
+    public UserId! : number;
+    public ProductId! : number;
 }
             Cart.init({
                 id: {

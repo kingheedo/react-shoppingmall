@@ -55,7 +55,8 @@ extraReducers: {
       const productDeliveryFee = product.totalPrice > 39900 ? 0 : 2500;
       state.cartTotalDeliveryFee -= productDeliveryFee;
       state.cartTotalPrice -= (product.totalPrice + productDeliveryFee);
-      state.userCart.filter((v) => v.id !== action.payload.CartItemId);
+      const newUserCart = state.userCart.filter((v) => v.id !== action.payload.CartItemId);
+      state.userCart = newUserCart;
   },
   [deleteProductInCart.rejected as any]: (state, action) => {
     state.deleteProductInCartLoading = false;

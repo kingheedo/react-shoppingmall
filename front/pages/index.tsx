@@ -69,7 +69,7 @@ const Home: FC = () => {
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
-  console.log('context.req.headers', context.req.headers);
+  // console.log('context.req.headers', context.req.headers);
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
   if (context.req && cookie) {

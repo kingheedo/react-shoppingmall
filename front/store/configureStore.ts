@@ -3,13 +3,15 @@ import { createWrapper } from 'next-redux-wrapper';
 import logger from 'redux-logger';
 import reducer from '../reducers';
 
+const createStore = () => {
 const store = configureStore({
     reducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });
-const makeStore = () => store;
+return store;
+};
 
-export type AppStore = ReturnType<typeof makeStore>;
+export type AppStore = ReturnType<typeof createStore>;
 export type RootState = ReturnType<AppStore['getState']>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
@@ -17,7 +19,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action
 >;
-const wrapper = createWrapper(makeStore, {
+const wrapper = createWrapper(createStore, {
     debug: process.env.NODE_ENV === 'development',
 });
 
