@@ -1,13 +1,11 @@
-import { BelongsToManyAddAssociationMixin, BelongsToManyAddAssociationsMixin, DataTypes, Model } from 'sequelize'
+import { DataTypes, Model } from 'sequelize'
 import { dbTtype } from '.';
-import Payment from './payment';
 import {sequelize} from './sequelize'
 class HistoryCart extends Model{
     public readonly id! : number;
     public quantity! : number;
     public totalPrice! : number;
     public size! : string;
-    public addPayments! : BelongsToManyAddAssociationsMixin<Payment,any>;
     public readonly createdAt! : Date;
     public readonly updatedAt! : Date;
 }

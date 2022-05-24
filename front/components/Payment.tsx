@@ -35,7 +35,7 @@ const Payment: FC<Props> = ({ payment }) => {
         <a>
           <h3>{payment.paymentID}</h3>
           <CardItem
-            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[0] && payment.HistoryCart?.Product?.Images[1].src} src={`${payment.HistoryCart?.Product?.Images[0] && payment.HistoryCart?.Product?.Images[1].src}`} />}
+            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`${payment.HistoryCart?.Product?.Images[1].src}`} />}
           >
             <Meta style={{ float: 'left' }} title={payment.HistoryCart?.Product?.productName} />
             <P>{moment(payment.createdAt).format('LLL')}</P>

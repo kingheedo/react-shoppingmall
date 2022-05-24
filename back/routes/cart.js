@@ -39,45 +39,29 @@ router.post('/', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0,
             const exCartItem = yield models_1.Cart.findOne({
                 where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
             });
-            if (exCartItem) {
-                const findHistoryCart = yield models_1.HistoryCart.findOne({
-                    where: {
-                        quantity: exCartItem.quantity,
-                        totalPrice: exCartItem.totalPrice,
-                        size: exCartItem.size,
-                        UserId: exCartItem.UserId,
-                        ProductId: exCartItem.ProductId,
-                    }
-                });
-                yield models_1.Cart.update({
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                }, {
-                    where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size },] },
-                }),
-                    yield models_1.HistoryCart.update({
+            exCartItem
+                ?
+                    yield models_1.Cart.update({
                         totalPrice: req.body.totalPrice,
                         quantity: req.body.quantity
                     }, {
-                        where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }, { id: findHistoryCart.id }] },
+                        where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
+                    })
+                :
+                    yield models_1.Cart.create({
+                        UserId: req.user.id,
+                        ProductId: parseInt(req.body.productId, 10),
+                        size: req.body.size,
+                        totalPrice: req.body.totalPrice,
+                        quantity: req.body.quantity
                     });
-            }
-            else {
-                yield models_1.Cart.create({
-                    UserId: req.user.id,
-                    ProductId: parseInt(req.body.productId, 10),
-                    size: req.body.size,
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                });
-                yield models_1.HistoryCart.create({
-                    UserId: req.user.id,
-                    ProductId: parseInt(req.body.productId, 10),
-                    size: req.body.size,
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                });
-            }
+            yield models_1.HistoryCart.create({
+                UserId: req.user.id,
+                ProductId: parseInt(req.body.productId, 10),
+                size: req.body.size,
+                totalPrice: req.body.totalPrice,
+                quantity: req.body.quantity
+            });
             const fullCartitem = yield models_1.Cart.findOne({
                 where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
                 include: [{
@@ -93,45 +77,29 @@ router.post('/', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0,
             const exCartItem = yield models_1.Cart.findOne({
                 where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
             });
-            if (exCartItem) {
-                const findHistoryCart = yield models_1.HistoryCart.findOne({
-                    where: {
-                        quantity: exCartItem.quantity,
-                        totalPrice: exCartItem.totalPrice,
-                        size: exCartItem.size,
-                        UserId: exCartItem.UserId,
-                        ProductId: exCartItem.ProductId,
-                    }
-                });
-                yield models_1.Cart.increment({
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                }, {
-                    where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size },] },
-                });
-                yield models_1.HistoryCart.increment({
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                }, {
-                    where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }, { id: findHistoryCart.id }] },
-                });
-            }
-            else {
-                yield models_1.Cart.create({
-                    UserId: req.user.id,
-                    ProductId: parseInt(req.body.productId, 10),
-                    size: req.body.size,
-                    totalPrice: req.body.totalPrice,
-                    quantity: req.body.quantity
-                }),
-                    yield models_1.HistoryCart.create({
+            exCartItem
+                ?
+                    yield models_1.Cart.increment({
+                        totalPrice: req.body.totalPrice,
+                        quantity: req.body.quantity
+                    }, {
+                        where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
+                    })
+                :
+                    yield models_1.Cart.create({
                         UserId: req.user.id,
                         ProductId: parseInt(req.body.productId, 10),
                         size: req.body.size,
                         totalPrice: req.body.totalPrice,
                         quantity: req.body.quantity
                     });
-            }
+            yield models_1.HistoryCart.create({
+                UserId: req.user.id,
+                ProductId: parseInt(req.body.productId, 10),
+                size: req.body.size,
+                totalPrice: req.body.totalPrice,
+                quantity: req.body.quantity
+            });
             const fullCartitem = yield models_1.Cart.findOne({
                 where: { [sequelize_1.Op.and]: [{ UserId: req.user.id, ProductId: req.body.productId }, { size: req.body.size }] },
                 include: [{

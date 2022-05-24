@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import _concat from 'lodash/concat';
 import {
   ProductState,
 } from './reducerTypes/productType';
@@ -14,7 +13,7 @@ export const productSlice = createSlice({
   singleProduct: null,
   imagePath: [],
   searchProductsList: [],
-  hasMoreProducts: false,
+  hasMoreProducts: true,
   registerProductLoading: false,
   registerProductDone: false,
   registerProductError: null,
@@ -92,9 +91,13 @@ extraReducers: {
   [loadProducts.fulfilled as any]: (state, action) => {
     state.loadProductsLoading = false;
     state.loadProductsDone = true;
-    state.mainProducts = state.mainProducts.concat(action.payload);
     state.hasMoreProducts = action.payload.length === 4;
-    },
+    if (state.hasMoreProducts) {
+      state.mainProducts.concat(action.payload);
+    } else {
+      state.mainProducts = action.payload;
+    }
+  },
   [loadProducts.rejected as any]: (state, action) => {
     state.loadProductsLoading = false;
     state.loadProductsDone = false;

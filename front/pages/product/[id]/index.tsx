@@ -40,7 +40,10 @@ const Wrapper = styled.div`
 `;
 const Content = styled.div`
     display: flex;
-    
+    .image: {
+      width: 400px;
+      height: 400px;
+    }
 @media only screen and (max-width: 690px) {
         flex-direction: column;
         align-items: center;
@@ -49,7 +52,12 @@ const Content = styled.div`
     
 `;
 const ProductImage = styled(Image)`
-    width: 100%;
+      width: 400px;
+      height: 400px;
+      @media only screen and (max-width: 1075px) {
+        width: 300px;
+        height: 300px;
+        }
 `;
 const H2 = styled.h2`
       margin: 2rem

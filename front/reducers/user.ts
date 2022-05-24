@@ -53,7 +53,7 @@ extraReducers: {
  [addProductReview.fulfilled as any]: (state, action) => {
     state.addProductReviewLoading = false;
     state.addProductReviewDone = true;
-    state.paymentLists.map((v) => v.HistoryCart?.User?.Reviews.push(action.payload.Review));
+    state.paymentLists.forEach((v) => v.HistoryCart.User.Reviews.push(action.payload.Review));
   },
   [addProductReview.rejected as any]: (state, action) => {
     state.addProductReviewLoading = false;

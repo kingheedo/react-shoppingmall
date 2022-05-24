@@ -35,7 +35,7 @@ const Product: FC<Props> = ({ product }) => {
       onClick={onClickCard(product.id)}
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
-      cover={show ? <img alt="Images[0]" src={`${product.Images[0] && product.Images[0].src}`} /> : <img alt="Images[1]" src={`${product.Images[1] && product.Images[1].src}`} />}
+      cover={show ? <img alt="Images[0]" src={`${product.Images[0].src}`} /> : <img alt="Images[1]" src={`${product.Images[1].src}`} />}
     >
       <ProductInfo>
         <span>{product?.productName}</span>
