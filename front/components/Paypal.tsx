@@ -15,19 +15,20 @@ const Paypal: FC<Props> = ({
   headers, checkedProduct, checkedProductsList, cartTotalPrice,
 }) => {
   const CartItemsId = checkedProductsList && checkedProductsList.map((v) => v.id);
-  const CartItemId = checkedProduct?.id;
+  const CartItemId = checkedProduct && checkedProduct.id;
   const dispatch = useDispatch();
 
   const onSuccess = useCallback(
     (payment) => {
       console.log('The payment was succeeded!', payment);
       if (headers === 'buynow') {
-        console.log('addPayment', { CartItemId, payment });
+        console.log('buynow', { CartItemId, payment });
         dispatch(
           addPayment({ CartItemId, payment }),
         );
       }
       if (headers === 'buylater') {
+        console.log('buylater', { CartItemsId, payment });
         dispatch(
           addPayment({ CartItemsId, payment }),
         );

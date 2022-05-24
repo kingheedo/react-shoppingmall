@@ -79,8 +79,15 @@ const Check = styled.input`
      height: 20px;
 `;
 const Image = styled.img`
-    width: 150px;
-    height: 150px;
+        width: 500px;
+        height: 500px;
+@media only screen and (max-width: 1160px) {
+        width: 442px;
+        }
+@media only screen and (max-width: 690px) {
+        width: 290px;
+        height: 290px;
+        }
 `;
 const DelteBtn = styled(CloseOutlined)`
     font-size: 20px; 
@@ -101,6 +108,7 @@ const Cart: FC = () => {
   const [checkedProductStates, setCheckedProductStates] = useState(
     Array(userCart.length).fill(true),
   );
+
   useEffect(() => {
     if (!me) {
       Router.push('/signin');
@@ -124,7 +132,7 @@ const Cart: FC = () => {
         dispatch(unCheckAllProducts());
       }
     },
-    [checkedProductsList, userCart],
+    [checkedProductsList, userCart, checkedProductStates],
   );
   const onChangeCheck = useCallback(
     (productId, index) => (e: React.ChangeEvent<HTMLInputElement>) => {

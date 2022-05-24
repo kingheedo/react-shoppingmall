@@ -1,5 +1,6 @@
-import {Model,DataTypes} from 'sequelize';
+import {Model,DataTypes, BelongsToManyGetAssociationsMixin} from 'sequelize';
 import { dbTtype } from '.';
+import HistoryCart from './historyCart';
 import {sequelize} from './sequelize'
 class User extends Model{
     public readonly id!:number;

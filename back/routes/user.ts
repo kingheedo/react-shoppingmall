@@ -1,5 +1,5 @@
 import * as express from 'express'
-import { User, Payment, Product, Image, HistoryCart, Review } from '../models';
+import { User, Payment, Product, Image, HistoryCart, Review, Cart } from '../models';
 const router = express.Router();
 import * as bcrypt from 'bcrypt';
 import * as passport from 'passport';
@@ -116,53 +116,87 @@ router.post('/', isNotLoggedIn,  async(req, res, next) => {
 })
 router.post('/payment', isLoggedIn,  async(req, res, next) => {
     try{
-        
-        
         if(req.body.CartItemId){
-            const findHistoryCartId = await HistoryCart.findOne({
-                where : {id : req.body.CartItemId}
+        const findCart = await Cart.findOne({
+            where: {id : req.body.CartItemId}
+        })
+            console.log('findCart',findCart)
+            if(findCart){
+            const findHistoryCart = await HistoryCart.findOne({
+                where : {
+                            quantity : findCart.quantity,
+                            totalPrice : findCart.totalPrice,
+                            size : findCart.size,
+                            UserId : findCart.UserId,
+                            ProductId : findCart.ProductId, 
+                }
             })
-            await Payment.create({
-                    cancelled : req.body.payment.cancelled,
-                    email : req.body.payment.email,
-                    paid : req.body.payment.paid,
-                    payerID :req.body.payment.payerID,
-                    paymentID : req.body.payment.paymentID,
-                    paymentToken : req.body.payment.paymentToken,
-                    returnUrl : req.body.payment.returnUrl,
-                    createdAt : req.body.payment.createdAt,
-                    updatedAt : req.body.payment.updatedAt,
-                    UserId : req.user!.id,
-                    HistoryCartId : findHistoryCartId!.id
-                    })
+            if(findHistoryCart){
+                         await Payment.create({
+                        cancelled : req.body.payment.cancelled,
+                        email : req.body.payment.email,
+                        paid : req.body.payment.paid,
+                        payerID :req.body.payment.payerID,
+                        paymentID : req.body.payment.paymentID,
+                        paymentToken : req.body.payment.paymentToken,
+                        returnUrl : req.body.payment.returnUrl,
+                        createdAt : req.body.payment.createdAt,
+                        updatedAt : req.body.payment.updatedAt,
+                        UserId : req.user!.id,
+                        HistoryCartId : findHistoryCart.id
+                        })
+                }
+                await Cart.destroy({
+                    where : {[Op.and] : [{id : req.body.CartItemId },{UserId : req.user!.id}]},
+                })
+            return res.status(200).send('결제성공')
+            }
         }
-
-        
         if(req.body.CartItemsId){
-            const findHistoryCart = await HistoryCart.findAll({
-                where : {[Op.and] : [{id : {[Op.or]: req.body.CartItemsId }},{UserId : req.user!.id}]},
+            const findCarts = await Cart.findAll({
+                where : {[Op.and] : [{id :  req.body.CartItemsId },{UserId : req.user!.id}]},
+                order : [['id', 'DESC']],
+            });
+            
+            const findHistoryCarts = await HistoryCart.findAll({
+                where:{
+                    [Op.or] : findCarts.map(v => ({
+                        quantity : v.quantity,
+                        totalPrice:  v.totalPrice,
+                        size:  v.size,
+                        UserId : req.user!.id,
+                        ProductId: v.ProductId,
+                        createdAt: v.createdAt,
+                    }))
+                },
+                attributes: ['id'],
                 order : [['id', 'DESC']],
             })
-            await Promise.all(
-                req.body.CartItemsId.map((cartItemId:number,i:number) => 
-                Payment.create({
-                    cancelled : req.body.payment.cancelled,
-                    email : req.body.payment.email,
-                    paid : req.body.payment.paid,
-                    payerID :req.body.payment.payerID,
-                    paymentID : req.body.payment.paymentID,
-                    paymentToken : req.body.payment.paymentToken,
-                    returnUrl : req.body.payment.returnUrl,
-                    createdAt : req.body.payment.createdAt,
-                    updatedAt : req.body.payment.updatedAt,
-                    UserId : req.user!.id,
-                    HistoryCartId : findHistoryCart[i]!.id
-                    })
-                )
-            )
-        }
-        return res.status(200).send('결제성공')
-    } catch (error) {
+            if(findHistoryCarts){
+                    
+                    await Promise.all(findHistoryCarts.map((cartItemId: HistoryCart, i:number) => {
+                    Payment.create({
+                        cancelled : req.body.payment.cancelled,
+                        email : req.body.payment.email,
+                        paid : req.body.payment.paid,
+                        payerID :req.body.payment.payerID,
+                        paymentID : req.body.payment.paymentID,
+                        paymentToken : req.body.payment.paymentToken,
+                        returnUrl : req.body.payment.returnUrl,
+                        createdAt : req.body.payment.createdAt,
+                        updatedAt : req.body.payment.updatedAt,
+                        UserId : req.user!.id,
+                        HistoryCartId : findHistoryCarts[i]!.id
+                    });
+                }))
+                await Cart.destroy({
+                    where : {[Op.and] : [{id :  req.body.CartItemsId },{UserId : req.user!.id}]},
+                })
+            return res.status(200).send('결제성공')
+            }
+            }
+    }
+         catch (error) {
         console.error(error);
         next(error);
     }

@@ -30,15 +30,29 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             const exCartItem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
         })
-        exCartItem 
-        ?
+        if(exCartItem){
+            const findHistoryCart = await HistoryCart.findOne({
+                where : {
+                            quantity : exCartItem!.quantity,
+                            totalPrice : exCartItem!.totalPrice,
+                            size : exCartItem!.size,
+                            UserId : exCartItem!.UserId,
+                            ProductId : exCartItem!.ProductId, 
+                }
+            })
             await Cart.update({
             totalPrice : req.body.totalPrice,
             quantity : req.body.quantity
         },{
-            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
+            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size},]},
+        }),
+            await HistoryCart.update({
+            totalPrice : req.body.totalPrice,
+            quantity : req.body.quantity
+        },{
+            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size},{id: findHistoryCart!.id}]},
         })
-        :
+        }else{
         await Cart.create({
             UserId : req.user!.id,
             ProductId : parseInt(req.body.productId,10),
@@ -53,6 +67,7 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             totalPrice : req.body.totalPrice,
             quantity: req.body.quantity
         })
+        }
         const fullCartitem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
             include: [{
@@ -67,22 +82,36 @@ router.post('/', isLoggedIn, async(req, res, next) => {
         const exCartItem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
         })
-        exCartItem 
-        ?
-            await Cart.increment({
-            totalPrice : req.body.totalPrice,
-            quantity : req.body.quantity
-        },{
-            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
+        if(exCartItem){
+            const findHistoryCart = await HistoryCart.findOne({
+                where : {
+                            quantity : exCartItem!.quantity,
+                            totalPrice : exCartItem!.totalPrice,
+                            size : exCartItem!.size,
+                            UserId : exCartItem!.UserId,
+                            ProductId : exCartItem!.ProductId, 
+                }
         })
-        :
-        await Cart.create({
+            await Cart.increment({
+                totalPrice : req.body.totalPrice,
+                quantity : req.body.quantity
+        },{
+            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size},]},
+        })
+            await HistoryCart.increment({
+                totalPrice : req.body.totalPrice,
+                quantity : req.body.quantity
+        },{
+            where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size},{id: findHistoryCart!.id}]},
+        })
+        }else{
+             await Cart.create({
             UserId : req.user!.id,
             ProductId : parseInt(req.body.productId,10),
             size: req.body.size,
             totalPrice : req.body.totalPrice,
             quantity: req.body.quantity
-        })
+        }),
         await HistoryCart.create({
             UserId : req.user!.id,
             ProductId : parseInt(req.body.productId,10),
@@ -90,7 +119,7 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             totalPrice : req.body.totalPrice,
             quantity: req.body.quantity
         })
-
+        }
         const fullCartitem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
             include: [{

@@ -57,7 +57,7 @@ router.get('/paymentsList', middlewares_1.isLoggedIn, (req, res, next) => __awai
                         }]
                 }]
         });
-        res.status(202).json(paymentLists);
+        return res.status(202).json(paymentLists);
     }
     catch (error) {
         console.error(error);
@@ -124,43 +124,82 @@ router.post('/', middlewares_1.isNotLoggedIn, (req, res, next) => __awaiter(void
 router.post('/payment', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (req.body.CartItemId) {
-            const findHistoryCartId = yield models_1.HistoryCart.findOne({
+            const findCart = yield models_1.Cart.findOne({
                 where: { id: req.body.CartItemId }
             });
-            yield models_1.Payment.create({
-                cancelled: req.body.payment.cancelled,
-                email: req.body.payment.email,
-                paid: req.body.payment.paid,
-                payerID: req.body.payment.payerID,
-                paymentID: req.body.payment.paymentID,
-                paymentToken: req.body.payment.paymentToken,
-                returnUrl: req.body.payment.returnUrl,
-                createdAt: req.body.payment.createdAt,
-                updatedAt: req.body.payment.updatedAt,
-                UserId: req.user.id,
-                HistoryCartId: findHistoryCartId.id
-            });
+            console.log('findCart', findCart);
+            if (findCart) {
+                const findHistoryCart = yield models_1.HistoryCart.findOne({
+                    where: {
+                        quantity: findCart.quantity,
+                        totalPrice: findCart.totalPrice,
+                        size: findCart.size,
+                        UserId: findCart.UserId,
+                        ProductId: findCart.ProductId,
+                    }
+                });
+                if (findHistoryCart) {
+                    yield models_1.Payment.create({
+                        cancelled: req.body.payment.cancelled,
+                        email: req.body.payment.email,
+                        paid: req.body.payment.paid,
+                        payerID: req.body.payment.payerID,
+                        paymentID: req.body.payment.paymentID,
+                        paymentToken: req.body.payment.paymentToken,
+                        returnUrl: req.body.payment.returnUrl,
+                        createdAt: req.body.payment.createdAt,
+                        updatedAt: req.body.payment.updatedAt,
+                        UserId: req.user.id,
+                        HistoryCartId: findHistoryCart.id
+                    });
+                }
+                yield models_1.Cart.destroy({
+                    where: { [sequelize_1.Op.and]: [{ id: req.body.CartItemId }, { UserId: req.user.id }] },
+                });
+                return res.status(200).send('결제성공');
+            }
         }
         if (req.body.CartItemsId) {
-            const findHistoryCart = yield models_1.HistoryCart.findAll({
-                where: { [sequelize_1.Op.and]: [{ id: { [sequelize_1.Op.or]: req.body.CartItemsId } }, { UserId: req.user.id }] },
+            const findCarts = yield models_1.Cart.findAll({
+                where: { [sequelize_1.Op.and]: [{ id: req.body.CartItemsId }, { UserId: req.user.id }] },
                 order: [['id', 'DESC']],
             });
-            yield Promise.all(req.body.CartItemsId.map((cartItemId, i) => models_1.Payment.create({
-                cancelled: req.body.payment.cancelled,
-                email: req.body.payment.email,
-                paid: req.body.payment.paid,
-                payerID: req.body.payment.payerID,
-                paymentID: req.body.payment.paymentID,
-                paymentToken: req.body.payment.paymentToken,
-                returnUrl: req.body.payment.returnUrl,
-                createdAt: req.body.payment.createdAt,
-                updatedAt: req.body.payment.updatedAt,
-                UserId: req.user.id,
-                HistoryCartId: findHistoryCart[i].id
-            })));
+            const findHistoryCarts = yield models_1.HistoryCart.findAll({
+                where: {
+                    [sequelize_1.Op.or]: findCarts.map(v => ({
+                        quantity: v.quantity,
+                        totalPrice: v.totalPrice,
+                        size: v.size,
+                        UserId: req.user.id,
+                        ProductId: v.ProductId,
+                        createdAt: v.createdAt,
+                    }))
+                },
+                attributes: ['id'],
+                order: [['id', 'DESC']],
+            });
+            if (findHistoryCarts) {
+                yield Promise.all(findHistoryCarts.map((cartItemId, i) => {
+                    models_1.Payment.create({
+                        cancelled: req.body.payment.cancelled,
+                        email: req.body.payment.email,
+                        paid: req.body.payment.paid,
+                        payerID: req.body.payment.payerID,
+                        paymentID: req.body.payment.paymentID,
+                        paymentToken: req.body.payment.paymentToken,
+                        returnUrl: req.body.payment.returnUrl,
+                        createdAt: req.body.payment.createdAt,
+                        updatedAt: req.body.payment.updatedAt,
+                        UserId: req.user.id,
+                        HistoryCartId: findHistoryCarts[i].id
+                    });
+                }));
+                yield models_1.Cart.destroy({
+                    where: { [sequelize_1.Op.and]: [{ id: req.body.CartItemsId }, { UserId: req.user.id }] },
+                });
+                return res.status(200).send('결제성공');
+            }
         }
-        res.status(200).send('결제성공');
     }
     catch (error) {
         console.error(error);

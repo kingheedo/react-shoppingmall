@@ -6,17 +6,18 @@ import user from './user';
 import product from './product';
 
 const reducer = (state:any, action:AnyAction) => {
-    if (action.type === HYDRATE) {
-        return {
-            ...state,
-            ...action.payload,
-        };
-    }
-    return combineReducers({
+  switch (action.type) {
+    case HYDRATE:
+      return action.payload;
+    default: {
+      const combinedReducer = combineReducers({
         user,
-        cart,
         product,
-    })(state, action);
+        cart,
+      });
+      return combinedReducer(state, action);
+    }
+  }
 };
 
 export default reducer;
