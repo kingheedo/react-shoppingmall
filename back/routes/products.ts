@@ -4,18 +4,18 @@ const { Op } = require('sequelize');
 import { Product, Image, Review, User } from '../models';
 const router = express.Router();
 
-router.get('/', async (req: Request<any,any,any,{lastId : string}>, res, next) =>{
+router.get('/', async (req: Request<any,any,any,{id : string}>, res, next) =>{
     try{
         let where = {};
-        if(parseInt(req.query.lastId,10)){
+        if(parseInt(req.query.id,10)){
             where = {
-                id : {[Op.lt] : parseInt(req.query.lastId,10)}
+                id : {[Op.gt] : parseInt(req.query.id,10)}
             }
         }
     const products = await Product.findAll({
         where,
         limit: 4,
-        order: [['createdAt', 'DESC']],
+        order: [['id', 'ASC']],
         include: [{
             model: Image,
         },{
@@ -24,7 +24,14 @@ router.get('/', async (req: Request<any,any,any,{lastId : string}>, res, next) =
                 model: User,
                 attributes: ['id','email']
             }]
-        },]
+        },{
+            model: User,
+            through: { // 다대다 table의 정보 가져오지 않기, 좋아요 누른 사람의 아이디만 가져오기 ex {id: 1}
+                attributes: []
+            },
+            attributes: ['id'],
+            as: 'Likers'
+        }]
     })
     res.status(202).json(products);
     }catch(error){

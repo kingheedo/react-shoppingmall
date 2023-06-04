@@ -1,5 +1,5 @@
-import { DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,Model } from 'sequelize';
-import { dbTtype, Image, Size } from '.';
+import { BelongsToManyGetAssociationsMixin, BelongsToManyRemoveAssociationMixin, DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,HasManyGetAssociationsMixin,HasManyRemoveAssociationMixin,Model } from 'sequelize';
+import { dbTtype, Image, Size, User } from '.';
 import { sequelize } from './sequelize';
 
 class Product extends Model{
@@ -12,6 +12,8 @@ class Product extends Model{
     public addImages! : HasManyAddAssociationsMixin<Image, number>
     public addSizes! : HasManyAddAssociationsMixin<Size, number>
     public addSize! : HasManyAddAssociationMixin<Size, number>
+    public addLikers! : BelongsToManyRemoveAssociationMixin<User, number>
+    public removeLikers! : BelongsToManyRemoveAssociationMixin<User, number>
 }
             Product.init({
             productName : {

@@ -16,27 +16,41 @@ try{
     fs.mkdirSync('uploads');
 }
 
-AWS.config.update({
-    accessKeyId: process.env.AWSAccessKeyId,
-    secretAccessKey: process.env.AWSSecretKey,
-    region: 'ap-northeast-2',
-})
+// AWS.config.update({
+//     accessKeyId: process.env.AWSAccessKeyId,
+//     secretAccessKey: process.env.AWSSecretKey,
+//     region: 'ap-northeast-2',
+// })
+
+// const upload = multer({
+//     storage: multerS3({
+//         s3: new AWS.S3(),
+//         bucket: 'reactshoppingmall-s3',
+//         key(rep,file,cb){
+//             cb(null, `orignal/${Date.now()}_${path.basename(file.originalname)}`)
+//         }
+//     }),
+//     limits : {fileSize: 20 * 1024 * 1024, files: 2}
+// });
 
 const upload = multer({
-    storage: multerS3({
-        s3: new AWS.S3(),
-        bucket: 'reactshoppingmall-s3',
-        key(rep,file,cb){
-            cb(null, `orignal/${Date.now()}_${path.basename(file.originalname)}`)
-        }
+    storage: multer.diskStorage({
+        destination: (req,file,cb) => {
+            cb(null, 'uploads')
+        },
+        filename: (req,file,cb) => {
+            cb(null, `${file.fieldname} - ${Date.now()}`)
+        },
     }),
-    limits : {fileSize: 20 * 1024 * 1024, files: 2}
-});
+    limits: {
+        fileSize : 20 * 1024 * 1024, files: 2
+    }
+})
 
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
     console.log('req.files',req.files);
     if(Array.isArray(req.files)){
-    res.json((req.files as Express.MulterS3.File[]).map((v) => v.location))
+    res.json((req.files as Express.Multer.File[]).map((v) => v.filename))
     }
 })
 router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
@@ -47,6 +61,8 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             stock : req.body.productStock,
             UserId : req.user!.id,
         })
+
+        console.log('req.body',req.body)
         if(req.body.image){
             const promises:Promise<Image>[] = req.body.image.map((image:string)=> Image.create({
                     src: image
@@ -170,6 +186,46 @@ router.post('/:productId/review',isLoggedIn, async(req, res, next) => {
         })
         res.status(201).json({Review : review,})
     }catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
+router.post('/like/:productId', isLoggedIn, async(req,res,next) => {
+    try{
+        const productId = parseInt(req.params.productId, 10);
+
+        const product = await Product.findOne({
+            where: {
+                id: productId
+            }
+        })
+
+        product?.addLikers(req.user?.id)
+
+        res.status(201).json('좋아요를 눌렀습니다.')
+    }
+
+    catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
+router.post('/unlike/:productId', isLoggedIn, async(req, res, next) => {
+    try{
+        const productId = parseInt(req.params.productId,10);
+        const product = await Product.findOne({
+            where: {
+                id: productId
+            }
+        })
+        if(product){
+            await product.removeLikers(req.user!.id);
+            res.status(201).json('좋아요 취소')
+        }
+    }
+    catch(error){
         console.error(error);
         next(error);
     }
