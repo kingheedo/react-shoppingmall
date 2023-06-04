@@ -26,6 +26,7 @@ import { loadProductsInCart } from '../reducers/asyncRequest/cart';
 import { registerProduct, uploadImages } from '../reducers/asyncRequest/product';
 import { removeImage } from '../reducers/product';
 import wrapper, { RootState } from '../store/configureStore';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -93,8 +94,8 @@ const layout = {
 };
 
 const ProductForm = () => {
-  const { me, loadUserDone } = useSelector<RootState, UserState>((state) => state.user);
-  const { imagePath, registerProductDone } = useSelector<RootState, ProductState>((state) => state.product);
+  const { me, loadUserDone } = useAppSelector((state) => state.user);
+  const { imagePath, registerProductDone } = useAppSelector((state) => state.product);
 
   const [productName, onChangeName, setProductName] = useInput('');
   const [productPrice, onChangePrice, setProductPrice] = useInput(0);
@@ -103,7 +104,7 @@ const ProductForm = () => {
   const checkedOption = ['SM', 'M', 'L', 'XL'];
   const [allChecked, setAllChecked] = useState(false);
   const [checkedSize, setCheckedSize] = useState<CheckboxValueType[]>([]);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const imageUpload = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -138,16 +139,19 @@ const ProductForm = () => {
     },
     [],
   );
-
+    console.log('productName',productName)
+    console.log('productPrice',productPrice)
+    console.log('productStock',productStock)
+    console.log('checkedSize',checkedSize)
   const onSubmitForm = useCallback(
-    (e) => {
-      e.preventDefault();
+    (e: any) => {
+      e.preventDefault()
       if (imagePath.length !== 2 || !productName || !productPrice || !productStock || !checkedSize[0]) {
         return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.');
       }
 
       const formData = new FormData();
-      imagePath.forEach((image) => {
+      imagePath.forEach((image: string) => {
         formData.append('image', image);
       });
       checkedSize.forEach((productSize: any) => {
@@ -192,7 +196,6 @@ const ProductForm = () => {
     [],
   );
   return (
-    <AppLayout>
       <Container>
         <Wrapper>
           <Form onFinish={onSubmitForm} encType="multipart/form-data" {...layout} name="nest-messages">
@@ -206,7 +209,7 @@ const ProductForm = () => {
 
               </FormItem>
               <ImageWrapper>
-                {imagePath?.map((v, i) => (
+                {imagePath?.map((v: string, i: number) => (
                   <div key={v}>
                     <Image
                       src={v}
@@ -248,7 +251,6 @@ const ProductForm = () => {
           </Form>
         </Wrapper>
       </Container>
-    </AppLayout>
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {

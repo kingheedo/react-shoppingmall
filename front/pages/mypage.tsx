@@ -55,15 +55,12 @@ const Mypage: FC = () => {
   }, [me]);
 
   return (
-    <AppLayout>
       <Container>
         <Wrapper>
           <BreadCrumb>
             <Breadcrumb.Item>
               <Link href="/">
-                <a>
                   Home
-                </a>
               </Link>
             </Breadcrumb.Item>
             <Breadcrumb.Item>
@@ -78,7 +75,6 @@ const Mypage: FC = () => {
           </PaymentListDiv>
         </Wrapper>
       </Container>
-    </AppLayout>
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {

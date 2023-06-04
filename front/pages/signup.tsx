@@ -10,7 +10,8 @@ import useInput from '../hooks/useInput';
 import { UserState } from '../reducers/reducerTypes/userTypes';
 import { logIn, signUp } from '../reducers/asyncRequest/user';
 import { signUpReset } from '../reducers/user';
-import { RootState } from '../store/configureStore';
+import { AppDispatch, RootState } from '../store/configureStore';
+import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 
 const Container = styled.div`
   width: 100vw;
@@ -35,7 +36,7 @@ const FormDiv = styled.div`
 const Signup = () => {
   const {
     signUpDone, signUpError, signUpLoading,
-  } = useSelector<RootState, UserState>((state) => state.user);
+  } = useAppSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [confirmpassword, onChangeConfirmpassword] = useInput('');
@@ -43,8 +44,7 @@ const Signup = () => {
   const [checkpassword, setCheckPassword] = useState(false);
   const [check, setCheck] = useState(false);
   const [checkerror, setCheckError] = useState(false);
-  const dispatch = useDispatch();
-
+   const dispatch = useAppDispatch();
   useEffect(() => {
     if (signUpDone) {
       dispatch(
@@ -76,8 +76,7 @@ const Signup = () => {
   );
 
   const onSubmitForm = useCallback(
-    (e) => {
-      e.preventDefault();
+    () => {
       if (checkpassword) {
         return alert('비밀번호를 확인해주세요');
       }
@@ -173,7 +172,7 @@ const Signup = () => {
                 </Button>
               )
                 : (
-                  <Button onClick={onSubmitForm} type="primary" htmlType="submit">
+                  <Button onClick={(e) => onSubmitForm} type="primary" htmlType="submit">
                     CREATE
                   </Button>
                 )}

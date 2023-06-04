@@ -3,7 +3,12 @@
     "strict": true,
     "allowJs": true,
     "target": "ES5",
-    "lib": ["es5", "es6", "es7", "dom"],
+    "lib": [
+      "es5",
+      "es6",
+      "es7",
+      "dom"
+    ],
     "jsx": "preserve",
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
@@ -13,9 +18,18 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "typeRoots": ["./types"],
-    "outDir": "dist"
+    "typeRoots": [
+      "./types"
+    ],
+    "outDir": "dist",
+    "incremental": true
   },
-  "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

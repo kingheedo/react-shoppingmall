@@ -15,6 +15,7 @@ import { CartState } from '../reducers/reducerTypes/cartTypes';
 import { UserState } from '../reducers/reducerTypes/userTypes';
 import { checkProduct } from '../reducers/cart';
 import wrapper, { RootState } from '../store/configureStore';
+import { useAppDispatch } from '../hooks/useRedux';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -82,7 +83,7 @@ const OrderForm: FC = () => {
     userCart, cartTotalPrice, cartTotalDeliveryFee,
   } = useSelector<RootState, CartState>((state) => state.cart);
   const { me } = useSelector<RootState, UserState>((state) => state.user);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(checkProduct({ id: userCart[0]?.id }));
@@ -95,15 +96,12 @@ const OrderForm: FC = () => {
   }, [me]);
 
   return (
-    <AppLayout>
       <Container>
         <Wrapper>
           <BreadCrumb>
             <Breadcrumb.Item>
               <Link href="/">
-                <a>
                   Home
-                </a>
               </Link>
             </Breadcrumb.Item>
             <Breadcrumb.Item>
@@ -185,7 +183,6 @@ const OrderForm: FC = () => {
           {userCart[0] && <DynamicPaypalComponent headers="buynow" checkedProduct={userCart[0]} cartTotalPrice={cartTotalPrice} checkedProductsList={undefined} />}
         </Wrapper>
       </Container>
-    </AppLayout>
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {

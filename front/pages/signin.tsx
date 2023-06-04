@@ -10,6 +10,11 @@ import useInput from '../hooks/useInput';
 import { UserState } from '../reducers/reducerTypes/userTypes';
 import { logIn } from '../reducers/asyncRequest/user';
 import { RootState } from '../store/configureStore';
+import { useAppDispatch } from '../hooks/useRedux';
+import { getUser } from '../context/LoginProvider';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import apis from '../apis';
+import { PostLoginReq } from '../apis/user/schema';
 
 const Container = styled.div`
   width: 100vw;
@@ -37,30 +42,33 @@ const FormDiv = styled.div`
 const Signin: FC = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { me, logInError } = useSelector<RootState, UserState>((state) => state.user);
+  const me = getUser();
+  const queryClient = useQueryClient();
 
-  const dispatch = useDispatch();
+  const { mutate: PostLogin} = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
+    onSuccess: () => {
+      queryClient.invalidateQueries(['getUser']).then(() => Router.back())
+
+    },
+    onError: () => {
+      alert('로그인 오류')
+    }
+  })
 
   useEffect(() => {
-    if (me) {
+    if (me?.id) {
       Router.back();
     }
   }, [me]);
-  useEffect(() => {
-    if (logInError) {
-      alert(logInError);
-    }
-  }, [logInError]);
 
-  const onhandleSubmit = useCallback(
-    (e: React.MouseEvent<HTMLInputElement>) => {
-      e.preventDefault();
-      dispatch(
-        logIn({ email, password }),
-      );
-    },
-    [email, password],
-  );
+  const onHandleSubmit =  () => {
+      PostLogin({
+        email,
+        password
+      })
+      
+    }
+
   const onhandleSignUp = useCallback(
     () => {
       Router.push('/signup');
@@ -78,7 +86,7 @@ const Signin: FC = () => {
             initialValues={{
               remember: true,
             }}
-            onFinish={onhandleSubmit}
+            onFinish={onHandleSubmit}
           >
             <h1>LOGIN</h1>
             <Form.Item
@@ -111,7 +119,7 @@ const Signin: FC = () => {
             </Form.Item>
 
             <Form.Item>
-              <Button onClick={onhandleSubmit} type="primary" htmlType="submit" className="login-form-button">
+              <Button type="primary" htmlType="submit" className="login-form-button">
                 로그인
               </Button>
               <SignUpButton onClick={onhandleSignUp} type="primary" htmlType="submit" className="signup-form-button">

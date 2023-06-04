@@ -1,28 +1,34 @@
-import React, { FC, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Col, Row } from 'antd';
-import { useInView } from 'react-intersection-observer';
+import React, { FC, useMemo, useRef } from 'react';
 import axios from 'axios';
-import styled, { createGlobalStyle } from 'styled-components';
-import AppLayout from '../components/AppLayout';
+import styled from 'styled-components';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
 import Product from '../components/Product';
-import { loadProductsInCart } from '../reducers/asyncRequest/cart';
-import { loadProducts } from '../reducers/asyncRequest/product';
-import { loadUser } from '../reducers/asyncRequest/user';
-import { ProductState } from '../reducers/reducerTypes/productType';
-import wrapper, { RootState } from '../store/configureStore';
+import { GetServerSideProps } from 'next';
+import { QueryClient, dehydrate, useInfiniteQuery} from '@tanstack/react-query';
+import useInterSectionObserver from '../hooks/useInterSectionObserver';
 
-const Global = createGlobalStyle`
-.ant-col-6 {
-  max-width: 100%;
+const getProducts = async(id?:number) => {
+   return await axios.get<any>(`/products?id=${id || 0}`,  {baseURL: process.env.NEXT_PUBLIC_SERVER_URL}).then(res => res.data);
 }
-`;
-const Container = styled.div`
-    width: 80vw;
-    height: 100%;
-    margin: 6rem auto 0;
-`;
+
+export const getServerSideProps:GetServerSideProps  = async(context) => {
+  const cookie = context.req ? context.req.headers.cookie : ''
+  axios.defaults.headers.Cookie = '';
+
+  if(context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchInfiniteQuery(['getProducts'], () => getProducts())
+
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    }
+  }
+}
+
 const Wrapper = styled.div`
 display: flex;
 flex-direction: column;
@@ -31,55 +37,62 @@ align-items: center;
 const H2 = styled.h2`
 margin-bottom: 2rem;
 `;
+const ListContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 338px);
+  grid-auto-rows: minmax(auto, 574px);
+  grid-gap: 80px;
+
+`
 const Home: FC = () => {
-  const { mainProducts, loadProductsLoading, hasMoreProducts } = useSelector<RootState, ProductState>((state) => state.product);
-  const dispatch = useDispatch();
-  const [ref, inView] = useInView();
-
-  useEffect(() => {
-    if (inView && hasMoreProducts && !loadProductsLoading) {
-      const lastId: number = mainProducts[mainProducts.length - 1]?.id;
-      dispatch(loadProducts(lastId));
+  const loadRef = useRef<HTMLDivElement | null>(null)
+  const {data, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery(
+    ['getProducts'],
+    ({pageParam  = 0}) => getProducts(pageParam),{
+      getNextPageParam: (lastPage, allPages) => {
+        return lastPage[lastPage.length - 1]?.id
+      }
     }
-  },
-    [inView, hasMoreProducts, loadProductsLoading, mainProducts]);
+  )
 
+  useInterSectionObserver({
+    root: null,
+    target: loadRef,
+    onInterSect: fetchNextPage,
+    enabled: hasNextPage && !isFetchingNextPage
+  })
+
+  const list = useMemo(() => {
+    return data?.pages?.flatMap(value => value)
+  }, [data?.pages])
   return (
     <>
-      <Global />
-      <AppLayout>
         <ImageSlider />
-        <Container>
           <Wrapper>
             <H2>Clothes</H2>
-            <Row gutter={[16, 16]}>
-
-              {mainProducts.map((product) => (
-                <Col key={product.id} span={6}>
+            <ListContainer ref={loadRef}>
+              {list?.map((product:any) => (
                   <Product product={product} />
-                </Col>
               ))}
-              <div ref={ref} />
-            </Row>
+            </ListContainer>
           </Wrapper>
-        </Container>
-
-      </AppLayout>
     </>
   );
 };
-export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
-  // console.log('context.req.headers', context.req.headers);
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-  await store.dispatch(loadUser());
-  await store.dispatch(loadProducts());
-  await store.dispatch(loadProductsInCart());
-  return {
-    props: {},
-  };
-});
+// export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
+//   // console.log('context.req.headers', context.req.headers);
+//   const cookie = context.req ? context.req.headers.cookie : '';
+//   axios.defaults.headers.Cookie = '';
+//   if (context.req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//   }
+  // await store.dispatch(loadUser());
+//   await store.dispatch(loadProducts());
+//   await store.dispatch(loadProductsInCart());
+//   return {
+//     props: {},
+//   };
+// });
+
+
 export default Home;

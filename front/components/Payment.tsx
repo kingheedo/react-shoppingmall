@@ -32,7 +32,6 @@ const Payment: FC<Props> = ({ payment }) => {
   return (
     <>
       <Link href="/product/[id]" as={`/product/${payment.HistoryCart?.Product?.id}`}>
-        <a>
           <h3>{payment.paymentID}</h3>
           <CardItem
             cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`${payment.HistoryCart?.Product?.Images[1].src}`} />}
@@ -49,7 +48,6 @@ const Payment: FC<Props> = ({ payment }) => {
             </strong>
 
           </CardItem>
-        </a>
       </Link>
       <Review reviewUniqueIds={payment.HistoryCart?.User?.Reviews?.map((v) => v.reviewUnique)} historyCartId={payment.HistoryCart?.id} productId={payment.HistoryCart?.Product.id} paymentToken={payment.paymentToken} />
       <br />

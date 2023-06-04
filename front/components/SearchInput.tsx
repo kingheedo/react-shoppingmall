@@ -10,6 +10,7 @@ import useInput from '../hooks/useInput';
 import { ProductState } from '../reducers/reducerTypes/productType';
 import { searchProducts } from '../reducers/asyncRequest/product';
 import { RootState } from '../store/configureStore';
+import { useAppDispatch } from '../hooks/useRedux';
 
 const { Search } = Input;
 const SearchWrapper = styled.div`
@@ -44,7 +45,7 @@ const SearchInput: FC = () => {
   const [searchvalue, onChangeSearch, setSearchValue] = useInput(null);
   const [openDropdown, setOpenDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (searchvalue) {
@@ -78,7 +79,7 @@ const SearchInput: FC = () => {
   );
 
   const onTabEnterLink = useCallback(
-    (id) => (e: React.KeyboardEvent<HTMLLIElement>) => {
+    (id: any) => (e: React.KeyboardEvent<HTMLLIElement>) => {
       if (e.key === 'Enter') {
         Router.push(`/product/${id}`);
       }

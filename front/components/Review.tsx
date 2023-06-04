@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import useInput from '../hooks/useInput';
 import { addProductReview } from '../reducers/asyncRequest/product';
 import { modalCountDown } from './ResultSuccessModal';
+import { useAppDispatch } from '../hooks/useRedux';
 
 const ReviewButton = styled(Button)`
  margin-top: 1rem
@@ -29,7 +30,7 @@ const Review: FC<Props> = ({
   const [reviewContent, onChangeText] = useInput('');
   const [reviewRate, onChangeRate] = useState(0);
   const [visibleModal, setVisibleModal] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onClickReview = useCallback(
     () => {

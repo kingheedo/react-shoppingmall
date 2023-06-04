@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { UserCart } from '../reducers/reducerTypes/cartTypes';
 import { modalCountDown } from './ResultSuccessModal';
 import { addPayment } from '../reducers/asyncRequest/user';
+import { useAppDispatch } from '../hooks/useRedux';
 
 type Props = {
   headers: string;
@@ -16,10 +17,10 @@ const Paypal: FC<Props> = ({
 }) => {
   const CartItemsId = checkedProductsList && checkedProductsList.map((v) => v.id);
   const CartItemId = checkedProduct && checkedProduct.id;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onSuccess = useCallback(
-    (payment) => {
+    (payment: any) => {
       console.log('The payment was succeeded!', payment);
       if (headers === 'buynow') {
         console.log('buynow', { CartItemId, payment });
@@ -38,13 +39,13 @@ const Paypal: FC<Props> = ({
     [CartItemsId, CartItemId],
   );
   const onCancel = useCallback(
-    (data) => {
+    (data: any) => {
       console.log('The payment was cancelled!', data);
     },
     [],
   );
   const onError = useCallback(
-    (err) => {
+    (err : any) => {
       console.log('Error!', err);
     },
     [],

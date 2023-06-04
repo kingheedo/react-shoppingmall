@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react';
 export default (initialValue:any) => {
   const [value, setValue] = useState(initialValue);
   const handler = useCallback(
-    (e) => {
+    (e: any) => {
       setValue(e.target.value);
     },
     [],

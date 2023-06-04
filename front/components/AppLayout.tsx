@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback } from 'react';
+import React, { FC, PropsWithChildren, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import { Badge, Button } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
@@ -10,6 +10,10 @@ import { UserState } from '../reducers/reducerTypes/userTypes';
 import SearchInput from './SearchInput';
 import { logOut } from '../reducers/asyncRequest/user';
 import { RootState } from '../store/configureStore';
+import { useAppDispatch } from '../hooks/useRedux';
+import { getUser } from '../context/LoginProvider';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import apis from '../apis';
 
 const Global = createGlobalStyle`
     a{
@@ -26,18 +30,12 @@ const Container = styled.div`
     width: 92vw;
         height: 100%;
         background-color: white;
-        @media only screen and (max-width: 770px) {
-        margin-bottom: 2rem;
-        }
     `;
 const Wrapper = styled.div`
         padding: 2px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        @media only screen and (max-width: 930px) {
-        flex-direction : column;
-        }
     `;
 const Left = styled.div`
         flex:1;
@@ -68,14 +66,24 @@ const MenuItem = styled.div`
 const ShoppingCart = styled(ShoppingCartOutlined)`
         font-size: 28px;
     `;
-const AppLayout: FC<ReactNode> = ({ children }) => {
-  const { me } = useSelector<RootState, UserState>((state) => state.user);
+const AppLayout = ({ children }: PropsWithChildren) => {
+  // const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { userCart } = useSelector<RootState, CartState>((state) => state.cart);
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const {mutate: logout} =  useMutation(() => apis.User.logout(),{
+    onSuccess: (data) => {
+      console.log('data',data);
+      queryClient.invalidateQueries(['getUser'])
+    }
+  })
+  
+  const me = getUser();
+  const dispatch = useAppDispatch();
 
   const onHandleLogout = useCallback(
     () => {
-      dispatch(logOut());
+      // dispatch(logOut());
+      logout();
       Router.push('/');
     },
     [],
@@ -94,36 +102,36 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
           <Center>
             <Logo>
               <Link href="/">
-                <a>STAR CLOTHES</a>
+                STAR CLOTHES
               </Link>
             </Logo>
           </Center>
           <Right>
-            {me
+            {me?.id
               ? (
                 <MenuItem>
                   <Button>
                     <Link href="/productForm">
-                      <a>상품등록</a>
+                      상품등록
                     </Link>
                   </Button>
                 </MenuItem>
               )
               : null}
-            {me
+            {me?.id
               ? null
               : (
                 <MenuItem>
                   <Button>
                     <Link href="/signup">
-                      <a>회원가입</a>
+                      회원가입
                     </Link>
                   </Button>
                 </MenuItem>
               )}
 
             <MenuItem>
-              {me
+              {me?.id
                 ? (
                   <Button onClick={onHandleLogout}>
                     로그아웃
@@ -132,7 +140,7 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
                 : (
                   <Button>
                     <Link href="/signin">
-                      <a>로그인</a>
+                      로그인
                     </Link>
                   </Button>
                 )}
@@ -141,18 +149,16 @@ const AppLayout: FC<ReactNode> = ({ children }) => {
             <MenuItem>
               <Button>
                 <Link href="/mypage">
-                  <a>마이페이지</a>
+                  마이페이지
                 </Link>
               </Button>
             </MenuItem>
 
             <MenuItem>
               <Link href="/cart">
-                <a>
                   <Badge count={userCart.length}>
                     <ShoppingCart />
                   </Badge>
-                </a>
               </Link>
             </MenuItem>
           </Right>

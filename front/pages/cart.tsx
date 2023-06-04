@@ -18,6 +18,7 @@ import {
   checkAllProducts, checkProduct, unCheckAllProducts, uncheckProduct,
 } from '../reducers/cart';
 import wrapper, { RootState } from '../store/configureStore';
+import { useAppDispatch } from '../hooks/useRedux';
 
 const DynamicPaypalComponent = dynamic(() => import('../components/Paypal'), { ssr: false });
 
@@ -120,7 +121,7 @@ const TotalDiv = styled.div`
 const Cart: FC = () => {
   const { userCart, cartTotalPrice, cartTotalDeliveryFee } = useSelector<RootState, CartState>((state) => state.cart);
   const { me } = useSelector<RootState, UserState>((state) => state.user);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [checkedProductsList, setcheckedProductsList] = useState(userCart);
   const [checkedAllProducts, setCheckedAllProducts] = useState(true);
   const [checkedProductStates, setCheckedProductStates] = useState(
@@ -138,7 +139,7 @@ const Cart: FC = () => {
   }, []);
 
   const onChangeAllCheckedProducts = useCallback(
-    (e) => {
+    (e:any) => {
       setCheckedAllProducts((prev) => !prev);
       if (e.target.checked) {
         setCheckedProductStates(checkedProductStates.fill(true));
@@ -153,7 +154,7 @@ const Cart: FC = () => {
     [checkedProductsList, userCart, checkedProductStates],
   );
   const onChangeCheck = useCallback(
-    (productId, index) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    (productId: any, index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
       const updatedCheckedProducts = checkedProductStates.map((productState, i) => (i === index ? !productState : productState));
       setCheckedProductStates(updatedCheckedProducts);
       setCheckedAllProducts(updatedCheckedProducts.every((v) => v === true));
@@ -171,22 +172,19 @@ const Cart: FC = () => {
   );
 
   const onDeleteCartItem = useCallback(
-    (cartSingleProductId) => (e: React.MouseEvent) => {
+    (cartSingleProductId: any) => (e: React.MouseEvent) => {
       e.preventDefault();
       dispatch(deleteProductInCart({ id: cartSingleProductId }));
     },
     [],
   );
   return (
-    <AppLayout>
       <Container>
         <Wrapper>
           <BreadCrumb>
             <Breadcrumb.Item>
               <Link href="/">
-                <a>
                   Home
-                </a>
               </Link>
             </Breadcrumb.Item>
             <Breadcrumb.Item>
@@ -275,7 +273,6 @@ const Cart: FC = () => {
           {userCart[0] && <DynamicPaypalComponent headers="buylater" checkedProductsList={checkedProductsList} cartTotalPrice={cartTotalPrice} checkedProduct={undefined} />}
         </Wrapper>
       </Container>
-    </AppLayout>
   );
 };
 export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {

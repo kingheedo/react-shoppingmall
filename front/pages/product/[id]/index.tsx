@@ -18,6 +18,7 @@ import { addProductToCart, loadProductsInCart } from '../../../reducers/asyncReq
 import { loadUser } from '../../../reducers/asyncRequest/user';
 import { loadSingleProduct } from '../../../reducers/asyncRequest/product';
 import wrapper, { RootState } from '../../../store/configureStore';
+import { useAppDispatch } from '../../../hooks/useRedux';
 
 const Container = styled.div`
     width: 80vw;
@@ -81,7 +82,7 @@ const SelectDiv = styled.div`
 `;
 
 const QueryProduct = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { me } = useSelector<RootState, UserState>((state) => state.user);
   const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
   const { addProductToCartDone, addProductToCartError } = useSelector<RootState, CartState>((state) => state.cart);
@@ -174,7 +175,6 @@ const QueryProduct = () => {
     }, [],
   );
   return (
-    <AppLayout>
       <Container>
         <Wrapper>
           {singleProduct
@@ -232,7 +232,6 @@ const QueryProduct = () => {
             )}
         </Wrapper>
       </Container>
-    </AppLayout>
 
   );
 };
