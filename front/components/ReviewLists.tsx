@@ -3,15 +3,16 @@ import {
 } from 'antd';
 import React, { FC } from 'react';
 import { SingleProduct } from '../reducers/reducerTypes/productType';
+import { GetSingleProductRes } from '../apis/product/schema';
 
 type Props = {
-  product: SingleProduct
+  product: GetSingleProductRes
 }
 const ReviewLists: FC<Props> = ({ product }) => {
   return (
     <>
       <Divider orientation="left">상품 리뷰</Divider>
-      <List
+      {/* <List
         itemLayout="vertical"
         size="large"
         pagination={{
@@ -42,7 +43,7 @@ const ReviewLists: FC<Props> = ({ product }) => {
             <br />
           </List.Item>
         )}
-      />
+      /> */}
 
     </>
   );

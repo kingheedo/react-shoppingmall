@@ -18,12 +18,35 @@ const CardItem = styled.div`
 
 const Image = styled.img`
   width: 100%;
-  height: 100%;
+  height: 450px;
   object-fit: cover;
   display: block;
+  transition: opacity 0.2s ease-out;
+  opacity: 1;
+  &:hover {
+    opacity: 0;
+  }
+`
+const ImageHover = styled.img`
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.2s ease-out;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  &:hover {
+    opacity: 1;
+  }
 `
 
-const ProductWrapper = styled.div`
+const ProductImgWrapper = styled.div`
+  position: relative;
+`
+
+const ProductInfoWrapper = styled.div`
     display: flex;
     flex-direction: column;
     padding-right: 80px;
@@ -64,7 +87,26 @@ const ProductLikeBtn = styled.button`
   height: 28px;
   position: absolute;
   right: 10px;
-  bottom: 83px;
+  bottom: 10px;
+`
+const ProductScore = styled.div`
+  
+`
+const HeartWrapper = styled.div`
+  display: flex;
+`
+
+const Heart = styled.img`
+  width: 16px;
+  height: 16px;
+  margin-right: 2px;
+`
+const HeartTxt = styled.em`
+  color: var(--gray450);
+  font-size: 11px;
+  line-height: 17px;
+  font-weight: 500;
+  font-style: inherit;
 `
 
 type Props = {
@@ -83,7 +125,6 @@ const Product: FC<Props> = ({ product }) => {
       const previous = queryClient.getQueryData(['getProducts']);
 
       queryClient.setQueryData<InfiniteData<Array<any>>>(['getProducts'], (old:any) => {
-        console.log('old',old);
         const newData = old?.pages.map((page:any) => 
           page.map((value:any) => {
             if(value.id === variable){
@@ -185,16 +226,25 @@ const Product: FC<Props> = ({ product }) => {
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
     >
-      <Image alt="Images[0]" src={ show ? `http://localhost:3065/${product?.Images[0]?.src}` : `http://localhost:3065/${product?.Images[1]?.src}`}/>
-      <ProductLikeBtn style={{background: product.Likers.find(value => value.id === me?.id) ?  `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center`}} onClick={onClickLike}/>
-      <ProductWrapper>
+      <ProductImgWrapper>
+        
+        <Image alt={`${product?.Images[0]}`} src={`http://localhost:3065/${product?.Images[0]?.src}`}/>
+        <ImageHover alt={`${product?.Images[1]}`} src={`http://localhost:3065/${product?.Images[1]?.src}`}/>
+        <ProductLikeBtn style={{background: product.Likers.find(value => value.id === me?.id) ?  `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center`}} onClick={onClickLike}/>
+      </ProductImgWrapper>
+      <ProductInfoWrapper>
         <ProductBrand>8 seconds</ProductBrand>
         <ProductName>{product?.productName}</ProductName>
         <ProductPrice>
           {product.price?.toLocaleString('ko-KR')}
         </ProductPrice>
-        
-      </ProductWrapper>
+        <ProductScore>
+            <HeartWrapper>
+              <Heart src={'./like-fill-gray.svg'} alt="like-fill-gray" />
+              <HeartTxt>{product.Likers.length}</HeartTxt>
+            </HeartWrapper>
+        </ProductScore>
+      </ProductInfoWrapper>
       {contextHolder}
     </CardItem>
   );

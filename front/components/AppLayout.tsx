@@ -16,12 +16,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apis from '../apis';
 
 const Global = createGlobalStyle`
-    a{
-        color: #111111;
-    } 
-    a:hover{
-        color: #111111;
-    }
+  
     
  `;
 

@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider,Hydrate } from '@tanstack/react-query'
 import AppLayout from '../components/AppLayout';
 import '../styles/global.css';
 import LoginProvider from '../context/LoginProvider';
+import ModalProvider from '../context/ModalProvider';
 
 const ShoppingMall = ({ Component, pageProps, ...appProps }: AppProps) => {
    const [queryClient] = React.useState(() => new QueryClient({
@@ -30,11 +31,13 @@ const ShoppingMall = ({ Component, pageProps, ...appProps }: AppProps) => {
     return (
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <LoginProvider>
-            <AppLayout>
-              <Component {...pageProps} />
-            </AppLayout>
-          </LoginProvider>
+          <ModalProvider>
+            <LoginProvider>
+                <AppLayout>
+                  <Component {...pageProps} />
+                </AppLayout>
+              </LoginProvider>
+            </ModalProvider>
           </Hydrate>
         </QueryClientProvider>
         

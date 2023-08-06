@@ -4,17 +4,69 @@
     font-style: normal;
 }
 
+:root {
+    --gap: 20px;
+    --radius: 6px;
+    --white: #FFFFFF;
+    --gray100: #F9F9F9;
+    --gray150: #F5F5F5;
+    --gray200: #EFEFEF;
+    --gray250: #E5E5E5;
+    --gray350: #D1D1D1;
+    --gray400: #C9C9C9;
+    --gray450: #B0B0B0;
+    --gray500: #969696;
+    --gray600: #767676;
+    --gray700: #555555;
+    --gray800: #424242;
+    --gray900: #111111;
+    --purpule300: #DCC3FE;
+    --purpule500: #7E00FF;
+    --mint300: #00BFB2;
+    --mint500: #00A197;
+    --red500: #F44338;
+    --blue500: #2D56E2;
+    --dimed: rgba(0, 0, 0, 0.2);
+    --fontA: 12px;
+    --fontAL: 18px;
+    --fontB: 13px;
+    --fontBL: 19px;
+    --fontC: 14px;
+    --fontCL: 20px;
+    --fontD: 15px;
+    --fontDL: 21px;
+    --fontE: 17px;
+    --fontEL: 23px;
+    --fontJ: 20px;
+    --fontJL: 26px;
+    --fontF: 21px;
+    --fontFL: 27px;
+    --fontG: 24px;
+    --fontGL: 30px;
+    --fontH: 32px;
+    --fontHL: 38px;
+    --fontI: 40px;
+    --fontIL: 48px;
+}
+
 html,
 body {
     padding: 0;
     margin: 0;
-    font-family: 'Pretendard';
-    font-style: normal;
-
+    
+    
 }
-
 *{
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-family: Pretendard,sans-serif;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    font-style: normal;
 }
 
 a{
@@ -24,4 +76,8 @@ a{
 img {
     display: block;
     max-width: 100%;
+}
+
+li, ol, ul {
+    list-style: none;
 }

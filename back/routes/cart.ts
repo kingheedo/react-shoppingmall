@@ -27,6 +27,7 @@ router.get('/', isLoggedIn, async(req, res, next) => {
 router.post('/', isLoggedIn, async(req, res, next) => {
     try{
         if(req.body.buyNow){
+            // 지금 바로 구매 시
             const exCartItem = await Cart.findOne({
             where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
         })
@@ -79,8 +80,15 @@ router.post('/', isLoggedIn, async(req, res, next) => {
         })
         return res.status(202).json(fullCartitem)
         } else{
+            //장바구니에 담을 시
         const exCartItem = await Cart.findOne({
-            where : {[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size}]},
+            where : {
+                [Op.and]: [{
+                    UserId: req.user!.id, 
+                    ProductId : req.body.productId
+                }, {
+                    size: req.body.size
+                }]},
         })
         if(exCartItem){
             const findHistoryCart = await HistoryCart.findOne({
@@ -105,6 +113,7 @@ router.post('/', isLoggedIn, async(req, res, next) => {
             where :{[Op.and]: [{UserId: req.user!.id, ProductId : req.body.productId}, {size: req.body.size},{id: findHistoryCart!.id}]},
         })
         }else{
+            // Cart와 HistoryCart에 새로운 상품 추가
              await Cart.create({
             UserId : req.user!.id,
             ProductId : parseInt(req.body.productId,10),
