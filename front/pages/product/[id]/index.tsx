@@ -25,6 +25,7 @@ import { GetSingleProductRes, SizeOption } from '../../../apis/product/schema';
 import { backUrl } from '../../../config/backUrl';
 import Link from 'next/link';
 import { useModal } from '../../../context/ModalProvider';
+import { getUser } from '../../../context/LoginProvider';
 
 const Container = styled.div`
     width: 1280px;
@@ -176,7 +177,6 @@ const SelectItm = styled.li`
     text-align: center;
 
     &.active{
-      margin-top: -1px;
       border: 2px solid var(--gray900);
     }
 `
@@ -327,9 +327,10 @@ type BuyInfo = {
 
 const QueryProduct = () => {
   const dispatch = useAppDispatch();
-  const { me } = useSelector<RootState, UserState>((state) => state.user);
-  const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
-  const { addProductToCartDone, addProductToCartError } = useSelector<RootState, CartState>((state) => state.cart);
+  // const { me } = useSelector<RootState, UserState>((state) => state.user);
+  // const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
+  // const { addProductToCartDone, addProductToCartError } = useSelector<RootState, CartState>((state) => state.cart);
+  const me = getUser();
   const router = useRouter();
   const id = router.query.id!;
   const modal = useModal();
@@ -457,18 +458,18 @@ const QueryProduct = () => {
   }
 
   const onClickAddCart = () => {
-      modal?.confirm.callBack(() => console.log('hi')
-      );
-
-    if(!buyInfo.size){
-      modal?.confirm.handleConfirm(true)
-    }
-
     if(!data){
       return 
     }
-
+    if(!me){
+      router.push('/signin')
+    }
+    if(!buyInfo.size){
+      modal?.confirm.sizeSlct.handleConfirm();
+    }
+    
     if(buyInfo.productId && buyInfo.size && buyInfo.totalPrice && buyInfo.quantity){
+      modal?.confirm.addCart.handleConfirm(() => router.push('/'))
       mutate({
         productId: buyInfo.productId,
         size: buyInfo.size,
@@ -542,7 +543,7 @@ const QueryProduct = () => {
                             배송방법
                           </Type>
                           <SelectWrap>
-                            <SelectItm>
+                            <SelectItm className={`${buyInfo.size ? 'active' : '' }`}>
                               택배
                             </SelectItm>
                           </SelectWrap>

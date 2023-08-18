@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { ConfirmType } from '../../context/ModalProvider'
 
 const Bg = styled.div`
     position: fixed;
@@ -14,7 +15,6 @@ const Bg = styled.div`
 `
 const ContentArea = styled.div`
     width: 460px;
-    height: 230px;
     overflow: hidden;
     display: block;
     z-index: 101;
@@ -36,9 +36,9 @@ const ButtonWrap = styled.div`
     display: flex;
 `
 const Button = styled.button`
+    flex: 1;
     cursor: pointer;
     margin: 0;
-    width: calc(50% - 4px);
     height: 50px;
     line-height: 48px;
     font-weight: 400;
@@ -60,33 +60,41 @@ const Button = styled.button`
 `
 
 interface IConfirmModalProps {
+    type: ConfirmType;
     onOk: () => void;
     onClose: () => void;
 }
 
 const ConfirmModal = ({
+    type,
     onOk,
     onClose
 }: IConfirmModalProps) => {
+    const content = {
+        [ConfirmType.ADD_CART]: {
+            txt: '장바구니에 상품이 담겼습니다.<br/>장바구니로 이동하시겠습니까?',
+            hideCancel: false
 
-    const onClickOk = () => {
-        
+        },
+        [ConfirmType.SIZE_SELECT]: {
+            txt: '사이즈를 선택해주세요',
+            hideCancel: true
+        }
     }
+    
+
   return (
     <Bg onClick={onClose}>
         <ContentArea onClick={e => e.stopPropagation()}>
-            <Content>
-                장바구니에 상품이 담겼습니다.
-                <br/>
-                장바구니로 이동하시겠습니까?
-            </Content>
+            <Content dangerouslySetInnerHTML={{__html: content[type].txt}}/>
             <ButtonWrap>
-                <Button onClick={() => onOk()}>
+                <Button onClick={onOk}>
                     확인
                 </Button>
-                <Button onClick={onClose}>
+                {!content[type].hideCancel && <Button onClick={onClose}>
                     취소
                 </Button>
+                }
             </ButtonWrap>
         </ContentArea>
     </Bg>
