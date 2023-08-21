@@ -8,13 +8,18 @@ const router = express.Router();
 router.get('/', isLoggedIn, async(req, res, next) => {
     try{
         const fullCartitem = await Cart.findAll({
-            where : {UserId: req.user!.id,},
+            where : {UserId: req.user!.id},
             order : [['updatedAt', 'DESC']],
+            attributes: ['id', 'quantity', 'size', 'totalPrice'],
             include: [{
                 model: Product,
+                attributes: {
+                    exclude: ['UserId', 'createdAt', 'updatedAt']
+                },
                 include: [{
                     model: Image,
-                }],
+                    attributes: ['src']
+                }]
             }]
         })
         res.status(202).json(fullCartitem)

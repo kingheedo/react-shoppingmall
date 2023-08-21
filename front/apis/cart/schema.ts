@@ -6,3 +6,19 @@ export type AddItmToCartReq = {
     totalPrice: number;
     quantity: number;
 }
+
+export type GetCartListRes = {
+    id: number;
+    quantity: number;
+    size: string;
+    totalPrice: number;
+    Product : {
+        Images: {
+            src: string;
+        }[];
+        id: number;
+        price: number;
+        productName: string;
+        stock:number;
+    }
+}

@@ -469,7 +469,7 @@ const QueryProduct = () => {
     }
     
     if(buyInfo.productId && buyInfo.size && buyInfo.totalPrice && buyInfo.quantity){
-      modal?.confirm.addCart.handleConfirm(() => router.push('/'))
+      modal?.confirm.addCart.handleConfirm(() => router.push('/cart'))
       mutate({
         productId: buyInfo.productId,
         size: buyInfo.size,
