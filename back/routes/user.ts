@@ -1,5 +1,5 @@
 import * as express from 'express'
-import { User, Payment, Product, Image, HistoryCart, Review, Cart } from '../models';
+import { User, Payment, Product, Image, HistoryCart, Review, Cart, sequelize } from '../models';
 const router = express.Router();
 import * as bcrypt from 'bcrypt';
 import * as passport from 'passport';
@@ -9,13 +9,23 @@ import { Op } from 'sequelize';
 router.get('/', async(req, res, next) =>{
      try{
          if(req.user){
-        const user = await User.findOne({
+        const info = await User.findOne({
          where : {id : req.user.id},
          attributes: {
              exclude : ['password']
          }
         })
-        return res.status(200).json(user);
+        const cartLength = await Cart.count({
+            where: {UserId: req.user.id}
+        })
+
+        const userInfo = {
+            info,
+            cartLength
+        }
+        
+
+        return res.status(200).json(userInfo);
          }else{
              return res.status(200).json(null);
          }
