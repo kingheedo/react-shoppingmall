@@ -2,14 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from "react";
 import apis from "../apis";
 import { useRouter } from "next/router";
+import { GetUserRes } from "../apis/user/schema";
 
-type LoginUser = {
-    id: number;
-    email: string;
-    name: string;
-}
-
-const LoginContext = createContext<LoginUser | null>(null);
+const LoginContext = createContext<GetUserRes | null>(null);
 
 const LoginProvider = ({children}: PropsWithChildren) => {
     const router = useRouter();

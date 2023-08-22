@@ -1,27 +1,16 @@
-import React, { MouseEvent, useCallback, useEffect, useRef, useState } from 'react';
-import Router, { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
 import {
-  Button, Image, Input, Modal, Result,
+  Button,
 } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
-import AppLayout from '../../../components/AppLayout';
 import useInput from '../../../hooks/useInput';
-import { ProductState } from '../../../reducers/reducerTypes/productType';
-import { CartState } from '../../../reducers/reducerTypes/cartTypes';
-import { UserState } from '../../../reducers/reducerTypes/userTypes';
-import { addProductToCart, loadProductsInCart } from '../../../reducers/asyncRequest/cart';
-import { loadUser } from '../../../reducers/asyncRequest/user';
-import { loadSingleProduct } from '../../../reducers/asyncRequest/product';
-import wrapper, { RootState } from '../../../store/configureStore';
 import { useAppDispatch } from '../../../hooks/useRedux';
-import { QueryClient, dehydrate, useMutation, useQuery } from '@tanstack/react-query';
-import request from '../../../apis/request';
+import { QueryClient, dehydrate, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../../apis';
-import { GetSingleProductRes, SizeOption } from '../../../apis/product/schema';
+import { SizeOption } from '../../../apis/product/schema';
 import { backUrl } from '../../../config/backUrl';
 import Link from 'next/link';
 import { useModal } from '../../../context/ModalProvider';
@@ -327,18 +316,20 @@ type BuyInfo = {
 
 const QueryProduct = () => {
   const dispatch = useAppDispatch();
-  // const { me } = useSelector<RootState, UserState>((state) => state.user);
-  // const { singleProduct } = useSelector<RootState, ProductState>((state) => state.product);
-  // const { addProductToCartDone, addProductToCartError } = useSelector<RootState, CartState>((state) => state.cart);
   const me = getUser();
   const router = useRouter();
   const id = router.query.id!;
   const modal = useModal();
+  const queryClient = useQueryClient();
   const {data} = useQuery(['getSingleProduct',id], () => apis.Product.getSingleProduct(id), {
     enabled: !!id
   })
 
-  const {mutate} = useMutation(apis.Cart.addItmtoCart)
+  const {mutate} = useMutation(apis.Cart.addItmtoCart, {
+    onSettled: () => {
+      queryClient.invalidateQueries(['getUser'])
+    }
+  })
   
 
   const productId = parseInt(router.query.id as string, 10);

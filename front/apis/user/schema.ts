@@ -1,7 +1,10 @@
  type UserInfo = {
-    id: number;
-    email: string;
-    name: string;
+    info: {
+        id: number;
+        email: string;
+        name: string;
+    };
+    cartLength: number;
 }
 
 export type GetUserRes = UserInfo

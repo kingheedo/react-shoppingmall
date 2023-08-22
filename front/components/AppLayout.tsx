@@ -62,22 +62,17 @@ const ShoppingCart = styled(ShoppingCartOutlined)`
         font-size: 28px;
     `;
 const AppLayout = ({ children }: PropsWithChildren) => {
-  // const { me } = useSelector<RootState, UserState>((state) => state.user);
-  const { userCart } = useSelector<RootState, CartState>((state) => state.cart);
   const queryClient = useQueryClient();
   const {mutate: logout} =  useMutation(() => apis.User.logout(),{
     onSuccess: (data) => {
-      console.log('data',data);
       queryClient.invalidateQueries(['getUser'])
     }
   })
   
   const me = getUser();
-  const dispatch = useAppDispatch();
 
   const onHandleLogout = useCallback(
     () => {
-      // dispatch(logOut());
       logout();
       Router.push('/');
     },
@@ -102,7 +97,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
             </Logo>
           </Center>
           <Right>
-            {me?.id
+            {me?.info.id
               ? (
                 <MenuItem>
                   <Button>
@@ -113,7 +108,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
                 </MenuItem>
               )
               : null}
-            {me?.id
+            {me?.info.id
               ? null
               : (
                 <MenuItem>
@@ -126,7 +121,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
               )}
 
             <MenuItem>
-              {me?.id
+              {me?.info.id
                 ? (
                   <Button onClick={onHandleLogout}>
                     로그아웃
@@ -151,7 +146,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
 
             <MenuItem>
               <Link href="/cart">
-                  <Badge count={userCart.length}>
+                  <Badge count={me?.cartLength || 0}>
                     <ShoppingCart />
                   </Badge>
               </Link>
