@@ -130,7 +130,7 @@ const Product: FC<Props> = ({ product }) => {
             if(value.id === variable){
               return {
                 ...value,
-                Likers: [...value.Likers, {id: me?.id}]
+                Likers: [...value.Likers, {id: me?.info.id}]
               }
             }else{
               return value
@@ -169,7 +169,7 @@ const Product: FC<Props> = ({ product }) => {
             if(value.id === variable){
               return {
                 ...value,
-                Likers: [...value.Likers.filter((liker: any) => liker.id !== me?.id)]
+                Likers: [...value.Likers.filter((liker: any) => liker.id !== me?.info.id)]
               }
             }else{
               return value
@@ -213,7 +213,7 @@ const Product: FC<Props> = ({ product }) => {
   const onClickLike = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if(product.Likers.find(value => value.id === me?.id)){
+    if(product.Likers.find(value => value.id === me?.info.id)){
           unLike(product.id);
     }else{
           addLike(product.id);
@@ -230,7 +230,7 @@ const Product: FC<Props> = ({ product }) => {
         
         <Image alt={`${product?.Images[0]}`} src={`http://localhost:3065/${product?.Images[0]?.src}`}/>
         <ImageHover alt={`${product?.Images[1]}`} src={`http://localhost:3065/${product?.Images[1]?.src}`}/>
-        <ProductLikeBtn style={{background: product.Likers.find(value => value.id === me?.id) ?  `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center`}} onClick={onClickLike}/>
+        <ProductLikeBtn style={{background: product.Likers.find(value => value.id === me?.info.id) ?  `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center`}} onClick={onClickLike}/>
       </ProductImgWrapper>
       <ProductInfoWrapper>
         <ProductBrand>8 seconds</ProductBrand>

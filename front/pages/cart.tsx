@@ -28,6 +28,36 @@ const BreadcrumbLi = styled.li`
   line-height: var(--fontBL);
 `
 
+const Main = styled.main`
+  width: 960px;
+  margin: 0 auto;
+
+  label > {
+
+    input[type=checkbox]{
+    width:0;
+    height: 0;
+
+    +i {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: url('/bg_component.png') no-repeat #fff -21px -1px;
+      vertical-align: middle;
+      border: 1px solid #e5e5e5;
+      cursor: pointer;
+    }
+
+    :checked {
+      +i {
+        background-position: 0 0;
+        background-color: #111;
+        border: 0;
+      }
+    }
+  }
+`
+
 const HomeLink = styled(Link)`
   background: url('/chevron-right.svg') no-repeat right center/12px auto;
   padding-right: 20px;
@@ -50,9 +80,14 @@ const Title = styled.h1`
 const OrderHead = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 10px 0;
+  font-weight: 400;
 
   > label {
-      >span{
+      > i{
+        margin-right: 8px;
+      }
+      > span{
       color: #111;
       font-weight: 700;
     }
@@ -70,6 +105,28 @@ const DltSlctedBtn = styled.button`
   color: #111;
 `
 
+const Table = styled.table`
+  border-collapse: collapse;
+  }
+`
+
+const Thead = styled.thead`
+  > tr{
+      > th {
+      text-align: center;
+      color: #767676;
+      font-size: 14px;
+      border-bottom: 1px solid #b8b8b8;
+      padding: 10px 0;
+      font-weight: 400;
+    }
+  }
+}
+`
+const Td = styled.td`
+  padding: 30px 0;
+  border-top: 1px solid #e5e5e5;
+`
 
 const CartPage = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
@@ -148,7 +205,7 @@ const CartPage = () => {
           <BreadcrumbLi>장바구니</BreadcrumbLi>
         </BreadcrumbOl>
       </Breadcrumb>
-      <div className="contents">
+      <Main className="contents">
         <OrderWrap>
           <Title>
             장바구니
@@ -156,6 +213,7 @@ const CartPage = () => {
           <OrderHead>
             <label>
               <input type="checkbox" className='check-all' />
+              <i/>
               <span>
                 전체선택
               </span>
@@ -164,26 +222,34 @@ const CartPage = () => {
               선택 상품 삭제
             </DltSlctedBtn>
           </OrderHead>
-          <table>
-            <thead>
+          <Table>
+            <colgroup>
+              <col width={40}/>
+              <col width={124}/>
+              <col width={'*'}/>
+              <col width={180}/>
+              <col width={220}/>
+            </colgroup>
+            <Thead>
               <tr>
-                <th>상품·혜택 정보</th>
+                <th colSpan={3} scope="col">상품·혜택 정보</th>
                 <th>배송정보</th>
                 <th>주문금액</th>
               </tr>
-            </thead>
+            </Thead>
             <tbody>
               {list?.map(info => (
-          <tr>
-                <td>
+            <tr>
+                <Td>
                   <label>
                       <input type="checkbox" />
+                      <i/>
                   </label>
-                </td>
-                <td>
+                </Td>
+                <Td>
                     <img src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`} alt={info.Product.Images[0].src} />
-                </td>
-                <td>
+                </Td>
+                <Td>
                   <div className="info">
                     <span className="brand">
                       8 seconds
@@ -198,16 +264,16 @@ const CartPage = () => {
                       옵션/수량 변경
                     </button>
                   </div>
-                </td>
-                <td>
+                </Td>
+                <Td>
                   <span>
                     무료배송
                   </span>
                   <span>
                     오늘 18시 전까지 주문 시, 오늘출고예정
                   </span>
-                </td>
-                <td>
+                </Td>
+                <Td>
 									<div className="price">
                     <span>{info.totalPrice}</span>
                     {/* <em>33%</em> */}
@@ -218,14 +284,14 @@ const CartPage = () => {
                   <button>
                     X
                   </button>
-                </td>
+                </Td>
               </tr>
               ))}
               
             </tbody>
-          </table>
+          </Table>
         </OrderWrap>
-      </div>
+      </Main>
     </Cart>
   );
 };
