@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import Link from 'next/link'
 import { useQuery } from '@tanstack/react-query';
 import apis from '../apis';
-import { GetCartListRes } from '../apis/cart/schema';
 
 const Cart = styled.div`
 `
@@ -65,9 +64,7 @@ const HomeLink = styled(Link)`
 `
 
 const OrderWrap = styled.div`
-  display: grid;
-  place-content: center;
-  padding: 41px var(--gap) 120px;
+  padding: 41px 0 120px;
 `
 const Title = styled.h1`
   margin-bottom: 40px;
@@ -80,6 +77,7 @@ const Title = styled.h1`
 const OrderHead = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
   padding: 10px 0;
   font-weight: 400;
 
@@ -106,8 +104,8 @@ const DltSlctedBtn = styled.button`
 `
 
 const Table = styled.table`
+  width: 100%;
   border-collapse: collapse;
-  }
 `
 
 const Thead = styled.thead`
@@ -124,13 +122,116 @@ const Thead = styled.thead`
 }
 `
 const Td = styled.td`
+  position: relative;
   padding: 30px 0;
   border-top: 1px solid #e5e5e5;
+  vertical-align: top;
+`
+const ProductImg = styled.img`
+  object-fit: cover;
+  width: 100px;
+`
+
+const BrandName = styled.span`
+  display: block;
+  width: 380px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #111;
+`
+
+const ProductName = styled.span`
+  display: block;
+  width: 380px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 15px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: #111;
+`
+
+const ShippingWrap = styled.div`
+  > span{
+    display: block;
+    line-height: 20px;
+    font-size: 15px;
+    word-break: keep-all;
+  }
+`
+
+const Fee = styled.span`
+  margin: 0 20px;
+  font-weight: 700;
+  color: #111;
+
+`
+
+const Status = styled.span`
+  margin: 10px 20px 0;
+  font-size: 14px;
+  color: #767676;
+`
+
+const Option = styled.em`
+  display: block;
+  position: relative;
+  margin-top: 8px;
+  line-height: 18px;
+  color: #767676;
+  font-size: 14px;
+`
+
+const AlterWrap = styled.div`
+    margin-top: 30px;
+`
+
+const AlterBtn = styled.button`
+  padding: 0 20px;
+  width: auto;
+  height: 40px;
+  font-size: 14px;
+  line-height: 34px;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+  color: #111;
+`
+const BuyNowBtn = styled.button`
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  display: block;
+  padding: 0;
+  width: 140px;
+  height: 40px;
+  line-height: 38px;
+  font-size: 15px;
+  border-color: #d5d5d5;
+  color: #fff;
+  background: #111;
+  border: 1px solid #111;
+  text-align: center;
+`
+
+const DeleteBtn = styled.button`
+  display: block;
+  position: absolute;
+  top: 19px;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  font-size: 0;
+  background: url(/btn_x_gray.svg) no-repeat center center/14px auto;
 `
 
 const CartPage = () => {
-  const [checkedList, setCheckedList] = useState<number[]>([]);
-  const {data: list} = useQuery(['getCartList'], () => apis.Cart.getCartList())
+  const [checkedList, setCheckedList] = useState<number[]>([]) ;
+  const {data: list} =  useQuery( ['getCartList'], () => apis.Cart.getCartList());
   // const { userCart, cartTotalPrice, cartTotalDeliveryFee } = useSelector<RootState, CartState>((state) => state.cart);
   // const { me } = useSelector<RootState, UserState>((state) => state.user);
   // const dispatch = useAppDispatch();
@@ -247,43 +348,55 @@ const CartPage = () => {
                   </label>
                 </Td>
                 <Td>
-                    <img src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`} alt={info.Product.Images[0].src} />
+                  <Link href={`/product/${info.Product.id}`}>
+                    <ProductImg
+                      src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`} 
+                      alt={info.Product.Images[0].src} >
+                     </ProductImg>
+                      </Link>
+
                 </Td>
                 <Td>
                   <div className="info">
-                    <span className="brand">
+                    <BrandName>
                       8 seconds
-                    </span>
-                    <span className="name">
-                      {info.Product.productName}
-                    </span>
-                    <em>
+                    </BrandName>
+                    <ProductName>
+                      <Link href={`/product/${info.Product.id}`}>
+                        <span>
+                          {info.Product.productName}
+                        </span>
+                      </Link>
+                    </ProductName>
+                    <Option>
                        {info.size} / {info.quantity}
-                    </em>
-                    <button>
-                      옵션/수량 변경
-                    </button>
+                    </Option>
+                    <AlterWrap>
+                      <AlterBtn>
+                        옵션/수량 변경
+                      </AlterBtn>
+                    </AlterWrap>
                   </div>
                 </Td>
                 <Td>
-                  <span>
-                    무료배송
-                  </span>
-                  <span>
-                    오늘 18시 전까지 주문 시, 오늘출고예정
-                  </span>
+                  <ShippingWrap>
+                    <Fee>
+                      무료배송
+                    </Fee>
+                    <Status>
+                      오늘 18시 전까지 주문 시, 오늘출고예정
+                    </Status>
+                  </ShippingWrap>
                 </Td>
                 <Td>
-									<div className="price">
-                    <span>{info.totalPrice}</span>
-                    {/* <em>33%</em> */}
-                  </div>
-                  <button>
-                    바로구매
-                  </button>
-                  <button>
-                    X
-                  </button>
+                    <div className="price">
+                      <span>{info.totalPrice}</span>
+                      {/* <em>33%</em> */}
+                    </div>
+                    <BuyNowBtn>
+                        바로구매
+                    </BuyNowBtn>
+                  <DeleteBtn />
                 </Td>
               </tr>
               ))}

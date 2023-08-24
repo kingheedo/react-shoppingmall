@@ -84,4 +84,6 @@ li, ol, ul {
 
 button {
     cursor: pointer;
+    border: 0;
+    outline: 0;
 }
