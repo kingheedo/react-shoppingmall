@@ -2,32 +2,33 @@ import React, { FC, useMemo, useRef } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 import ImageSlider from '../components/ImageSlider/ImageSlider';
-import Product from '../components/Product';
 import { GetServerSideProps } from 'next';
-import { QueryClient, dehydrate, useInfiniteQuery} from '@tanstack/react-query';
+import { QueryClient, dehydrate, useInfiniteQuery } from '@tanstack/react-query';
 import useInterSectionObserver from '../hooks/useInterSectionObserver';
+import { TmainProduct } from '../reducers/reducerTypes/productType';
+import Product from '../components/Product';
 
 const getProducts = async(id?:number) => {
-   return await axios.get<any>(`/products?id=${id || 0}`,  {baseURL: process.env.NEXT_PUBLIC_SERVER_URL}).then(res => res.data);
-}
+  return await axios.get<TmainProduct[]>(`/products?id=${id || 0}`, { baseURL: process.env.NEXT_PUBLIC_SERVER_URL }).then(res => res.data);
+};
 
-export const getServerSideProps:GetServerSideProps  = async(context) => {
-  const cookie = context.req ? context.req.headers.cookie : ''
+export const getServerSideProps:GetServerSideProps = async(context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
 
-  if(context.req && cookie) {
+  if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchInfiniteQuery(['getProducts'], () => getProducts())
+  await queryClient.prefetchInfiniteQuery(['getProducts'], () => getProducts());
 
   return {
     props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient)))
     }
-  }
-}
+  };
+};
 
 const Wrapper = styled.div`
 display: flex;
@@ -43,39 +44,42 @@ const ListContainer = styled.div`
   grid-auto-rows: minmax(auto, 574px);
   grid-gap: 80px;
 
-`
+`;
 const Home: FC = () => {
-  const loadRef = useRef<HTMLDivElement | null>(null)
-  const {data, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery(
+  const loadRef = useRef<HTMLDivElement | null>(null);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     ['getProducts'],
-    ({pageParam  = 0}) => getProducts(pageParam),{
+    ({ pageParam = 0 }) => getProducts(pageParam),{
       getNextPageParam: (lastPage, allPages) => {
-        return lastPage[lastPage.length - 1]?.id
+        return lastPage[lastPage.length - 1]?.id;
       }
     }
-  )
+  );
 
   useInterSectionObserver({
     root: null,
     target: loadRef,
     onInterSect: fetchNextPage,
     enabled: hasNextPage && !isFetchingNextPage
-  })
+  });
 
   const list = useMemo(() => {
-    return data?.pages?.flatMap(value => value)
-  }, [data?.pages])
+    return data?.pages?.flatMap(value => value);
+  }, [data?.pages]);
+  
+  console.log('list',list);
+
   return (
     <>
-        <ImageSlider />
-          <Wrapper>
-            <H2>Clothes</H2>
-            <ListContainer ref={loadRef}>
-              {list?.map((product:any) => (
-                  <Product product={product} />
-              ))}
-            </ListContainer>
-          </Wrapper>
+      <ImageSlider />
+      <Wrapper>
+        <H2>Clothes</H2>
+        <ListContainer ref={loadRef}>
+          {list?.map((product) => (
+            <Product key={product.id} product={product} />
+          ))}
+        </ListContainer>
+      </Wrapper>
     </>
   );
 };
@@ -93,6 +97,5 @@ const Home: FC = () => {
 //     props: {},
 //   };
 // });
-
 
 export default Home;
