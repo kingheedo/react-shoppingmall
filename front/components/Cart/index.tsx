@@ -1,5 +1,12 @@
-const Cart = styled.div`
-`;
+import { useEffect, useMemo, useState } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import apis from '../../apis';
+import OptionModal from './OptionModal';
+import { GetCartListRes } from '../../apis/cart/schema';
+
+const Cart = styled.div``;
 
 const Breadcrumb = styled.div`
   padding: 20px var(--gap) 0px;
@@ -69,10 +76,10 @@ const OrderHead = styled.div`
   font-weight: 400;
 
   > label {
-      > i{
-        margin-right: 8px;
-      }
-      > span{
+    > i {
+      margin-right: 8px;
+    }
+    > span {
       color: #111;
       font-weight: 700;
     }
@@ -144,7 +151,7 @@ const ProductName = styled.span`
 `;
 
 const ShippingWrap = styled.div`
-  > span{
+  > span {
     display: block;
     line-height: 20px;
     font-size: 15px;
@@ -156,7 +163,6 @@ const Fee = styled.span`
   margin: 0 20px;
   font-weight: 700;
   color: #111;
-
 `;
 
 const Status = styled.span`
@@ -164,16 +170,6 @@ const Status = styled.span`
   font-size: 14px;
   color: #767676;
 `;
-
-import {
-  MouseEvent,
-  useState
-} from 'react';
-import styled from 'styled-components';
-import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import apis from '../../apis';
-import OptionModal from './OptionModal';
 
 const Option = styled.em`
   display: block;
@@ -185,7 +181,7 @@ const Option = styled.em`
 `;
 
 const AlterWrap = styled.div`
-    margin-top: 30px;
+  margin-top: 30px;
 `;
 
 const AlterBtn = styled.button`
@@ -234,110 +230,161 @@ const ModalBg = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0, 0.25);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 100;
 `;
 
+export type Optionitem = {
+  cartId: number;
+  name: string;
+  size: string;
+  quantity: number;
+};
+
 const CartComponent = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
-  const [optionModal, setOptionModal] = useState(false);
-  const { data: list } = useQuery( ['getCartList'], () => apis.Cart.getCartList());
+  const [selectd, setSelectd] = useState<GetCartListRes>();
+  const [opSize, setOpSize] = useState('');
+  const [opQty, setOpQty] = useState(1);
 
-  /** 옵션/변경 모달 핸들러 */
-  const handleOptionModal = (open: boolean) => {
-    setOptionModal(open);
+  const [optionModal, setOptionModal] = useState(false);
+  const queryClient = useQueryClient();
+  const { data: list } = useQuery(['getCartList'], () =>
+    apis.Cart.getCartList(),
+  );
+  const { mutate } = useMutation((id: number) => apis.Cart.deleteItem(id), {
+    onSettled: () => {
+      queryClient.invalidateQueries(['getCartList']);
+    },
+  });
+
+  const optionItem = useMemo(
+    () => ({
+      cartId: selectd?.id || -1,
+      name: selectd?.Product.productName || '',
+      size: opSize || '',
+      quantity: opQty || 1,
+    }),
+    [selectd, opSize, opQty],
+  );
+
+  /** 수량 핸들러 */
+  const handleQuantity = (qty: number) => {
+    setOpQty(qty);
   };
 
+  /** 옵션/변경 모달 핸들러 */
+  const handleOptionModal = (idx: number) => {
+    if (list) {
+      setSelectd(list[idx]);
+    }
+  };
+
+  const deleteItem = (id: number) => {
+    mutate(id);
+  };
   const onCloseModal = () => {
     setOptionModal(false);
   };
 
+  /** 선탟한 아이템이 있을때 모달 열기 */
+  useEffect(() => {
+    if (selectd?.id) {
+      setOptionModal(true);
+    }
+  }, [selectd]);
+
+  useEffect(() => {
+    if (selectd) {
+      setOpSize(selectd?.size);
+      setOpQty(selectd?.quantity);
+    }
+  }, [selectd]);
+
   return (
     <>
-      {optionModal && 
-      <ModalBg onClick={onCloseModal}>
-        <div onClick={e => e.stopPropagation()}>
-          <OptionModal/>
-        </div>
-      </ModalBg>
-      }
+      {optionModal && (
+        <ModalBg onClick={onCloseModal}>
+          <div onClick={(e) => e.stopPropagation()}>
+            <OptionModal
+              onCloseModal={onCloseModal}
+              item={optionItem}
+              option={{
+                size: opSize,
+                quantity: opQty,
+              }}
+              handleQuantity={handleQuantity}
+            />
+          </div>
+        </ModalBg>
+      )}
       <Cart>
         <Breadcrumb>
           <BreadcrumbOl>
             <BreadcrumbLi>
-              <HomeLink href="/">
-              Home
-              </HomeLink>
+              <HomeLink href="/">Home</HomeLink>
             </BreadcrumbLi>
             <BreadcrumbLi>장바구니</BreadcrumbLi>
           </BreadcrumbOl>
         </Breadcrumb>
         <Main className="contents">
           <OrderWrap>
-            <Title>
-            장바구니
-            </Title>
+            <Title>장바구니</Title>
             <OrderHead>
               <label>
                 <input type="checkbox" className="check-all" />
-                <i/>
-                <span>
-                전체선택
-                </span>
+                <i />
+                <span>전체선택</span>
               </label>
-              <DltSlctedBtn>
-              선택 상품 삭제
-              </DltSlctedBtn>
+              <DltSlctedBtn>선택 상품 삭제</DltSlctedBtn>
             </OrderHead>
             <Table>
               <colgroup>
-                <col width={40}/>
-                <col width={124}/>
-                <col width={'*'}/>
-                <col width={180}/>
-                <col width={220}/>
+                <col width={40} />
+                <col width={124} />
+                <col width={'*'} />
+                <col width={180} />
+                <col width={220} />
               </colgroup>
               <Thead>
                 <tr>
-                  <th colSpan={3} scope="col">상품·혜택 정보</th>
+                  <th colSpan={3} scope="col">
+                    상품·혜택 정보
+                  </th>
                   <th>배송정보</th>
                   <th>주문금액</th>
                 </tr>
               </Thead>
               <tbody>
-                {list?.map(info => (
+                {list?.map((info, idx) => (
                   <tr key={info.id}>
                     <Td>
                       <label>
                         <input type="checkbox" />
-                        <i/>
+                        <i />
                       </label>
                     </Td>
                     <Td>
                       <Link href={`/product/${info.Product.id}`}>
                         <ProductImg
-                          src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`} 
-                          alt={info.Product.Images[0].src} />
+                          src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`}
+                          alt={info.Product.Images[0].src}
+                        />
                       </Link>
-
                     </Td>
                     <Td>
                       <div className="info">
-                        <BrandName>
-                      8 seconds
-                        </BrandName>
+                        <BrandName>8 seconds</BrandName>
                         <ProductName>
                           <Link href={`/product/${info.Product.id}`}>
-                            <span>
-                              {info.Product.productName}
-                            </span>
+                            <span>{info.Product.productName}</span>
                           </Link>
                         </ProductName>
                         <Option>
                           {info.size} / {info.quantity}
                         </Option>
                         <AlterWrap>
-                          <AlterBtn onClick={() => handleOptionModal(true)}>
+                          <AlterBtn onClick={() => handleOptionModal(idx)}>
                             옵션/수량 변경
                           </AlterBtn>
                         </AlterWrap>
@@ -345,12 +392,8 @@ const CartComponent = () => {
                     </Td>
                     <Td>
                       <ShippingWrap>
-                        <Fee>
-                          무료배송
-                        </Fee>
-                        <Status>
-                          오늘 18시 전까지 주문 시, 오늘출고예정
-                        </Status>
+                        <Fee>무료배송</Fee>
+                        <Status>오늘 18시 전까지 주문 시, 오늘출고예정</Status>
                       </ShippingWrap>
                     </Td>
                     <Td>
@@ -358,14 +401,11 @@ const CartComponent = () => {
                         <span>{info.totalPrice}</span>
                         {/* <em>33%</em> */}
                       </div>
-                      <BuyNowBtn>
-                        바로구매
-                      </BuyNowBtn>
-                      <DeleteBtn />
+                      <BuyNowBtn>바로구매</BuyNowBtn>
+                      <DeleteBtn onClick={() => deleteItem(info.id)} />
                     </Td>
                   </tr>
                 ))}
-              
               </tbody>
             </Table>
           </OrderWrap>
