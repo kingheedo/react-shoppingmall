@@ -13,6 +13,9 @@ export type GetCartListRes = {
   size: string;
   totalPrice: number;
   Product: {
+    Sizes: {
+      option: 'SM' | 'M' | 'L' | 'XL';
+    }[];
     Images: {
       src: string;
     }[];

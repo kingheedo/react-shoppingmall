@@ -235,15 +235,15 @@ const ModalBg = styled.div`
 `;
 
 export type Optionitem = {
-  cartId: number;
-  name: string;
-  size: string;
-  quantity: number;
+  cartId: number | null;
+  name: string | null;
+  sizes:{ option: 'SM' | 'M' | 'L' | 'XL'
+  }[] | null;
 };
 
 const CartComponent = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
-  const [selectd, setSelectd] = useState<GetCartListRes>();
+  const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
   const [opSize, setOpSize] = useState('');
   const [opQty, setOpQty] = useState(1);
 
@@ -258,19 +258,22 @@ const CartComponent = () => {
     },
   });
 
-  const optionItem = useMemo(
-    () => ({
-      cartId: selectd?.id || -1,
-      name: selectd?.Product.productName || '',
-      size: opSize || '',
-      quantity: opQty || 1,
-    }),
-    [selectd, opSize, opQty],
-  );
+  const optionItem = useMemo(() => {
+    return {
+      cartId: selectd && selectd.id || null,
+      name: selectd && selectd.Product.productName || null,
+      sizes: selectd && selectd.Product.Sizes || null,
+    };
+  }, [selectd]);
 
   /** 수량 핸들러 */
   const handleQuantity = (qty: number) => {
     setOpQty(qty);
+  };
+
+  /** 사이즈 핸들러 */
+  const handleSize = (size: 'SM' | 'M' | 'L' | 'XL') => {
+    setOpSize(size);
   };
 
   /** 옵션/변경 모달 핸들러 */
@@ -284,15 +287,9 @@ const CartComponent = () => {
     mutate(id);
   };
   const onCloseModal = () => {
+    setSelectd(null);
     setOptionModal(false);
   };
-
-  /** 선탟한 아이템이 있을때 모달 열기 */
-  useEffect(() => {
-    if (selectd?.id) {
-      setOptionModal(true);
-    }
-  }, [selectd]);
 
   useEffect(() => {
     if (selectd) {
@@ -303,7 +300,7 @@ const CartComponent = () => {
 
   return (
     <>
-      {optionModal && (
+      {selectd?.id && (
         <ModalBg onClick={onCloseModal}>
           <div onClick={(e) => e.stopPropagation()}>
             <OptionModal
@@ -313,6 +310,7 @@ const CartComponent = () => {
                 size: opSize,
                 quantity: opQty,
               }}
+              handleSize={handleSize}
               handleQuantity={handleQuantity}
             />
           </div>

@@ -183,14 +183,13 @@ const ChangeBtn = styled.button`
   padding: 0 20px;
 `;
 
-const sizes = ['M', 'M', 'M', 'M'];
-
 interface IOptionModalProps {
   item: Optionitem;
   option: {
     size: string;
     quantity: number;
   };
+  handleSize: (size: 'SM' | 'M' | 'L' | 'XL') => void;
   handleQuantity: (qty: number) => void;
   onCloseModal: () => void;
 }
@@ -198,22 +197,21 @@ interface IOptionModalProps {
 const OptionModal = ({
   item,
   option,
+  handleSize,
   handleQuantity,
   onCloseModal,
 }: IOptionModalProps) => {
-  const [btnIdx, setBtnIdx] = useState(-1);
-
-  const onClickSize = (idx: number) => {
-    setBtnIdx(idx);
+  const onClickSize = (size: 'SM' | 'M' | 'L' | 'XL') => {
+    handleSize(size);
   };
 
   const onClickQtyBtn = (payload: { type: 'MINUS' | 'PLUS' }) => {
     if (payload.type === 'MINUS') {
-      if (item.quantity > 1) {
-        handleQuantity(item.quantity - 1);
+      if (option.quantity > 1) {
+        handleQuantity(option.quantity - 1);
       }
     } else {
-      handleQuantity(item.quantity + 1);
+      handleQuantity(option.quantity + 1);
     }
   };
 
@@ -224,21 +222,23 @@ const OptionModal = ({
         <Title>옵션/수량 변경</Title>
         <ProductName>{item.name}</ProductName>
         <SelctedOption>
-          {item.size} / {item.quantity}개
+          {option.size} / {option.quantity}개
         </SelctedOption>
         <OptionWrap>
           <ul>
             <li>
               <span>사이즈</span>
               <ButtonWrap>
-                {sizes.map((size, idx) => (
+                {item.sizes?.map((size, idx) => (
                   <>
                     <button
-                      key={size}
-                      className={btnIdx === idx ? 'size_btn_active' : ''}
-                      onClick={() => onClickSize(idx)}
+                      key={size.option + idx}
+                      className={
+                        size.option === option.size ? 'size_btn_active' : ''
+                      }
+                      onClick={() => onClickSize(size.option)}
                     >
-                      {size}
+                      {size.option}
                     </button>
                   </>
                 ))}
