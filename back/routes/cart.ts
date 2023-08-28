@@ -1,6 +1,6 @@
 import * as express from 'express';
-import { Op } from 'sequelize';
-import {Product, Cart, Image, HistoryCart} from '../models';
+import { Op, Model } from 'sequelize';
+import {Product, Cart, Image, HistoryCart, Size} from '../models';
 import { isLoggedIn } from './middlewares';
 
 const router = express.Router();
@@ -14,12 +14,17 @@ router.get('/', isLoggedIn, async(req, res, next) => {
             include: [{
                 model: Product,
                 attributes: {
-                    exclude: ['UserId', 'createdAt', 'updatedAt']
+                    exclude: ['UserId', 'createdAt', 'updatedAt'],
                 },
                 include: [{
                     model: Image,
                     attributes: ['src']
-                }]
+                }
+                ,{
+                    model: Size,
+                    attributes: ['option']
+                }
+            ]
             }]
         })
         res.status(202).json(fullCartitem)
@@ -156,7 +161,7 @@ router.delete('/:cartItemId', isLoggedIn, async(req, res, next) => {
         await Cart.destroy({
             where: {[Op.and] : [{id : req.params.cartItemId},{UserId : req.user!.id}]},
         })
-        res.status(200).json({CartItemId: parseInt(req.params.cartItemId,10)})
+        res.status(200).send('아이템이 삭제되었습니다')
     }catch(error){
         console.error(error);   
         next(error)
