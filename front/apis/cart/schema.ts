@@ -1,5 +1,12 @@
 import { SizeOption } from '../product/schema';
 
+export enum Size {
+  SM = 'SM',
+  M = 'M' ,
+  L = 'L' ,
+  XL = 'XL'
+}
+
 export type AddItmToCartReq = {
   productId: number;
   size: SizeOption | '';
@@ -10,11 +17,11 @@ export type AddItmToCartReq = {
 export type GetCartListRes = {
   id: number;
   quantity: number;
-  size: string;
+  size: Size;
   totalPrice: number;
   Product: {
     Sizes: {
-      option: 'SM' | 'M' | 'L' | 'XL';
+      option: Size;
     }[];
     Images: {
       src: string;
@@ -25,3 +32,11 @@ export type GetCartListRes = {
     stock: number;
   };
 };
+
+export type ChangeOption = {
+  id: number;
+  productId: number;
+  quantity: number;
+  size: Size;
+  totalPrice: number;
+}

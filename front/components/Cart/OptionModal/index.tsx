@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Optionitem } from '..';
+import { Size } from '../../../apis/cart/schema';
 
 const Wrap = styled.div`
   position: relative;
@@ -188,30 +189,30 @@ interface IOptionModalProps {
   option: {
     size: string;
     quantity: number;
+    onClickChOp: () => void;
+    handleSize: (size: Size) => void;
+    handleQuantity: (qty: number) => void;
   };
-  handleSize: (size: 'SM' | 'M' | 'L' | 'XL') => void;
-  handleQuantity: (qty: number) => void;
+  
   onCloseModal: () => void;
 }
 
 const OptionModal = ({
   item,
   option,
-  handleSize,
-  handleQuantity,
   onCloseModal,
 }: IOptionModalProps) => {
-  const onClickSize = (size: 'SM' | 'M' | 'L' | 'XL') => {
-    handleSize(size);
+  const onClickSize = (size: Size) => {
+    option.handleSize(size);
   };
 
   const onClickQtyBtn = (payload: { type: 'MINUS' | 'PLUS' }) => {
     if (payload.type === 'MINUS') {
       if (option.quantity > 1) {
-        handleQuantity(option.quantity - 1);
+        option.handleQuantity(option.quantity - 1);
       }
     } else {
-      handleQuantity(option.quantity + 1);
+      option.handleQuantity(option.quantity + 1);
     }
   };
 
@@ -264,7 +265,7 @@ const OptionModal = ({
             </li>
           </ul>
         </OptionWrap>
-        <ChangeBtn>변경하기</ChangeBtn>
+        <ChangeBtn onClick={option.onClickChOp}>변경하기</ChangeBtn>
       </Inner>
     </Wrap>
   );

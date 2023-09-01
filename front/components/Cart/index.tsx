@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../apis';
 import OptionModal from './OptionModal';
-import { GetCartListRes } from '../../apis/cart/schema';
+import { ChangeOption, GetCartListRes, Size } from '../../apis/cart/schema';
 
 const Cart = styled.div``;
 
@@ -237,14 +237,14 @@ const ModalBg = styled.div`
 export type Optionitem = {
   cartId: number | null;
   name: string | null;
-  sizes:{ option: 'SM' | 'M' | 'L' | 'XL'
+  sizes:{ option: Size
   }[] | null;
 };
 
 const CartComponent = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
   const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
-  const [opSize, setOpSize] = useState('');
+  const [opSize, setOpSize] = useState(Size.SM);
   const [opQty, setOpQty] = useState(1);
 
   const [optionModal, setOptionModal] = useState(false);
@@ -252,19 +252,38 @@ const CartComponent = () => {
   const { data: list } = useQuery(['getCartList'], () =>
     apis.Cart.getCartList(),
   );
-  const { mutate } = useMutation((id: number) => apis.Cart.deleteItem(id), {
+
+  /** 장바구니 아이템 삭제 */
+  const { mutate: deleteItem } = useMutation((id: number) => apis.Cart.deleteItem(id), {
     onSettled: () => {
       queryClient.invalidateQueries(['getCartList']);
     },
   });
 
+  /** 장바구니 아이템 옵션변경 */
+  const { mutate: changeOption } = useMutation((data: ChangeOption) => apis.Cart.changeOption(data),{
+    onSettled: () => {
+      queryClient.invalidateQueries(['getCartList']);
+    }
+  });
+
   const optionItem = useMemo(() => {
     return {
-      cartId: selectd && selectd.id || null,
-      name: selectd && selectd.Product.productName || null,
-      sizes: selectd && selectd.Product.Sizes || null,
+      cartId: selectd?.id || null,
+      product: {
+        id: selectd?.Product.id,
+        price: selectd?.Product.price
+      } || null,
+      name: selectd?.Product.productName || null,
+      sizes: selectd?.Product.Sizes || null,
     };
   }, [selectd]);
+
+  /** 모달 닫기 시 */
+  const onCloseModal = () => {
+    setSelectd(null);
+    setOptionModal(false);
+  };
 
   /** 수량 핸들러 */
   const handleQuantity = (qty: number) => {
@@ -272,7 +291,7 @@ const CartComponent = () => {
   };
 
   /** 사이즈 핸들러 */
-  const handleSize = (size: 'SM' | 'M' | 'L' | 'XL') => {
+  const handleSize = (size: Size) => {
     setOpSize(size);
   };
 
@@ -283,12 +302,21 @@ const CartComponent = () => {
     }
   };
 
-  const deleteItem = (id: number) => {
-    mutate(id);
+  /** 삭제 클릭 시 */
+  const onClickDelete = (id: number) => {
+    deleteItem(id);
   };
-  const onCloseModal = () => {
-    setSelectd(null);
-    setOptionModal(false);
+
+  /** 옵션 및 수량 변경 클릭 시 */
+  const onClickChOp = () => {
+    changeOption({
+      id: optionItem.cartId!,
+      productId: optionItem.product.id!,
+      size: opSize!,
+      quantity: opQty,
+      totalPrice: optionItem.product.price! * opQty
+    });
+    onCloseModal();
   };
 
   useEffect(() => {
@@ -304,14 +332,15 @@ const CartComponent = () => {
         <ModalBg onClick={onCloseModal}>
           <div onClick={(e) => e.stopPropagation()}>
             <OptionModal
-              onCloseModal={onCloseModal}
               item={optionItem}
               option={{
                 size: opSize,
                 quantity: opQty,
+                onClickChOp: onClickChOp,
+                handleSize: handleSize,
+                handleQuantity: handleQuantity
               }}
-              handleSize={handleSize}
-              handleQuantity={handleQuantity}
+              onCloseModal={onCloseModal}
             />
           </div>
         </ModalBg>
@@ -400,7 +429,7 @@ const CartComponent = () => {
                         {/* <em>33%</em> */}
                       </div>
                       <BuyNowBtn>바로구매</BuyNowBtn>
-                      <DeleteBtn onClick={() => deleteItem(info.id)} />
+                      <DeleteBtn onClick={() => onClickDelete(info.id)} />
                     </Td>
                   </tr>
                 ))}
