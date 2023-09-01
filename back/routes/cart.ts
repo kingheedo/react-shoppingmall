@@ -156,11 +156,50 @@ router.post('/', isLoggedIn, async(req, res, next) => {
     }
 })
 
+router.post('/change', isLoggedIn, async(req, res, next) => {
+    try{
+
+        const exCart = await Cart.findOne({
+            where: {
+                id: req.body.id,
+                ProductId: req.body.productId,
+                UserId: req.user?.id
+            }
+        })
+
+        const exHistoryCart = await HistoryCart.findOne({
+            where: {
+                id: req.body.id,
+                ProductId: req.body.productId,
+                UserId: req.user?.id
+            }
+        })
+
+        await exCart?.update({
+            size: req.body.size,
+            quantity: req.body.quantity,
+            totalPrice: req.body.totalPrice
+        })
+        await  exHistoryCart?.update({
+            size: req.body.size,
+            quantity: req.body.quantity,
+            totalPrice: req.body.totalPrice
+        })
+
+        res.status(200).send('정상 변경되었습니다.')        
+    }
+    catch(error){
+        console.error(error);
+        next(error)
+    }
+})
+
 router.delete('/:cartItemId', isLoggedIn, async(req, res, next) => {
     try{
         await Cart.destroy({
             where: {[Op.and] : [{id : req.params.cartItemId},{UserId : req.user!.id}]},
         })
+        
         res.status(200).send('아이템이 삭제되었습니다')
     }catch(error){
         console.error(error);   
