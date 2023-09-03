@@ -246,8 +246,18 @@ const CartComponent = () => {
   const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
   const [opSize, setOpSize] = useState(Size.SM);
   const [opQty, setOpQty] = useState(1);
+  const optionItem = useMemo(() => {
+    return {
+      cartId: selectd?.id || null,
+      product: {
+        id: selectd?.Product.id,
+        price: selectd?.Product.price
+      } || null,
+      name: selectd?.Product.productName || null,
+      sizes: selectd?.Product.Sizes || null,
+    };
+  }, [selectd]);
 
-  const [optionModal, setOptionModal] = useState(false);
   const queryClient = useQueryClient();
   const { data: list } = useQuery(['getCartList'], () =>
     apis.Cart.getCartList(),
@@ -267,22 +277,9 @@ const CartComponent = () => {
     }
   });
 
-  const optionItem = useMemo(() => {
-    return {
-      cartId: selectd?.id || null,
-      product: {
-        id: selectd?.Product.id,
-        price: selectd?.Product.price
-      } || null,
-      name: selectd?.Product.productName || null,
-      sizes: selectd?.Product.Sizes || null,
-    };
-  }, [selectd]);
-
   /** 모달 닫기 시 */
   const onCloseModal = () => {
     setSelectd(null);
-    setOptionModal(false);
   };
 
   /** 수량 핸들러 */
@@ -317,6 +314,22 @@ const CartComponent = () => {
       totalPrice: optionItem.product.price! * opQty
     });
     onCloseModal();
+  };
+
+  /** 체크 박스 클릭 시 */
+  const onCheck = (type: 'EACH' | 'ALL', id?: number) => {
+    if (type === 'ALL') {
+      const ids = list?.map(cart => cart.id);
+      if (checkedList.length === ids?.length && checkedList.length > 0) {
+        setCheckedList([]);
+      } else {
+        if (ids?.length) {
+          setCheckedList([...ids]);
+        }
+      }
+    } else if (type === 'EACH' && id) {
+      checkedList.includes(id) ? setCheckedList(prev => prev.filter(cartId => cartId !== id)) : setCheckedList(prev => [...prev, id]);
+    }
   };
 
   useEffect(() => {
@@ -359,7 +372,11 @@ const CartComponent = () => {
             <Title>장바구니</Title>
             <OrderHead>
               <label>
-                <input type="checkbox" className="check-all" />
+                <input 
+                  checked={checkedList.length === list?.length && checkedList.length > 0}
+                  onChange={() => onCheck('ALL')} 
+                  type="checkbox" 
+                  className="check-all" />
                 <i />
                 <span>전체선택</span>
               </label>
@@ -387,7 +404,10 @@ const CartComponent = () => {
                   <tr key={info.id}>
                     <Td>
                       <label>
-                        <input type="checkbox" />
+                        <input 
+                          checked={checkedList.includes(info.id)}
+                          onChange={() => onCheck('EACH', info.id)}
+                          type="checkbox" />
                         <i />
                       </label>
                     </Td>
