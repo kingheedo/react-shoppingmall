@@ -13,7 +13,19 @@ const Bg = styled.div`
     background: rgba(0,0,0, 0.25);
     z-index: 100;
 `;
+
+const CloseBtn = styled.button`
+    position: absolute;
+    top: 13px;
+    right: 17px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 0;
+    background: url('/btn_x.svg') no-repeat center center/20px 20px
+`;
 const ContentArea = styled.div`
+    position: relative;
     width: 460px;
     overflow: hidden;
     display: block;
@@ -46,16 +58,18 @@ const Button = styled.button`
     box-sizing: border-box;
     border-radius: 0;
 
-     &:nth-child(1){
+     &:nth-of-type(1){
         color: #fff;
         background: #111;
         border: 1px solid #111;
      }
 
-     &:nth-child(2){
+     &:nth-of-type(2){
         margin-left: 8px;
         color: #111;
         background: #fff;
+        border: 1px solid #111;
+
      }
 `;
 
@@ -76,6 +90,10 @@ const ConfirmModal = ({
       hideCancel: false
 
     },
+    [ConfirmType.DELETE_CART]: {
+      txt: '선택한 상품을 삭제하시겠습니까?',
+      hideCancel: false
+    },
     [ConfirmType.SIZE_SELECT]: {
       txt: '사이즈를 선택해주세요',
       hideCancel: true
@@ -85,14 +103,16 @@ const ConfirmModal = ({
   return (
     <Bg onClick={onClose}>
       <ContentArea onClick={e => e.stopPropagation()}>
+        <CloseBtn onClick={onClose}/>
         <Content dangerouslySetInnerHTML={{ __html: content[type].txt }}/>
         <ButtonWrap>
           <Button onClick={onOk}>
                     확인
           </Button>
-          {!content[type].hideCancel && <Button onClick={onClose}>
+          {!content[type].hideCancel && (
+            <Button onClick={onClose}>
                     취소
-          </Button>
+            </Button>)
           }
         </ButtonWrap>
       </ContentArea>

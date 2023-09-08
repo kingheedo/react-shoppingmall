@@ -5,12 +5,7 @@ import {
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Router from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
 import useInput from '../hooks/useInput';
-import { UserState } from '../reducers/reducerTypes/userTypes';
-import { logIn } from '../reducers/asyncRequest/user';
-import { RootState } from '../store/configureStore';
-import { useAppDispatch } from '../hooks/useRedux';
 import { getUser } from '../context/LoginProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apis from '../apis';
@@ -45,29 +40,29 @@ const Signin: FC = () => {
   const me = getUser();
   const queryClient = useQueryClient();
 
-  const { mutate: PostLogin} = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
+  const { mutate: PostLogin } = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
     onSuccess: () => {
-      queryClient.invalidateQueries(['getUser']).then(() => Router.back())
+      queryClient.invalidateQueries(['getUser']).then(() => Router.back());
 
     },
     onError: () => {
-      alert('로그인 오류')
+      alert('로그인 오류');
     }
-  })
+  });
 
-  useEffect(() => {
-    if (me?.id) {
-      Router.back();
-    }
-  }, [me]);
+  // useEffect(() => {
+  //   if (me?.id) {
+  //     Router.back();
+  //   }
+  // }, [me]);
 
-  const onHandleSubmit =  () => {
-      PostLogin({
-        email,
-        password
-      })
+  const onHandleSubmit = () => {
+    // PostLogin({
+    //   email,
+    //   password
+    // })
       
-    }
+  };
 
   const onhandleSignUp = useCallback(
     () => {

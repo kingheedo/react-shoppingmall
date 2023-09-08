@@ -52,4 +52,3 @@ const ShoppingMall = ({ Component, pageProps, ...appProps }: AppProps) => {
 };
 
 export default ShoppingMall;
-// export default wrapper.withRedux(ShoppingMall);

@@ -9,6 +9,7 @@ import ConfirmModal from '../components/common/ConfirmModal';
 
 export enum ConfirmType {
   ADD_CART = 'ADD_CART',
+  DELETE_CART = 'DELETE_CART',
   SIZE_SELECT = 'SIZE_SELECT',
 }
 
@@ -18,6 +19,10 @@ interface IModalContext {
       open: boolean;
       handleConfirm: (cb: () => void) => void;
     };
+    deleteCart: {
+      open: boolean;
+      handleConfirm: (cb: () => void) => void;
+    }
     sizeSlct: {
       open: boolean;
       handleConfirm: () => void;
@@ -47,6 +52,15 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
               open: true,
               callBack: cb,
             }),
+        },
+        deleteCart: {
+          open: confirm.open,
+          handleConfirm: (cb: () => void) => 
+            setConfirm({
+              type: ConfirmType.DELETE_CART,
+              open: true,
+              callBack: cb
+            })
         },
         sizeSlct: {
           open: confirm.open,

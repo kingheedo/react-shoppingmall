@@ -4,12 +4,9 @@ import {
 import React, {
   FC, useCallback, useState,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import useInput from '../hooks/useInput';
-import { addProductReview } from '../reducers/asyncRequest/product';
 import { modalCountDown } from './ResultSuccessModal';
-import { useAppDispatch } from '../hooks/useRedux';
 
 const ReviewButton = styled(Button)`
  margin-top: 1rem
@@ -30,7 +27,6 @@ const Review: FC<Props> = ({
   const [reviewContent, onChangeText] = useInput('');
   const [reviewRate, onChangeRate] = useState(0);
   const [visibleModal, setVisibleModal] = useState(false);
-  const dispatch = useAppDispatch();
 
   const onClickReview = useCallback(
     () => {
@@ -43,18 +39,19 @@ const Review: FC<Props> = ({
       if (reviewRate === 0) {
         return alert('별점을 평가해주세요.');
       }
-      dispatch(
-        addProductReview(
-          {
-            reviewUnique: `${paymentToken}_${historyCartId}`, historyCartId, productId, content: reviewContent, rate: reviewRate, paymentToken,
-          },
-        ),
-      );
+      // dispatch(
+      //   addProductReview(
+      //     {
+      //       reviewUnique: `${paymentToken}_${historyCartId}`, historyCartId, productId, content: reviewContent, rate: reviewRate, paymentToken,
+      //     },
+      //   ),
+      // );
       setVisibleModal(false);
       modalCountDown('isReview');
     },
     [historyCartId, reviewContent, reviewRate, paymentToken],
   );
+  
   return (
     <>
       {exReview ? <ReviewButton disabled>작성완료</ReviewButton> : <ReviewButton onClick={() => setVisibleModal(true)}>리뷰쓰기</ReviewButton>}
@@ -62,7 +59,7 @@ const Review: FC<Props> = ({
         visible={visibleModal}
         footer={
           [<Button onClick={onClickReview} key="write">작성</Button>,
-          <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
+            <Button onClick={() => setVisibleModal(false)} key="cancel">취소</Button>,
           ]
         }
         onCancel={() => setVisibleModal(false)}

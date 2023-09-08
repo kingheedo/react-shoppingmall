@@ -10,23 +10,12 @@ import {
   Divider,
 } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
 import axios from 'axios';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
-import { UserState } from '../reducers/reducerTypes/userTypes';
-import {
-  ProductState,
-} from '../reducers/reducerTypes/productType';
-import { loadUser } from '../reducers/asyncRequest/user';
-import { loadProductsInCart } from '../reducers/asyncRequest/cart';
-import { registerProduct, uploadImages } from '../reducers/asyncRequest/product';
-import { removeImage } from '../reducers/product';
-import wrapper, { RootState } from '../store/configureStore';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -94,8 +83,6 @@ const layout = {
 };
 
 const ProductForm = () => {
-  const { me, loadUserDone } = useAppSelector((state) => state.user);
-  const { imagePath, registerProductDone } = useAppSelector((state) => state.product);
 
   const [productName, onChangeName, setProductName] = useInput('');
   const [productPrice, onChangePrice, setProductPrice] = useInput(0);
@@ -104,21 +91,7 @@ const ProductForm = () => {
   const checkedOption = ['SM', 'M', 'L', 'XL'];
   const [allChecked, setAllChecked] = useState(false);
   const [checkedSize, setCheckedSize] = useState<CheckboxValueType[]>([]);
-  const dispatch = useAppDispatch();
   const imageUpload = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (registerProductDone) {
-      alert('정상 등록되었습니다!');
-      Router.push('/');
-    }
-  }, [registerProductDone]);
-
-  useEffect(() => {
-    if (!me) {
-      Router.push('/');
-    }
-  }, [me, loadUserDone]);
 
   const onClickImageUpload = useCallback(
     () => {
@@ -134,45 +107,45 @@ const ProductForm = () => {
       if (e.target.files) {
         Array.from(e.target.files).forEach((f) => imageFormData.append('image', f));
       }
-      dispatch(uploadImages(imageFormData));
+      // dispatch(uploadImages(imageFormData));
       console.log(imageFormData);
     },
     [],
   );
-    console.log('productName',productName)
-    console.log('productPrice',productPrice)
-    console.log('productStock',productStock)
-    console.log('checkedSize',checkedSize)
+  console.log('productName',productName);
+  console.log('productPrice',productPrice);
+  console.log('productStock',productStock);
+  console.log('checkedSize',checkedSize);
   const onSubmitForm = useCallback(
     (e: any) => {
-      e.preventDefault()
-      if (imagePath.length !== 2 || !productName || !productPrice || !productStock || !checkedSize[0]) {
-        return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.');
-      }
+      e.preventDefault();
+      // if (imagePath.length !== 2 || !productName || !productPrice || !productStock || !checkedSize[0]) {
+      //   return alert('빈칸이 존재하거나 이미지는 2개 필요합니다.');
+      // }
 
-      const formData = new FormData();
-      imagePath.forEach((image: string) => {
-        formData.append('image', image);
-      });
-      checkedSize.forEach((productSize: any) => {
-        formData.append('productSize', productSize);
-      });
-      formData.append('productName', productName);
-      formData.append('productPrice', productPrice);
-      formData.append('productStock', productStock);
-      dispatch(registerProduct(formData));
-      setProductName('');
-      setProductPrice('');
-      setProductStock('');
-      setAllChecked(false);
-      setCheckedSize([]);
+      // const formData = new FormData();
+      // imagePath.forEach((image: string) => {
+      //   formData.append('image', image);
+      // });
+      // checkedSize.forEach((productSize: any) => {
+      //   formData.append('productSize', productSize);
+      // });
+      // formData.append('productName', productName);
+      // formData.append('productPrice', productPrice);
+      // formData.append('productStock', productStock);
+      // dispatch(registerProduct(formData));
+      // setProductName('');
+      // setProductPrice('');
+      // setProductStock('');
+      // setAllChecked(false);
+      // setCheckedSize([]);
     },
-    [imagePath, productName, productPrice, productStock, allChecked, checkedSize],
+    [productName, productPrice, productStock, allChecked, checkedSize],
   );
 
   const onDeleteImage = useCallback(
     (index: number) => () => {
-      dispatch(removeImage(index));
+      // dispatch(removeImage(index));
     },
     [],
   );
@@ -195,74 +168,63 @@ const ProductForm = () => {
     },
     [],
   );
+  
   return (
-      <Container>
-        <Wrapper>
-          <Form onFinish={onSubmitForm} encType="multipart/form-data" {...layout} name="nest-messages">
-            <ImageContainer>
-              <FormItem>
-                <input type="file" name="image" ref={imageUpload} multiple hidden onChange={onChangeImages} />
-                <FirstFormItem onClick={onClickImageUpload}>
-                  <PlusOutlined />
+    <Container>
+      <Wrapper>
+        <Form onFinish={onSubmitForm} encType="multipart/form-data" {...layout} name="nest-messages">
+          <ImageContainer>
+            <FormItem>
+              <input type="file" name="image" ref={imageUpload} multiple hidden onChange={onChangeImages} />
+              <FirstFormItem onClick={onClickImageUpload}>
+                <PlusOutlined />
                   Upload
-                </FirstFormItem>
+              </FirstFormItem>
 
-              </FormItem>
-              <ImageWrapper>
-                {imagePath?.map((v: string, i: number) => (
-                  <div key={v}>
-                    <Image
-                      src={v}
-                      alt={v}
-                    />
-                    <Button style={{ marginTop: '0.5rem' }} onClick={onDeleteImage(i)}>삭제</Button>
-                  </div>
-                ))}
-              </ImageWrapper>
-            </ImageContainer>
+            </FormItem>
+            <ImageWrapper>
+              {/* {imagePath?.map((v: string, i: number) => (
+                <div key={v}>
+                  <Image
+                    src={v}
+                    alt={v}
+                  />
+                  <Button style={{ marginTop: '0.5rem' }} onClick={onDeleteImage(i)}>삭제</Button>
+                </div>
+              ))} */}
+            </ImageWrapper>
+          </ImageContainer>
 
-            <TextFormItem>
-              <FormItem name={['상품명']} label="상품명" rules={[{ type: 'string', required: true, message: '상품명을 입력해주세요.' }]}>
-                <Input value={productName} onChange={onChangeName} />
-              </FormItem>
+          <TextFormItem>
+            <FormItem name={['상품명']} label="상품명" rules={[{ type: 'string', required: true, message: '상품명을 입력해주세요.' }]}>
+              <Input value={productName} onChange={onChangeName} />
+            </FormItem>
 
-              <FormItem name={['상품가격']} label="상품가격" rules={[{ type: 'number', required: true, message: '상품가격을 입력해주세요.' }]}>
-                <Input value={productPrice} type="number" onChange={onChangePrice} />
-              </FormItem>
+            <FormItem name={['상품가격']} label="상품가격" rules={[{ type: 'number', required: true, message: '상품가격을 입력해주세요.' }]}>
+              <Input value={productPrice} type="number" onChange={onChangePrice} />
+            </FormItem>
 
-              <FormItem name={['재고수량']} label="재고수량" rules={[{ type: 'number', required: true, message: '재고수량을 입력해주세요.' }]}>
-                <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
-              </FormItem>
+            <FormItem name={['재고수량']} label="재고수량" rules={[{ type: 'number', required: true, message: '재고수량을 입력해주세요.' }]}>
+              <Input min="1" value={productStock} type="number" onChange={onChangeStock} />
+            </FormItem>
 
-              <FormItem>
-                <Checkbox indeterminate={indeterminate} onChange={onChangeAllCheck} checked={allChecked}>
+            <FormItem>
+              <Checkbox indeterminate={indeterminate} onChange={onChangeAllCheck} checked={allChecked}>
                   Check all
-                </Checkbox>
-                <Divider />
-                <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChangeCheckBox} />
-              </FormItem>
+              </Checkbox>
+              <Divider />
+              <CheckboxGroup options={checkedOption} value={checkedSize} onChange={onChangeCheckBox} />
+            </FormItem>
 
-              <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-                <Button onClick={onSubmitForm} type="primary" htmlType="submit">
+            <FormItem wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+              <Button onClick={onSubmitForm} type="primary" htmlType="submit">
                   Submit
-                </Button>
-              </FormItem>
-            </TextFormItem>
-          </Form>
-        </Wrapper>
-      </Container>
+              </Button>
+            </FormItem>
+          </TextFormItem>
+        </Form>
+      </Wrapper>
+    </Container>
   );
 };
-export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-  await store.dispatch(loadUser());
-  await store.dispatch(loadProductsInCart());
-  return {
-    props: {},
-  };
-});
 export default ProductForm;

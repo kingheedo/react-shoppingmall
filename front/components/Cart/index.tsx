@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../apis';
 import OptionModal from './OptionModal';
 import { ChangeOption, GetCartListRes, Size } from '../../apis/cart/schema';
+import { useModal } from '../../context/ModalProvider';
 
 const Cart = styled.div``;
 
@@ -257,7 +258,8 @@ const CartComponent = () => {
       sizes: selectd?.Product.Sizes || null,
     };
   }, [selectd]);
-
+  const modal = useModal();
+  
   const queryClient = useQueryClient();
   const { data: list } = useQuery(['getCartList'], () =>
     apis.Cart.getCartList(),
@@ -301,7 +303,8 @@ const CartComponent = () => {
 
   /** 삭제 클릭 시 */
   const onClickDelete = (id: number) => {
-    deleteItem(id);
+    modal?.confirm.deleteCart.handleConfirm(() => deleteItem(id));
+    
   };
 
   /** 옵션 및 수량 변경 클릭 시 */

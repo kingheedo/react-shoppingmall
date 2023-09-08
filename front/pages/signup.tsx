@@ -4,14 +4,8 @@ import {
 } from 'antd';
 import Router from 'next/router';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 
 import useInput from '../hooks/useInput';
-import { UserState } from '../reducers/reducerTypes/userTypes';
-import { logIn, signUp } from '../reducers/asyncRequest/user';
-import { signUpReset } from '../reducers/user';
-import { AppDispatch, RootState } from '../store/configureStore';
-import { useAppDispatch, useAppSelector } from '../hooks/useRedux';
 
 const Container = styled.div`
   width: 100vw;
@@ -34,9 +28,6 @@ const FormDiv = styled.div`
     padding: 20px;
 `;
 const Signup = () => {
-  const {
-    signUpDone, signUpError, signUpLoading,
-  } = useAppSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [confirmpassword, onChangeConfirmpassword] = useInput('');
@@ -44,22 +35,21 @@ const Signup = () => {
   const [checkpassword, setCheckPassword] = useState(false);
   const [check, setCheck] = useState(false);
   const [checkerror, setCheckError] = useState(false);
-   const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (signUpDone) {
-      dispatch(
-        logIn({ email, password }),
-      );
-      dispatch(signUpReset());
-      alert('회원가입이 완료되었습니다.');
-      Router.push('/');
-    }
-  }, [signUpDone]);
-  useEffect(() => {
-    if (signUpError) {
-      alert(signUpError);
-    }
-  }, [signUpError]);
+  // useEffect(() => {
+  //   if (signUpDone) {
+  //     dispatch(
+  //       logIn({ email, password }),
+  //     );
+  //     dispatch(signUpReset());
+  //     alert('회원가입이 완료되었습니다.');
+  //     Router.push('/');
+  //   }
+  // }, [signUpDone]);
+  // useEffect(() => {
+  //   if (signUpError) {
+  //     alert(signUpError);
+  //   }
+  // }, [signUpError]);
 
   useEffect(() => {
     if (password && confirmpassword && password !== confirmpassword) {
@@ -86,10 +76,11 @@ const Signup = () => {
       if (!(email && password && name && confirmpassword && check)) {
         return alert('빈칸이 존재합니다.');
       }
-      dispatch(signUp({ email, name, password }));
+      // dispatch(signUp({ email, name, password }));
     },
     [email, password, name, confirmpassword, check, checkpassword],
   );
+  
   return (
     <Container>
       <Wrapper>
@@ -166,7 +157,7 @@ const Signup = () => {
             </Form.Item>
 
             <Form.Item>
-              {signUpLoading ? (
+              {/* {signUpLoading ? (
                 <Button type="primary" loading>
                   Loading
                 </Button>
@@ -175,7 +166,7 @@ const Signup = () => {
                   <Button onClick={(e) => onSubmitForm} type="primary" htmlType="submit">
                     CREATE
                   </Button>
-                )}
+                )} */}
             </Form.Item>
           </Form>
         </FormDiv>
