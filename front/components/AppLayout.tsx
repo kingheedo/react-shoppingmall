@@ -1,16 +1,9 @@
-import React, { FC, PropsWithChildren, ReactNode, useCallback } from 'react';
+import React, { PropsWithChildren, useCallback } from 'react';
 import Link from 'next/link';
 import { Badge, Button } from 'antd';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import styled, { createGlobalStyle } from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
-import { CartState } from '../reducers/reducerTypes/cartTypes';
-import { UserState } from '../reducers/reducerTypes/userTypes';
-import SearchInput from './SearchInput';
-import { logOut } from '../reducers/asyncRequest/user';
-import { RootState } from '../store/configureStore';
-import { useAppDispatch } from '../hooks/useRedux';
 import { getUser } from '../context/LoginProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apis from '../apis';
@@ -63,11 +56,11 @@ const ShoppingCart = styled(ShoppingCartOutlined)`
     `;
 const AppLayout = ({ children }: PropsWithChildren) => {
   const queryClient = useQueryClient();
-  const {mutate: logout} =  useMutation(() => apis.User.logout(),{
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['getUser'])
+  const { mutate: logout } = useMutation(() => apis.User.logout(),{
+    onSuccess: () => {
+      queryClient.invalidateQueries(['getUser']);
     }
-  })
+  });
   
   const me = getUser();
 
@@ -85,9 +78,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
         <Global />
         <Wrapper>
           <Left>
-            <SearchContainer>
-              <SearchInput />
-            </SearchContainer>
+            <SearchContainer/>
           </Left>
           <Center>
             <Logo>
@@ -146,9 +137,9 @@ const AppLayout = ({ children }: PropsWithChildren) => {
 
             <MenuItem>
               <Link href="/cart">
-                  <Badge count={me?.cartLength || 0}>
-                    <ShoppingCart />
-                  </Badge>
+                <Badge count={me?.cartLength || 0}>
+                  <ShoppingCart />
+                </Badge>
               </Link>
             </MenuItem>
           </Right>

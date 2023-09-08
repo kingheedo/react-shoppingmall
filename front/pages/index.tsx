@@ -5,12 +5,8 @@ import ImageSlider from '../components/ImageSlider/ImageSlider';
 import { GetServerSideProps } from 'next';
 import { QueryClient, dehydrate, useInfiniteQuery } from '@tanstack/react-query';
 import useInterSectionObserver from '../hooks/useInterSectionObserver';
-import { TmainProduct } from '../reducers/reducerTypes/productType';
 import Product from '../components/Product';
-
-const getProducts = async(id?:number) => {
-  return await axios.get<TmainProduct[]>(`/products?id=${id || 0}`, { baseURL: process.env.NEXT_PUBLIC_SERVER_URL }).then(res => res.data);
-};
+import apis from '../apis';
 
 export const getServerSideProps:GetServerSideProps = async(context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
@@ -21,7 +17,7 @@ export const getServerSideProps:GetServerSideProps = async(context) => {
   }
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchInfiniteQuery(['getProducts'], () => getProducts());
+  await queryClient.prefetchInfiniteQuery(['getProducts'], () => apis.Product.getProducts());
 
   return {
     props: {
@@ -49,7 +45,7 @@ const Home: FC = () => {
   const loadRef = useRef<HTMLDivElement | null>(null);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     ['getProducts'],
-    ({ pageParam = 0 }) => getProducts(pageParam),{
+    ({ pageParam = 0 }) => apis.Product.getProducts(pageParam),{
       getNextPageParam: (lastPage, allPages) => {
         return lastPage[lastPage.length - 1]?.id;
       }

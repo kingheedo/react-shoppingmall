@@ -2,7 +2,6 @@ import {
   Divider, List, Rate,
 } from 'antd';
 import React, { FC } from 'react';
-import { SingleProduct } from '../reducers/reducerTypes/productType';
 import { GetSingleProductRes } from '../apis/product/schema';
 
 type Props = {
