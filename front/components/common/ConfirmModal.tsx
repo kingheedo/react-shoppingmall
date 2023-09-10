@@ -97,6 +97,10 @@ const ConfirmModal = ({
     [ConfirmType.SIZE_SELECT]: {
       txt: '사이즈를 선택해주세요',
       hideCancel: true
+    },
+    [ConfirmType.NO_SELECT_CART_ITEM]: {
+      txt: '선택된 상품이 없습니다.',
+      hideCancel: true
     }
   };
 

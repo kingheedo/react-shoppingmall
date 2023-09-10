@@ -77,6 +77,7 @@ const OrderHead = styled.div`
   font-weight: 400;
 
   > label {
+    cursor: pointer;
     > i {
       margin-right: 8px;
     }
@@ -242,6 +243,11 @@ export type Optionitem = {
   }[] | null;
 };
 
+export enum Delete {
+  MULTIPLE = 'MULTIPLE',
+  EACH = 'EACH'
+}
+
 const CartComponent = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
   const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
@@ -266,7 +272,7 @@ const CartComponent = () => {
   );
 
   /** 장바구니 아이템 삭제 */
-  const { mutate: deleteItem } = useMutation((id: number) => apis.Cart.deleteItem(id), {
+  const { mutate: deleteItem } = useMutation((ids: number[]) => apis.Cart.deleteItem(ids), {
     onSettled: () => {
       queryClient.invalidateQueries(['getCartList']);
     },
@@ -302,8 +308,15 @@ const CartComponent = () => {
   };
 
   /** 삭제 클릭 시 */
-  const onClickDelete = (id: number) => {
-    modal?.confirm.deleteCart.handleConfirm(() => deleteItem(id));
+  const onClickDelete = (payload: { type : Delete, id?: number }) => {
+    if (payload.type === Delete.MULTIPLE) {
+      if (checkedList.length < 1) {
+        return modal?.confirm.noSelectCartItem.handleConfirm();
+      }
+      modal?.confirm.deleteCart.handleConfirm(() => deleteItem([...checkedList]));
+    } else if (payload.type === Delete.EACH) {
+      modal?.confirm.deleteCart.handleConfirm(() => payload.id && deleteItem([payload.id]));
+    }
     
   };
 
@@ -383,7 +396,7 @@ const CartComponent = () => {
                 <i />
                 <span>전체선택</span>
               </label>
-              <DltSlctedBtn>선택 상품 삭제</DltSlctedBtn>
+              <DltSlctedBtn onClick={() => onClickDelete({ type: Delete.MULTIPLE })}>선택 상품 삭제</DltSlctedBtn>
             </OrderHead>
             <Table>
               <colgroup>
@@ -448,11 +461,11 @@ const CartComponent = () => {
                     </Td>
                     <Td>
                       <div className="price">
-                        <span>{info.totalPrice}</span>
+                        <span>{new Intl.NumberFormat('ko-KR').format(info.totalPrice)}</span>
                         {/* <em>33%</em> */}
                       </div>
                       <BuyNowBtn>바로구매</BuyNowBtn>
-                      <DeleteBtn onClick={() => onClickDelete(info.id)} />
+                      <DeleteBtn onClick={() => onClickDelete({ type: Delete.EACH, id: info.id })} />
                     </Td>
                   </tr>
                 ))}

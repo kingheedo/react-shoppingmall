@@ -40,7 +40,7 @@ const Signin: FC = () => {
   const me = getUser();
   const queryClient = useQueryClient();
 
-  const { mutate: PostLogin } = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
+  const { mutate: postLogin } = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
     onSuccess: () => {
       queryClient.invalidateQueries(['getUser']).then(() => Router.back());
 
@@ -56,11 +56,11 @@ const Signin: FC = () => {
   //   }
   // }, [me]);
 
-  const onHandleSubmit = () => {
-    // PostLogin({
-    //   email,
-    //   password
-    // })
+  const onClickLogin = () => {
+    postLogin({
+      email,
+      password
+    });
       
   };
 
@@ -81,7 +81,7 @@ const Signin: FC = () => {
             initialValues={{
               remember: true,
             }}
-            onFinish={onHandleSubmit}
+            onFinish={onClickLogin}
           >
             <h1>LOGIN</h1>
             <Form.Item

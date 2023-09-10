@@ -11,6 +11,7 @@ export enum ConfirmType {
   ADD_CART = 'ADD_CART',
   DELETE_CART = 'DELETE_CART',
   SIZE_SELECT = 'SIZE_SELECT',
+  NO_SELECT_CART_ITEM = 'NO_SELECT_CART_ITEM',
 }
 
 interface IModalContext {
@@ -27,6 +28,10 @@ interface IModalContext {
       open: boolean;
       handleConfirm: () => void;
     };
+    noSelectCartItem:{
+      open: boolean;
+      handleConfirm: () => void;
+    },
   };
 }
 
@@ -74,6 +79,15 @@ const ModalProvider = ({ children }: PropsWithChildren) => {
               },
             }),
         },
+        noSelectCartItem: {
+          open: confirm.open,
+          handleConfirm: () => 
+            setConfirm({
+              type: ConfirmType.NO_SELECT_CART_ITEM,
+              open: true,
+              callBack: () => {null;}
+            })
+        }
       },
     }),
     [confirm],
