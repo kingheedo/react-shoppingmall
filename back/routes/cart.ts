@@ -194,10 +194,12 @@ router.post('/change', isLoggedIn, async(req, res, next) => {
     }
 })
 
-router.delete('/:cartItemId', isLoggedIn, async(req, res, next) => {
+router.delete('/', isLoggedIn, async(req, res, next) => {
     try{
+        console.log('req.body.ids',req.body);
+        
         await Cart.destroy({
-            where: {[Op.and] : [{id : req.params.cartItemId},{UserId : req.user!.id}]},
+            where: {[Op.and] : [{id : [...req.body.ids]},{UserId : req.user!.id}]},
         })
         
         res.status(200).send('아이템이 삭제되었습니다')
