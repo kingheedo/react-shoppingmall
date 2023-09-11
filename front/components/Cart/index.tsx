@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -236,6 +236,53 @@ const ModalBg = styled.div`
   z-index: 100;
 `;
 
+const GrayArea = styled.div`
+    margin: 10px 0 0 40px;
+    padding: 30px 40px;
+    width: 838px;
+    background-color: #fafafa;
+    border: 1px solid #efefef;
+
+    > h5 {
+        margin-bottom: 8px;
+        color: #8e8e8e;
+        font-size: 15px;
+        font-weight: 400;
+      }
+    }
+`;
+
+const AmountWrap = styled.div`
+    display: flex;
+    justify-content: space-between
+`;
+
+const DetailAmt = styled.div`
+  font-size: 16px;
+  color: #111;
+`;
+
+const Amount = styled.div`
+  > h4 {
+    font-weight: 400;
+    font-size:23px;
+    color: #111;
+    display: inline-block;
+  }
+
+  > em {
+    font-size: 23px;
+    font-weight: 700;
+  }
+
+  > span {
+    display: block;
+    color: #8e8e8e;
+    font-size: 14px;
+    font-weight: 400;
+  }
+`;
+
 export type Optionitem = {
   cartId: number | null;
   name: string | null;
@@ -270,6 +317,17 @@ const CartComponent = () => {
   const { data: list } = useQuery(['getCartList'], () =>
     apis.Cart.getCartList(),
   );
+
+  const totalPrice = useMemo(() => {
+    let price = 0;
+
+    for (let i = 0; i < checkedList.length; i++) {
+      const id = checkedList[i];
+      price += list?.find(val => val.id === id)?.totalPrice || 0;
+    }
+    
+    return price;
+  },[list,checkedList]);
 
   /** 장바구니 아이템 삭제 */
   const { mutate: deleteItem } = useMutation((ids: number[]) => apis.Cart.deleteItem(ids), {
@@ -354,6 +412,10 @@ const CartComponent = () => {
       setOpQty(selectd?.quantity);
     }
   }, [selectd]);
+
+  useEffect(() => {
+    onCheck('ALL');
+  }, [list]);
 
   return (
     <>
@@ -471,6 +533,19 @@ const CartComponent = () => {
                 ))}
               </tbody>
             </Table>
+            <GrayArea>
+              <h5>스토어 주문금액 합계</h5>
+              <AmountWrap>
+                <DetailAmt>
+                  상품금액 {totalPrice.toLocaleString()}원 &nbsp;&nbsp;+ &nbsp;&nbsp;배송비 0원 &nbsp;&nbsp;-&nbsp;&nbsp; 할인금액 0 원
+                </DetailAmt>
+                <Amount>
+                  <h4>{totalPrice.toLocaleString()}</h4>
+                  <em>원</em><br/>
+                  <span>39,900원 이상 무료배송</span>
+                </Amount>
+              </AmountWrap>
+            </GrayArea>
           </OrderWrap>
         </Main>
       </Cart>
