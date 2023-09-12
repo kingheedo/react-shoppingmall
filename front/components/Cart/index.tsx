@@ -283,6 +283,80 @@ const Amount = styled.div`
   }
 `;
 
+const SubOrder = styled.div`
+  border-top: 2px solid #111;
+  border-bottom: 2px solid #111;
+  margin-top: 70px;
+
+  > h4 {
+    height: 50px;
+    line-height: 50px;
+    font-size: 17px;
+    border-bottom: 1px solid #efefef;
+    > span{
+    margin-left: 10px;
+    font-size: 17px;
+    font-weight: 400;
+    > em{
+    color: #8e1fff;
+    font-weight: 700;
+      }
+    }
+  }
+`;
+const CalcWrap = styled.div`
+  padding: 35px 0;
+  text-align: center;
+`;
+const CalcItem = styled.div`
+  display: inline-block;
+  line-height: 36px;
+  text-align: center;
+  font-size: 27px;
+  vertical-align: top;
+  > em{
+    display: block;
+    margin-top: 5px;
+    line-height: 32px;
+    color: #444;
+    font-size: 15px;
+  }
+  :nth-of-type(2) {
+    padding-left: 80px;
+    background: url('/bg_calc.gif') no-repeat;
+    background-position: 30px 26px;
+  }
+
+  :nth-of-type(3) {
+    padding-left: 80px;
+    background: url('/bg_calc.gif') no-repeat;
+    background-position: 30px -40px;
+  }
+
+  :nth-of-type(4) {
+    padding-left: 80px;
+    background: url('/bg_calc.gif') no-repeat;
+    background-position: 30px -104px;
+  }
+`;
+
+const SubmitWrap = styled.div`
+    margin: 0 0 40px 0;
+    text-align: center;
+  > a{
+    display: inline-block;
+    line-height: 58px;
+    font-size: 17px;
+    margin: 0 4px;
+    min-width: 256px;
+    padding: 0 69px;
+    height: 60px;
+    color: #fff;
+    background: #111;
+    border: 1px solid #111;
+  }
+`;
+
 export type Optionitem = {
   cartId: number | null;
   name: string | null;
@@ -546,6 +620,51 @@ const CartComponent = () => {
                 </Amount>
               </AmountWrap>
             </GrayArea>
+            <SubOrder>
+              <h4>
+                결제 예정 금액
+                <span>총&nbsp;<em>4</em>건</span>
+              </h4>
+              <CalcWrap>
+                <CalcItem>
+                  <span>
+                    {totalPrice.toLocaleString()}원
+                  </span>
+                  <em>
+                    상품금액
+                  </em>
+                </CalcItem>
+                <CalcItem>
+                  <span>
+                    0원
+                  </span>
+                  <em>
+                    배송비
+                  </em>
+                </CalcItem>
+                <CalcItem>
+                  <span>
+                    0원
+                  </span>
+                  <em>
+                    할인금액
+                  </em>
+                </CalcItem>
+                <CalcItem>
+                  <span>
+                    {totalPrice.toLocaleString()}원
+                  </span>
+                  <em>
+                    총 주문금액
+                  </em>
+                </CalcItem>
+              </CalcWrap>
+              <SubmitWrap>
+                <Link href={'/'}>
+                  주문하기
+                </Link>
+              </SubmitWrap>
+            </SubOrder>
           </OrderWrap>
         </Main>
       </Cart>
