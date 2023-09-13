@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -6,21 +6,11 @@ import apis from '../../apis';
 import OptionModal from './OptionModal';
 import { ChangeOption, GetCartListRes, Size } from '../../apis/cart/schema';
 import { useModal } from '../../context/ModalProvider';
+import BreadCrumb from '../common/BreadCrumb';
+import { GetServerSideProps } from 'next';
+import axios from 'axios';
 
 const Cart = styled.div``;
-
-const Breadcrumb = styled.div`
-  padding: 20px var(--gap) 0px;
-`;
-
-const BreadcrumbOl = styled.ol`
-  display: flex;
-`;
-const BreadcrumbLi = styled.li`
-  margin-right: 8px;
-  font-size: var(--fontB);
-  line-height: var(--fontBL);
-`;
 
 const Main = styled.main`
   width: 960px;
@@ -50,12 +40,6 @@ const Main = styled.main`
       }
     }
   }
-`;
-
-const HomeLink = styled(Link)`
-  background: url('/chevron-right.svg') no-repeat right center/12px auto;
-  padding-right: 20px;
-  color: var(--gray450);
 `;
 
 const OrderWrap = styled.div`
@@ -511,14 +495,9 @@ const CartComponent = () => {
         </ModalBg>
       )}
       <Cart>
-        <Breadcrumb>
-          <BreadcrumbOl>
-            <BreadcrumbLi>
-              <HomeLink href="/">Home</HomeLink>
-            </BreadcrumbLi>
-            <BreadcrumbLi>장바구니</BreadcrumbLi>
-          </BreadcrumbOl>
-        </Breadcrumb>
+        <BreadCrumb>
+          장바구니
+        </BreadCrumb>
         <Main className="contents">
           <OrderWrap>
             <Title>장바구니</Title>
@@ -660,7 +639,12 @@ const CartComponent = () => {
                 </CalcItem>
               </CalcWrap>
               <SubmitWrap>
-                <Link href={'/'}>
+                <Link href={{
+                  pathname: '/order',
+                  query: { ids: (encodeURIComponent(JSON.stringify(checkedList))) },
+                  
+                }}
+                >
                   주문하기
                 </Link>
               </SubmitWrap>
@@ -670,6 +654,19 @@ const CartComponent = () => {
       </Cart>
     </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async(context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  return {
+    props: {}
+  };
 };
 
 export default CartComponent;

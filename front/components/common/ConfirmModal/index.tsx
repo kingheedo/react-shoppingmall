@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ConfirmType } from '../../context/ModalProvider';
+import { ConfirmType } from '../../../context/ModalProvider';
 
 const Bg = styled.div`
     position: fixed;
