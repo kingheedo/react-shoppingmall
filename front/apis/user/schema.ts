@@ -13,4 +13,4 @@ export type PostLoginReq = {
     email: string;
     password: string;
 }
-export type PostLoginRes= UserInfo
+export type PostLoginRes = UserInfo;

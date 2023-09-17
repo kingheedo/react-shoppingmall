@@ -10,6 +10,7 @@ import { getUser } from '../context/LoginProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apis from '../apis';
 import { PostLoginReq } from '../apis/user/schema';
+import SignIn from '../components/SignIn';
 
 const Container = styled.div`
   width: 100vw;
@@ -34,7 +35,7 @@ const FormDiv = styled.div`
     width: 400px;
     padding: 20px;
 `;
-const Signin: FC = () => {
+const SignInPage: FC = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const me = getUser();
@@ -72,60 +73,61 @@ const Signin: FC = () => {
   );
 
   return (
-    <Container>
-      <Wrapper>
-        <FormDiv>
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={onClickLogin}
-          >
-            <h1>LOGIN</h1>
-            <Form.Item
-              name="E-mail"
-              rules={[
-                {
-                  required: true,
-                  message: '이메일을 입력해주세요!',
-                },
-              ]}
-            >
-              <Input value={email} onChange={onChangeEmail} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: '비밀번호를 입력해주세요!',
-                },
-              ]}
-            >
-              <Input
-                value={password}
-                onChange={onChangePassword}
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="Password"
-              />
-            </Form.Item>
+    // <Container>
+    //   <Wrapper>
+    //     <FormDiv>
+    //       <Form
+    //         name="normal_login"
+    //         className="login-form"
+    //         initialValues={{
+    //           remember: true,
+    //         }}
+    //         onFinish={onClickLogin}
+    //       >
+    //         <h1>LOGIN</h1>
+    //         <Form.Item
+    //           name="E-mail"
+    //           rules={[
+    //             {
+    //               required: true,
+    //               message: '이메일을 입력해주세요!',
+    //             },
+    //           ]}
+    //         >
+    //           <Input value={email} onChange={onChangeEmail} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="E-mail" />
+    //         </Form.Item>
+    //         <Form.Item
+    //           name="password"
+    //           rules={[
+    //             {
+    //               required: true,
+    //               message: '비밀번호를 입력해주세요!',
+    //             },
+    //           ]}
+    //         >
+    //           <Input
+    //             value={password}
+    //             onChange={onChangePassword}
+    //             prefix={<LockOutlined className="site-form-item-icon" />}
+    //             type="password"
+    //             placeholder="Password"
+    //           />
+    //         </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button">
-                로그인
-              </Button>
-              <SignUpButton onClick={onhandleSignUp} type="primary" htmlType="submit" className="signup-form-button">
-                회원가입
-              </SignUpButton>
-            </Form.Item>
-          </Form>
-        </FormDiv>
-      </Wrapper>
-    </Container>
+    //         <Form.Item>
+    //           <Button type="primary" htmlType="submit" className="login-form-button">
+    //             로그인
+    //           </Button>
+    //           <SignUpButton onClick={onhandleSignUp} type="primary" htmlType="submit" className="signup-form-button">
+    //             회원가입
+    //           </SignUpButton>
+    //         </Form.Item>
+    //       </Form>
+    //     </FormDiv>
+    //   </Wrapper>
+    // </Container>
+    <SignIn/>
   );
 };
 
-export default Signin;
+export default SignInPage;

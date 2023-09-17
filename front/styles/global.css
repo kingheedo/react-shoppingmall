@@ -54,6 +54,10 @@ html,
 body {
   padding: 0;
   margin: 0;
+  font-size: var(--fontC);
+  line-height: var(--fontCL);
+  color: var(--gray900);
+  -webkit-text-size-adjust: none;
 }
 * {
   box-sizing: border-box;
@@ -107,6 +111,16 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+input[type=email]:focus, 
+input[type=number]:focus, 
+input[type=password]:focus,
+input[type=tel]:focus, 
+input[type=text]:focus, 
+input[type=url]:focus,
+ textarea:focus{
+  border: 1px solid #111 !important;
+  outline: 0;
 }
 
 /* Select box 스타일 초기화 */

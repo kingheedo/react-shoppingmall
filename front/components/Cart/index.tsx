@@ -641,7 +641,7 @@ const CartComponent = () => {
               <SubmitWrap>
                 <Link href={{
                   pathname: '/order',
-                  query: { ids: (encodeURIComponent(JSON.stringify(checkedList))) },
+                  query: { ids: ((JSON.stringify(checkedList))) },
                   
                 }}
                 >
