@@ -1,6 +1,7 @@
 import * as passport from 'passport';
 import local from './local';
 import User from '../models/user';
+import kakao from './kakao';
 type IUser ={
     id?: number;
 }
@@ -14,12 +15,13 @@ export default() => {
     passport.deserializeUser<number>(async(id, done) => {
         try{
             const user = await User.findOne({where: {id}});
-            return done(null,user)
+            done(null,user)
             
         }catch(error){
             console.error(error);
-            return done(error);
+             done(error);
         }
     })
     local();
+    kakao();
 }

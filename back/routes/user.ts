@@ -34,7 +34,8 @@ router.get('/', async(req, res, next) =>{
          console.error(error);
          next(error);
      }
-})
+});
+
 
 router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
     try{
@@ -65,11 +66,18 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
         next(error);
     }
 })
-router.post('/logout',isLoggedIn, (req, res) => {
-    req.logout();
-    req.session.destroy(() =>{
-        return res.status(201).send('로그아웃 완료.')
+router.post('/logout',isLoggedIn, (req, res, next) => {
+    req.logOut((err) => {
+        if(err){
+            console.error(err);
+            return next(err);
+        }else{
+            res.redirect('/')
+        }
     });
+    // req.session.destroy(() =>{
+    //     return res.status(201).send('로그아웃 완료.')
+    // });
     
 })
 
@@ -96,8 +104,8 @@ router.post('/login',isNotLoggedIn, (req, res, next) =>{
         return res.status(201).json(withOutPasswordUser);
     })
     })(req, res, next)
-    });
-    
+});
+
 router.post('/', isNotLoggedIn,  async(req, res, next) => {
     try{
         const exUser = await User.findOne({

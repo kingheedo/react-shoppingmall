@@ -1,6 +1,6 @@
 import * as express from 'express'
 import {sequelize} from './models'
-
+import authRouter from './routes/auth';
 import cartRouter from './routes/cart'
 import productRouter from './routes/product'
 import productsRouter from './routes/products'
@@ -65,8 +65,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
+app.use('/auth', authRouter);
 app.use('/user', userRouter)
 app.use('/product',productRouter)
 app.use('/products',productsRouter)

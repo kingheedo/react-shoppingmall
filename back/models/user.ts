@@ -4,27 +4,40 @@ import HistoryCart from './historyCart';
 import {sequelize} from './sequelize'
 class User extends Model{
     public readonly id!:number;
-    public email!:string;
+    public email!:string | null;
     public name!:string;
-    public password!:string;
+    public password!:string | null;
+    public kakaoId!: string | null
+    public provider!: 'local' | 'kakao';
     public readonly createdAt!:Date;
     public readonly updatedAt!:Date;
 }
     User.init({
             email: {
                 type: DataTypes.STRING(30),
-                allowNull : false,
+                allowNull : true,
                 unique : true,
+                defaultValue: null
             },
             name: {
                 type: DataTypes.STRING(30),
                 allowNull : false,
-                unique: true,
+                unique: false,
             },
             password: {
                 type: DataTypes.STRING(100),
-                allowNull : false,
+                allowNull : true,
+                defaultValue: null
             },
+            provider: {
+                type: DataTypes.ENUM('local', 'kakao'),
+                allowNull: false,
+                defaultValue: 'local'
+            },
+            kakaoId: {
+                type: DataTypes.STRING(100),
+                allowNull: true
+            }
         },{
             sequelize,  
             modelName: 'User',
