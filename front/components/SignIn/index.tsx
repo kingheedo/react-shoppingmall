@@ -258,7 +258,7 @@ const SignIn = () => {
             <a className="kakao-link" href="http://localhost:3065/auth/kakao">
               카카오 로그인
             </a>
-            <a className="naver-link" href="#">
+            <a className="naver-link" href="http://localhost:3065/auth/naver">
               네이버 로그인
             </a>
           </dd>
