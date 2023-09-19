@@ -7,7 +7,8 @@ class User extends Model{
     public email!:string | null;
     public name!:string;
     public password!:string | null;
-    public kakaoId!: string | null
+    public kakaoId!: string | null;
+    public naverId!: string | null;
     public provider!: 'local' | 'kakao';
     public readonly createdAt!:Date;
     public readonly updatedAt!:Date;
@@ -30,11 +31,15 @@ class User extends Model{
                 defaultValue: null
             },
             provider: {
-                type: DataTypes.ENUM('local', 'kakao'),
+                type: DataTypes.ENUM('local', 'kakao', 'naver'),
                 allowNull: false,
                 defaultValue: 'local'
             },
             kakaoId: {
+                type: DataTypes.STRING(100),
+                allowNull: true
+            },
+            naverId: {
                 type: DataTypes.STRING(100),
                 allowNull: true
             }

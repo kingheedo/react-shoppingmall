@@ -2,6 +2,7 @@ import * as passport from 'passport';
 import local from './local';
 import User from '../models/user';
 import kakao from './kakao';
+import naver from './naver';
 type IUser ={
     id?: number;
 }
@@ -24,4 +25,5 @@ export default() => {
     })
     local();
     kakao();
+    naver();
 }
