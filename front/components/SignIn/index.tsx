@@ -255,7 +255,7 @@ const SignIn = () => {
             </span>
           </dt>
           <dd>
-            <a className="kakao-link" href="#">
+            <a className="kakao-link" href="http://localhost:3065/auth/kakao">
               카카오 로그인
             </a>
             <a className="naver-link" href="#">
