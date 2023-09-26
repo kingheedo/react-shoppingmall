@@ -174,7 +174,6 @@ const SignIn = () => {
  
   /** 이메일 패스워드 핸들러 */
   const onChangeUser = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('e',e.target.value);
     if (e.target.id === 'email') {
       setUser({
         ...user,

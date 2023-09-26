@@ -602,7 +602,7 @@ const CartComponent = () => {
             <SubOrder>
               <h4>
                 결제 예정 금액
-                <span>총&nbsp;<em>4</em>건</span>
+                <span>총&nbsp;<em>{checkedList.length}</em>건</span>
               </h4>
               <CalcWrap>
                 <CalcItem>

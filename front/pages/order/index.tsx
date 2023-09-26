@@ -2,14 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import apis from '../../apis';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
   const { query } = context;
-
-  console.log('query',query);
 
   axios.defaults.headers.Cookie = '';
 
