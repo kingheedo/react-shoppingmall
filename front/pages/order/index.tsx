@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
-import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import apis from '../../apis';
+import Order from '../../components/Order';
 
 export const getServerSideProps: GetServerSideProps = async(context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
@@ -33,17 +33,16 @@ const OrderPage = (props: any) => {
     apis.Cart.getCartList(),
   );
   const { ids }: { ids: number[] } = props;
-  const router = useRouter();
   
   /** 주문 대상 리스트 */
-  const orderList = useMemo(() => (
-    list?.filter(product => ids.includes(product.id))
-  ),[list,ids]);
-    
-  console.log('orderList',orderList);
+  const orderList = useMemo(() => {
+    return list?.filter(product => ids.includes(product.id)) || [];
+  },[list,ids]);
 
   return (
-    <div>OrderPage</div>
+    <Order
+      list={orderList}
+    />
   );
 };
 

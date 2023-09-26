@@ -495,9 +495,9 @@ const CartComponent = () => {
         </ModalBg>
       )}
       <Cart>
-        <BreadCrumb>
-          장바구니
-        </BreadCrumb>
+        <BreadCrumb 
+          list={[{ content: '장바구니' }]}
+        />
         <Main className="contents">
           <OrderWrap>
             <Title>장바구니</Title>

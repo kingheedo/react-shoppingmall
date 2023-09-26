@@ -1,9 +1,13 @@
 import Link from 'next/link';
 import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
+import { UrlObject } from 'url';
 
 const Breadcrumb = styled.div`
-  padding: 20px var(--gap) 0px;
+  max-width: 1440px;
+    min-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--gap);
 `;
 
 const BreadcrumbOl = styled.ol`
@@ -13,24 +17,46 @@ const BreadcrumbLi = styled.li`
   margin-right: 8px;
   font-size: var(--fontB);
   line-height: var(--fontBL);
+  color: #111;
 `;
 
-const HomeLink = styled(Link)`
+const BreadcrumbLiLink = styled(Link)`
   background: url('/chevron-right.svg') no-repeat right center/12px auto;
   padding-right: 20px;
   color: var(--gray450);
 `;
 
-const BreadCrumb = ({ children }: PropsWithChildren) => {
+interface IBreadCrumbProps {
+  list : {
+    content: string;
+    href?: string | UrlObject;
+  }[]
+}
+
+const BreadCrumb = ({
+  list,
+}: IBreadCrumbProps) => {
   return (
     <Breadcrumb>
       <BreadcrumbOl>
         <BreadcrumbLi>
-          <HomeLink href="/">Home</HomeLink>
+          <BreadcrumbLiLink href="/">Home</BreadcrumbLiLink>
         </BreadcrumbLi>
-        <BreadcrumbLi>
-          {children}
-        </BreadcrumbLi>
+        {list.map((item,idx) => (
+          idx === list.length - 1 && item.href
+            ? (
+              <BreadcrumbLi key={item.content}>
+                <BreadcrumbLiLink href={item.href}>{item.content}</BreadcrumbLiLink>
+              </BreadcrumbLi>
+            )
+          
+            : (
+              <BreadcrumbLi key={item.content}>
+                {item.content}
+              </BreadcrumbLi>
+            )
+          
+        ))}
       </BreadcrumbOl>
     </Breadcrumb>
   );
