@@ -590,10 +590,10 @@ const CartComponent = () => {
               <h5>스토어 주문금액 합계</h5>
               <AmountWrap>
                 <DetailAmt>
-                  상품금액 {totalPrice.toLocaleString()}원 &nbsp;&nbsp;+ &nbsp;&nbsp;배송비 0원 &nbsp;&nbsp;-&nbsp;&nbsp; 할인금액 0 원
+                  상품금액 {totalPrice.toLocaleString('ko-KR')}원 &nbsp;&nbsp;+ &nbsp;&nbsp;배송비 0원 &nbsp;&nbsp;-&nbsp;&nbsp; 할인금액 0 원
                 </DetailAmt>
                 <Amount>
-                  <h4>{totalPrice.toLocaleString()}</h4>
+                  <h4>{totalPrice.toLocaleString('ko-KR')}</h4>
                   <em>원</em><br/>
                   <span>39,900원 이상 무료배송</span>
                 </Amount>
@@ -607,7 +607,7 @@ const CartComponent = () => {
               <CalcWrap>
                 <CalcItem>
                   <span>
-                    {totalPrice.toLocaleString()}원
+                    {totalPrice.toLocaleString('ko-KR')}원
                   </span>
                   <em>
                     상품금액
@@ -631,7 +631,7 @@ const CartComponent = () => {
                 </CalcItem>
                 <CalcItem>
                   <span>
-                    {totalPrice.toLocaleString()}원
+                    {totalPrice.toLocaleString('ko-KR')}원
                   </span>
                   <em>
                     총 주문금액

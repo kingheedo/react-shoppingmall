@@ -474,9 +474,7 @@ const QueryProduct = () => {
                     </Quantity>
                     <PriceWrap>
                       <Price>
-                        {(buyInfo.totalPrice || data.price).toLocaleString(
-                          'ko',
-                        )}
+                        {(buyInfo.totalPrice || data.price).toLocaleString('ko-KR')}
                       </Price>
                       <PriceUnit>원</PriceUnit>
                     </PriceWrap>
