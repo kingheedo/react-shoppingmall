@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import PostBtn from '../PostCode';
 
 const DeliveryInfoHeader = styled.div`
   display: flex;
@@ -66,10 +67,17 @@ const InputWrap = styled.div`
 
     > input{
       width: 100%;
+      line-height: 38px;
+      padding: 0 20px;
+      border: 1px solid #e5e5e5;
     }
 
     &.address-input-wrap{
       display: flex;
+
+      &:not(:first-child){
+        margin-top: 8px;
+      }
     }
     .post-num-input{
         padding-right: 110px;
@@ -78,21 +86,6 @@ const InputWrap = styled.div`
         white-space: nowrap;
       }
     }
-`;
-
-const PostNumBtn = styled.button`
-    width: 100px;
-    margin-left: 10px;
-    line-height: 38px;
-    display: inline-block;
-    box-sizing: border-box;
-    padding: 0 20px;
-    line-height: 34px;
-    font-size: 14px;
-    color: #444;
-    text-align: center;
-    background: #fff;
-    border: 1px solid #e5e5e5;
 `;
 
 type InfoType = {
@@ -116,6 +109,19 @@ const DeliveryInfo = () => {
     }
   });
   
+  /** 우편번호 및 기본 배송지 핸들러 */
+  const handleAddress = (payload:{ postNum: string, baseAddress: string; }) => {
+    const tempInfo = info;
+    setInfo({
+      ...tempInfo,
+      address: {
+        postNum: payload.postNum,
+        base: payload.baseAddress,
+        detail: tempInfo.address.detail
+      }
+    });
+  };
+
   /** input 핸들러
    * 
    * 1. target의 id에 따라서 value값을 수정
@@ -130,10 +136,6 @@ const DeliveryInfo = () => {
         }
         : e.target.value
     });
-  };
-
-  const onClickPost = () => {
-
   };
 
   return (
@@ -190,13 +192,12 @@ const DeliveryInfo = () => {
                 name="postNum" 
                 onChange={onChangeValue} 
                 value={info.address.postNum} 
-                type="text" />
-              <PostNumBtn 
-                className="post-num-btn"
-                onClick={onClickPost}
-              >
-              우편번호
-              </PostNumBtn>
+                type="text" 
+                readOnly
+              />
+              <PostBtn
+                handleAddress={handleAddress}
+              />
             </InputWrap>
             <InputWrap 
               className="address-input-wrap"
@@ -208,8 +209,10 @@ const DeliveryInfo = () => {
                 className="post-base-input"
                 name="base" 
                 onChange={onChangeValue} 
-                value={info.address.postNum} 
-                type="text" />
+                value={info.address.base} 
+                type="text" 
+                readOnly
+              />
             </InputWrap>
             <InputWrap 
               className="address-input-wrap"
@@ -221,7 +224,7 @@ const DeliveryInfo = () => {
                 className="post-detail-input"
                 name="detail" 
                 onChange={onChangeValue} 
-                value={info.address.postNum} 
+                value={info.address.detail} 
                 type="text" />
             </InputWrap>
           </div>
