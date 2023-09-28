@@ -32,22 +32,22 @@ const Payment: FC<Props> = ({ payment }) => {
   return (
     <>
       <Link href="/product/[id]" as={`/product/${payment.HistoryCart?.Product?.id}`}>
-          <h3>{payment.paymentID}</h3>
-          <CardItem
-            cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`${payment.HistoryCart?.Product?.Images[1].src}`} />}
-          >
-            <Meta style={{ float: 'left' }} title={payment.HistoryCart?.Product?.productName} />
-            <P>{moment(payment.createdAt).format('LLL')}</P>
-            <br />
-            <br />
-            <span>{`${payment.HistoryCart?.size} / ${payment.HistoryCart?.quantity}`}</span>
-            <br />
-            <strong>
-              {payment.HistoryCart?.totalPrice > 39900 ? payment.HistoryCart?.totalPrice.toLocaleString('ko-KR') : (payment.HistoryCart?.totalPrice + 2500).toLocaleString('ko-KR')}
+        <h3>{payment.paymentID}</h3>
+        <CardItem
+          cover={<CardImage alt={payment.HistoryCart?.Product?.Images[1].src} src={`${payment.HistoryCart?.Product?.Images[1].src}`} />}
+        >
+          <Meta style={{ float: 'left' }} title={payment.HistoryCart?.Product?.productName} />
+          <P>{moment(payment.createdAt).format('LLL')}</P>
+          <br />
+          <br />
+          <span>{`${payment.HistoryCart?.size} / ${payment.HistoryCart?.quantity}`}</span>
+          <br />
+          <strong>
+            {payment.HistoryCart?.totalPrice > 39900 ? payment.HistoryCart?.totalPrice.toLocaleString('ko-KR') : (payment.HistoryCart?.totalPrice + 2500).toLocaleString('ko-KR')}
               원
-            </strong>
+          </strong>
 
-          </CardItem>
+        </CardItem>
       </Link>
       <Review reviewUniqueIds={payment.HistoryCart?.User?.Reviews?.map((v) => v.reviewUnique)} historyCartId={payment.HistoryCart?.id} productId={payment.HistoryCart?.Product.id} paymentToken={payment.paymentToken} />
       <br />

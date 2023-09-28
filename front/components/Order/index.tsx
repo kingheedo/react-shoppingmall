@@ -3,6 +3,8 @@ import { GetCartListRes } from '../../apis/cart/schema';
 import BreadCrumb from '../common/BreadCrumb';
 import styled from 'styled-components';
 import Link from 'next/link';
+import PostCode from './PostCode';
+import DeliveryInfo from './DeliveryInfo';
 
 const Title = styled.h1`
   margin-bottom: 40px;  
@@ -160,6 +162,8 @@ const Order = ({
             ))}
           </tbody>
         </Table>
+        <DeliveryInfo/>
+        <PostCode/>
       </Main>
     </div>
   );
