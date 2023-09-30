@@ -34,13 +34,16 @@ const DeliveryInfoMain = styled.div`
 `;
 
 const DeliveryInfoRow = styled.div`
+    position: relative;
     display: flex;
     &:not(:first-child){
       margin-top: 20px;
     }
     > label{
       position: absolute;
+      top: 9px;
       left: 0;
+      cursor: pointer;
       &::after{
         position: absolute;
         display: inline-block;
@@ -51,6 +54,10 @@ const DeliveryInfoRow = styled.div`
         background: #8e1fff;
         content: '';
       }
+    }
+
+    .address{
+      
     }
 
     .address-container{
@@ -88,6 +95,40 @@ const InputWrap = styled.div`
     }
 `;
 
+const BaseDelCheck = styled.label`
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    padding-left: 110px;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-right: 10px;
+    font-size: var(--fontD);
+    line-height: var(--fontDL);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    color: var(--gray900);
+    cursor: pointer;
+    > input{
+      &[type=checkbox]:checked{
+        +i{
+          background: url(/checkbox_check.svg) center/24px no-repeat;
+        }
+      }
+    }
+
+     > i {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      margin-right: 6px;
+      background: url(/checkbox_uncheck.svg) center/24px no-repeat;
+      border-radius: 4px;
+     }
+`;
+
 type InfoType = {
   name: string,
     phoneNum: string,
@@ -95,7 +136,8 @@ type InfoType = {
       postNum: string,
       base: string,
       detail: string
-    }
+    },
+    message: string
 }
 
 const DeliveryInfo = () => {
@@ -106,8 +148,23 @@ const DeliveryInfo = () => {
       postNum: '',
       base: '',
       detail: ''
-    }
+    },
+    message: ''
   });
+
+  /** 새로입력 클릭 시 */
+  const onClickReset = () => {
+    setInfo({
+      name: '',
+      phoneNum: '',
+      address: {
+        postNum: '',
+        base: '',
+        detail: ''
+      },
+      message: ''
+    });
+  };
   
   /** 우편번호 및 기본 배송지 핸들러 */
   const handleAddress = (payload:{ postNum: string, baseAddress: string; }) => {
@@ -145,7 +202,7 @@ const DeliveryInfo = () => {
           배송지 정보
         </h4>
         <div className="btn-wrap">
-          <BtnGray>
+          <BtnGray onClick={onClickReset}>
             새로입력
           </BtnGray>
           <BtnGray>
@@ -227,7 +284,29 @@ const DeliveryInfo = () => {
                 value={info.address.detail} 
                 type="text" />
             </InputWrap>
+            <BaseDelCheck>
+              <input type="checkbox" />
+              <i/>
+              기본 배송지로 저장
+            </BaseDelCheck>
           </div>
+        </DeliveryInfoRow>
+        <DeliveryInfoRow>
+          <label htmlFor="message">
+            배송메시지
+          </label>
+          <InputWrap 
+            className="message-input-wrap"
+            style={{
+              paddingLeft: 110
+            }}>
+            <input 
+              id="message" 
+              className="message-input"
+              onChange={onChangeValue} 
+              value={info.message} 
+              type="text" />
+          </InputWrap>
         </DeliveryInfoRow>
       </DeliveryInfoMain>
     </div>
