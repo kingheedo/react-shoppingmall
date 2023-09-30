@@ -1,66 +1,38 @@
 import * as express from 'express'
-import { User, Payment, Product, Image, HistoryCart, Review, Cart, sequelize } from '../models';
+import { User, Payment, Product, Image, HistoryCart, Review, Cart, sequelize, Address } from '../models';
 const router = express.Router();
 import * as bcrypt from 'bcrypt';
 import * as passport from 'passport';
 import {isLoggedIn, isNotLoggedIn} from './middlewares';
 import { Op } from 'sequelize';
 
-router.get('/', async(req, res, next) =>{
-     try{
-         if(req.user){
-        const info = await User.findOne({
-         where : {id : req.user.id},
-         attributes: {
-             exclude : ['password']
-         }
-        })
-        const cartLength = await Cart.count({
-            where: {UserId: req.user.id}
-        })
 
-        const userInfo = {
-            info,
-            cartLength
-        }
-        
-
-        return res.status(200).json(userInfo);
-         }else{
-             return res.status(200).json(null);
-         }
-         
-     }catch(error){
-         console.error(error);
-         next(error);
-     }
-});
 
 
 router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
     try{
-             const paymentLists = await Payment.findAll({
-                 order : [['createdAt', 'DESC']],
-                 where : {UserId: req.user!.id},
-                 include:[{
-                     model : HistoryCart,
-                     include: [{
-                         model : Product,
-                         include: [{
-                         model : Image
-                        },]
-                     },{
-                         model : User,
-                         include: [{
-                             model : Review,
-                             
-                         }],
-                         attributes: ['id', 'email']
-                     }]
-                     
-                 }]
-             })
-             return res.status(202).json(paymentLists)
+            const paymentLists = await Payment.findAll({
+                order : [['createdAt', 'DESC']],
+                where : {UserId: req.user!.id},
+                include:[{
+                    model : HistoryCart,
+                    include: [{
+                        model : Product,
+                        include: [{
+                        model : Image
+                    },]
+                    },{
+                        model : User,
+                        include: [{
+                            model : Review,
+                            
+                        }],
+                        attributes: ['id', 'email']
+                    }]
+                    
+                }]
+            })
+            return res.status(202).json(paymentLists)
     } catch (error) {
         console.error(error);
         next(error);
@@ -80,6 +52,71 @@ router.post('/logout',isLoggedIn, (req, res, next) => {
     // });
     
 })
+
+router.get('/address', isLoggedIn, async(req, res, next) => {
+    try{
+        const getAddresses=  await Address.findAll({
+            where: {
+                id: req.user?.id
+            }
+        })
+        
+        res.status(200).json(getAddresses);
+    }
+    catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
+router.post('/address', isLoggedIn, async(req, res, next) => {
+    try{
+        if(req.user){
+            await Address.create({
+                postNum: req.body.postNum,
+                base: req.body.base,
+                detail: req.body.detail,
+                UserId: req.user.id
+            })
+        }
+
+        return res.status(201).send('배송지 추가 완료')
+    }
+    catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
+router.get('/', async(req, res, next) =>{
+    try{
+        if(req.user){
+    const info = await User.findOne({
+        where : {id : req.user.id},
+        attributes: {
+            exclude : ['password']
+        }
+        })
+        const cartLength = await Cart.count({
+            where: {UserId: req.user.id}
+        })
+
+        const userInfo = {
+            info,
+            cartLength
+        }
+        
+
+        return res.status(200).json(userInfo);
+        }else{
+            return res.status(200).json(null);
+        }
+        
+    }catch(error){
+        console.error(error);
+        next(error);
+    }
+});
 
 router.post('/login',isNotLoggedIn, (req, res, next) =>{
     passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{

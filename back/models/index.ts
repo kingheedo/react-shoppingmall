@@ -6,6 +6,7 @@ import Image, {associate as associateImage} from './image';
 import Product, {associate as associateProduct} from './product';
 import Review, {associate as associateReview} from './review';
 import Size, {associate as associateSize} from './size';
+import Address, {associate as associateAddress} from './address';
 
 export * from './sequelize';
 export {User};
@@ -16,6 +17,7 @@ export {Image};
 export {Product};
 export {Review};
 export {Size};
+export {Address};
 
 const db ={
   User,
@@ -26,6 +28,7 @@ const db ={
   Product,
   Review,
   Size,
+  Address
 };
 export type dbTtype = typeof db;
 
@@ -37,3 +40,4 @@ associateImage(db);
 associateProduct(db);
 associateReview(db);
 associateSize(db);
+associateAddress(db);

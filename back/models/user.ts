@@ -10,6 +10,7 @@ class User extends Model{
     public kakaoId!: string | null;
     public naverId!: string | null;
     public provider!: 'local' | 'kakao';
+    public addressId!: number | null;
     public readonly createdAt!:Date;
     public readonly updatedAt!:Date;
 }
@@ -42,20 +43,25 @@ class User extends Model{
             naverId: {
                 type: DataTypes.STRING(100),
                 allowNull: true
+            },
+            addressId: {
+                type: DataTypes.INTEGER,
+                allowNull: true
             }
         },{
             sequelize,  
             modelName: 'User',
             tableName: 'users',
             charset: 'utf8',
-            collate: 'utf8_general_ci', 
+            collate: 'utf8_general_ci',
     })
     export const associate = (db:dbTtype) => {
-        db.User.hasMany(db.Product)
-        db.User.hasMany(db.Review)
-        db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'})
-        db.User.belongsToMany(db.Product, {through: {model: db.Cart,unique: false }})
-        db.User.belongsToMany(db.Product, {through: {model: db.HistoryCart,unique: false }})
-        db.User.belongsToMany(db.HistoryCart,{through: {model: db.Payment,unique : false}})
+        db.User.hasMany(db.Address);
+        db.User.hasMany(db.Product);
+        db.User.hasMany(db.Review);
+        db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'});
+        db.User.belongsToMany(db.Product, {through: {model: db.Cart,unique: false }});
+        db.User.belongsToMany(db.Product, {through: {model: db.HistoryCart,unique: false }});
+        db.User.belongsToMany(db.HistoryCart,{through: {model: db.Payment,unique : false}});
     }
     export default User;
