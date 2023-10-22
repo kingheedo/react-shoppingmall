@@ -44,8 +44,6 @@ const PostBtn = ({
     if (data.zonecode && (data.address || data.roadAddress)) {
       handleAddress({ postNum: data.zonecode, baseAddress: data.address || data.roadAddress });
     }
-    console.log('data',data);
-    console.log('fullAddress',fullAddress); // e.g. '서울 성동구 왕십리로2길 20 (성수동1가)'
   };
 
   /** 우편번호 버튼 클릭 시 */

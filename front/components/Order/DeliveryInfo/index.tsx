@@ -1,3 +1,4 @@
+/* eslint-disable no-fallthrough */
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PostBtn from '../PostCode';
@@ -67,9 +68,10 @@ const DeliveryInfoRow = styled.div`
 `;
 
 const InputWrap = styled.div`
+    position: relative;
     display: flex;
     flex: 1;
-    padding-left: 140px;
+    padding-left: 110px;
     height: 40px;
 
     > input{
@@ -95,7 +97,7 @@ const InputWrap = styled.div`
     }
 `;
 
-const BaseDelCheck = styled.label`
+const BaseDeliveryCheck = styled.label`
     display: flex;
     align-items: center;
     margin-top: 10px;
@@ -129,6 +131,21 @@ const BaseDelCheck = styled.label`
      }
 `;
 
+const ResetBtn = styled.button`
+     position: absolute;
+     top: 50%;
+     right: 5px;
+     transform: translateY(-50%);
+     display: none;
+     width: 22px;
+     height: 22px;
+     background: url(/btn_x.svg) no-repeat center center/12px auto;
+
+     &.active{
+      display: inline-block;
+     }
+`;
+
 type InfoType = {
   name: string,
     phoneNum: string,
@@ -151,9 +168,13 @@ const DeliveryInfo = () => {
     },
     message: ''
   });
+  const [showResetBtn, setShowResetBtn] = useState({
+    base: false,
+    detail: false
+  });
 
   /** 새로입력 클릭 시 */
-  const onClickReset = () => {
+  const onClickResetForm = () => {
     setInfo({
       name: '',
       phoneNum: '',
@@ -195,6 +216,46 @@ const DeliveryInfo = () => {
     });
   };
 
+  /** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
+  const handleShowResetBtn = (payload: 'base' | 'detail') => {
+    console.log('payload');
+    
+    setShowResetBtn({
+      ...showResetBtn,
+      [payload]: !{ ...showResetBtn }[payload]
+    });
+  };
+
+  const onClickResetInput = (payload: 'base' | 'detail') => {
+    console.log('hi');
+    
+    const tempInfo = info;
+
+    switch (payload) {
+    case 'base':
+      setInfo({
+        ...tempInfo,
+        address: {
+          ...tempInfo.address,
+          base: ''
+        }
+      });
+
+      break;
+    
+    case 'detail': 
+      setInfo({
+        ...tempInfo,
+        address: {
+          ...tempInfo.address,
+          detail: ''
+        }
+      });
+    default:
+      break;
+    }
+  };
+
   return (
     <div className="delivery-info-area">
       <DeliveryInfoHeader>
@@ -202,7 +263,7 @@ const DeliveryInfo = () => {
           배송지 정보
         </h4>
         <div className="btn-wrap">
-          <BtnGray onClick={onClickReset}>
+          <BtnGray onClick={onClickResetForm}>
             새로입력
           </BtnGray>
           <BtnGray>
@@ -215,9 +276,7 @@ const DeliveryInfo = () => {
           <label htmlFor="name">
             이름
           </label>
-          <InputWrap style={{
-            paddingLeft: 110
-          }}>
+          <InputWrap>
             <input id="name" onChange={onChangeValue} value={info.name} type="text" />
 
           </InputWrap>
@@ -226,9 +285,7 @@ const DeliveryInfo = () => {
           <label htmlFor="phoneNum">
             휴대폰
           </label>
-          <InputWrap style={{
-            paddingLeft: 110
-          }}>
+          <InputWrap>
             <input id="phoneNum" onChange={onChangeValue} value={info.phoneNum} type="text" />
 
           </InputWrap>
@@ -239,15 +296,13 @@ const DeliveryInfo = () => {
           </label>
           <div className="address-container">
             <InputWrap 
-              className="address-input-wrap"
-              style={{
-                paddingLeft: 110
-              }}>
+              className="address-input-wrap">
               <input 
                 id="address" 
                 className="post-num-input"
+                title="배송주소"
                 name="postNum" 
-                onChange={onChangeValue} 
+                onChange={onChangeValue}
                 value={info.address.postNum} 
                 type="text" 
                 readOnly
@@ -257,38 +312,45 @@ const DeliveryInfo = () => {
               />
             </InputWrap>
             <InputWrap 
-              className="address-input-wrap"
-              style={{
-                paddingLeft: 110
-              }}>
+              className="address-input-wrap">
               <input 
                 id="address" 
                 className="post-base-input"
+                title="배송주소"
                 name="base" 
-                onChange={onChangeValue} 
+                onChange={onChangeValue}
+                onFocus={() => handleShowResetBtn('base')}
+                onBlur={() => handleShowResetBtn('base')}
                 value={info.address.base} 
                 type="text" 
                 readOnly
               />
+              <ResetBtn 
+                onMouseDown={() => onClickResetInput('base')}
+                className={`reset-btn ${showResetBtn.base ? 'active' : ''}`}/>
             </InputWrap>
             <InputWrap 
-              className="address-input-wrap"
-              style={{
-                paddingLeft: 110
-              }}>
+              className="address-input-wrap">
               <input 
                 id="address" 
                 className="post-detail-input"
+                title="상세주소"
                 name="detail" 
-                onChange={onChangeValue} 
+                onChange={onChangeValue}
+                onFocus={() => handleShowResetBtn('detail')}
+                onBlur={() => handleShowResetBtn('detail')}
                 value={info.address.detail} 
+                maxLength={100}
                 type="text" />
+              <ResetBtn 
+                onMouseDown={() => onClickResetInput('detail')}
+                className={`reset-btn ${showResetBtn.detail ? 'active' : ''}`}/>
             </InputWrap>
-            <BaseDelCheck>
+            <BaseDeliveryCheck>
               <input type="checkbox" />
               <i/>
               기본 배송지로 저장
-            </BaseDelCheck>
+            </BaseDeliveryCheck>
           </div>
         </DeliveryInfoRow>
         <DeliveryInfoRow>
@@ -296,10 +358,7 @@ const DeliveryInfo = () => {
             배송메시지
           </label>
           <InputWrap 
-            className="message-input-wrap"
-            style={{
-              paddingLeft: 110
-            }}>
+            className="message-input-wrap">
             <input 
               id="message" 
               className="message-input"
