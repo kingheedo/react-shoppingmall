@@ -66,12 +66,8 @@ const DeliveryInfoRow = styled.div`
       }
     }
 
-    .address{
-      
-    }
-
     .address-container{
-
+      flex: 1
     }
 
 `;
@@ -98,7 +94,6 @@ const InputWrap = styled.div`
       }
     }
     .post-num-input{
-        padding-right: 110px;
       
       + button {
         white-space: nowrap;
@@ -305,7 +300,7 @@ const DeliveryInfo = () => {
   };
 
   return (
-    <div>
+    <DeliveryInfoArea>
       <DeliveryInfoHeader>
         <h4>
           배송지 정보
@@ -454,7 +449,7 @@ const DeliveryInfo = () => {
           
         </DeliveryInfoRow>
       </DeliveryInfoMain>
-    </div>
+    </DeliveryInfoArea>
   );  
 };
 
