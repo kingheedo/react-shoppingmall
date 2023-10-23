@@ -3,6 +3,15 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import PostBtn from '../PostCode';
 
+interface IMessageContainerProps{
+  showMsgList: boolean;
+}
+
+const DeliveryInfoArea = styled.div`
+    margin-top: 70px;
+    border-top: 1px solid #444;
+`;
+
 const DeliveryInfoHeader = styled.div`
   display: flex;
   align-items: center;
@@ -74,7 +83,7 @@ const InputWrap = styled.div`
     padding-left: 110px;
     height: 40px;
 
-    > input{
+    input{
       width: 100%;
       line-height: 38px;
       padding: 0 20px;
@@ -121,29 +130,56 @@ const BaseDeliveryCheck = styled.label`
       }
     }
 
-     > i {
+      > i {
       width: 24px;
       height: 24px;
       display: inline-block;
       margin-right: 6px;
       background: url(/checkbox_uncheck.svg) center/24px no-repeat;
       border-radius: 4px;
-     }
+      vertical-align: bottom;
+      }
 `;
 
 const ResetBtn = styled.button`
-     position: absolute;
-     top: 50%;
-     right: 5px;
-     transform: translateY(-50%);
-     display: none;
-     width: 22px;
-     height: 22px;
-     background: url(/btn_x.svg) no-repeat center center/12px auto;
+      position: absolute;
+      top: 50%;
+      right: 5px;
+      transform: translateY(-50%);
+      display: none;
+      width: 22px;
+      height: 22px;
+      background: url(/btn_x.svg) no-repeat center center/12px auto;
 
-     &.active{
+      &.active{
       display: inline-block;
-     }
+      }
+`;
+
+const MessageContent = styled.div`
+      position: relative;
+      flex: 1;
+`;
+
+const MessageContainer = styled.ul<IMessageContainerProps>`
+      position: absolute;
+      top: 40px;
+      display: ${(props) => props.showMsgList ? 'block' : 'none'};
+      width: 100%;
+      padding: 20px 0;
+      border: 1px solid #e5e5e5;
+      background: #fff;
+`;
+
+const MessageItem = styled.li`
+      padding: 0px 20px;
+
+      > span{
+        font-size: 14px;
+        line-height: 36px;
+        color: #444;
+        cursor: pointer;
+      }
 `;
 
 type InfoType = {
@@ -226,9 +262,8 @@ const DeliveryInfo = () => {
     });
   };
 
+  /** input의 x버튼 클릭 시 값 초기화 */
   const onClickResetInput = (payload: 'base' | 'detail') => {
-    console.log('hi');
-    
     const tempInfo = info;
 
     switch (payload) {
@@ -256,8 +291,21 @@ const DeliveryInfo = () => {
     }
   };
 
+  const [showMsgList, setShowMsgList] = useState(false);
+  const onFocusMessage = () => {
+    setShowMsgList(true);
+  };
+
+  const onClickMsg = (e: React.MouseEvent<HTMLLIElement>) => {
+    setInfo({
+      ...info,
+      message: e.currentTarget.innerText
+    });
+    setShowMsgList(false);
+  };
+
   return (
-    <div className="delivery-info-area">
+    <div>
       <DeliveryInfoHeader>
         <h4>
           배송지 정보
@@ -359,13 +407,51 @@ const DeliveryInfo = () => {
           </label>
           <InputWrap 
             className="message-input-wrap">
-            <input 
-              id="message" 
-              className="message-input"
-              onChange={onChangeValue} 
-              value={info.message} 
-              type="text" />
+            <MessageContent>
+              <input 
+                id="message" 
+                name="message"
+                className="message-input"
+                onChange={onChangeValue} 
+                onFocus={onFocusMessage}
+                onBlur={() => setShowMsgList(false)}
+                value={info.message} 
+                type="text" />
+              <MessageContainer showMsgList={showMsgList}>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                  부재 시 경비실에 맡겨주세요.
+                  </span>
+                </MessageItem>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                  부재 시 문 앞에 놓아주세요.
+                  </span>              
+                </MessageItem>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                  배송 전에 연락주세요.
+                  </span>
+                </MessageItem>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                  빠른 배송 부탁드려요.
+                  </span>
+                </MessageItem>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                    배관함에 넣어주세요.
+                  </span>
+                </MessageItem>
+                <MessageItem onMouseDown={onClickMsg}>
+                  <span>
+                    무인 택배함에 보관해주세요.
+                  </span>
+                </MessageItem>
+              </MessageContainer>
+            </MessageContent>
           </InputWrap>
+          
         </DeliveryInfoRow>
       </DeliveryInfoMain>
     </div>
