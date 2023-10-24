@@ -1,7 +1,7 @@
 /* eslint-disable no-fallthrough */
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import PostBtn from '../PostCode';
+import PostBtn from './PostBtn';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
