@@ -61,7 +61,7 @@ const Payments = ({
         customerName: '김토스',
         customerEmail: 'customer123@gmail.com',
         successUrl: `${window.location.origin}/order/success`,
-        failUrl: `${window.location.origin}`,
+        failUrl: `${window.location.origin}`
       });
     }
     catch (error) {
@@ -72,7 +72,6 @@ const Payments = ({
   useEffect(() => {
     (async () => {
       const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
-
       const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
         '#payment-widget',
         { value: totalPrice },

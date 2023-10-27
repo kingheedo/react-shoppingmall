@@ -38,7 +38,7 @@ const OrderPage = (props: any) => {
   const orderList = useMemo(() => {
     return list?.filter(product => ids.includes(product.id)) || [];
   },[list,ids]);
-
+  
   return (
     <Order
       list={orderList}
