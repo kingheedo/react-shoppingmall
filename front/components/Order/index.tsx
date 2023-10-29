@@ -1,10 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { GetCartListRes } from '../../apis/cart/schema';
 import BreadCrumb from '../common/BreadCrumb';
 import styled from 'styled-components';
 import DeliveryInfo from './DeliveryInfo';
 import Payments from './Payments';
 import Products from './Products';
+import DeliveryModal from './DeliveryInfo/DeliveryModal';
 
 const Title = styled.h1`
   margin-bottom: 40px;  
@@ -36,7 +37,7 @@ interface IOrderProps{
 const Order = ({
   list 
 }: IOrderProps) => {
-
+  const [modalStep, setModalStep] = useState(-1);
   const totalPrice = useMemo(() => {
     let price = 0;
     for (let i = 0; i < list.length; i++) {
@@ -46,6 +47,11 @@ const Order = ({
     return price;
     
   },[list]);
+
+  /** 배송 모달 스텝 핸들러 */
+  const handleModalStep = (step: number) => {
+    setModalStep(step);
+  };
   
   return (
     <div className="order">
@@ -57,9 +63,18 @@ const Order = ({
           주문/결제
         </Title>
         <Products list={list}/>
-        <DeliveryInfo/>
+        <DeliveryInfo
+          handleModalStep={() => handleModalStep(0)}
+        />
         <Payments totalPrice={totalPrice}/>
       </Main>
+      {modalStep >= 0 && (
+        <DeliveryModal
+          step={modalStep}
+          handleModalStep={handleModalStep}
+        />
+      )}
+      
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useDaumPostcodePopup } from 'react-daum-postcode';
 import styled from 'styled-components';
 const PostNumBtn = styled.button`
@@ -22,8 +22,9 @@ interface IPostBtnProps{
   handleAddress: ({ postNum, baseAddress }: { postNum: string, baseAddress: string }) => void;
 }
 const PostBtn = ({
-  handleAddress
-}: IPostBtnProps) => {
+  handleAddress,
+  children
+}: IPostBtnProps & PropsWithChildren) => {
   const open = useDaumPostcodePopup(scriptUrl);
 
   /** 검색이 끝난후 정보를 받아올 콜백함수 */
@@ -56,9 +57,10 @@ const PostBtn = ({
   return (
     <PostNumBtn 
       className="post-num-btn"
+      type="button"
       onClick={handleClick}
     >
-      우편번호
+      {children}
     </PostNumBtn>
   );
 };

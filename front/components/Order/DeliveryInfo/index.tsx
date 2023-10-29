@@ -188,7 +188,13 @@ type InfoType = {
     message: string
 }
 
-const DeliveryInfo = () => {
+interface IDeliveryInfoProps{
+  handleModalStep: () => void;
+}
+
+const DeliveryInfo = ({
+  handleModalStep
+}: IDeliveryInfoProps) => {
   const [info, setInfo] = useState<InfoType>({
     name: '',
     phoneNum: '',
@@ -219,8 +225,8 @@ const DeliveryInfo = () => {
   };
   
   /** 우편번호 및 기본 배송지 핸들러 */
-  const handleAddress = (payload:{ postNum: string, baseAddress: string; }) => {
-    const tempInfo = info;
+  const handleAddress = (payload:{ postNum: string, baseAddress: string }) => {
+    const tempInfo = { ...info };
     setInfo({
       ...tempInfo,
       address: {
@@ -250,10 +256,10 @@ const DeliveryInfo = () => {
   /** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
   const handleShowResetBtn = (payload: 'base' | 'detail') => {
     console.log('payload');
-    
+    const tempShowResetBtn = { ...showResetBtn };
     setShowResetBtn({
       ...showResetBtn,
-      [payload]: !{ ...showResetBtn }[payload]
+      [payload]: !tempShowResetBtn[payload]
     });
   };
 
@@ -309,7 +315,7 @@ const DeliveryInfo = () => {
           <BtnGray onClick={onClickResetForm}>
             새로입력
           </BtnGray>
-          <BtnGray>
+          <BtnGray onClick={handleModalStep}>
             배송지 목록
           </BtnGray>
         </div>
@@ -352,7 +358,9 @@ const DeliveryInfo = () => {
               />
               <PostBtn
                 handleAddress={handleAddress}
-              />
+              >
+                우편번호
+              </PostBtn>
             </InputWrap>
             <InputWrap 
               className="address-input-wrap">
@@ -446,7 +454,6 @@ const DeliveryInfo = () => {
               </MessageContainer>
             </MessageContent>
           </InputWrap>
-          
         </DeliveryInfoRow>
       </DeliveryInfoMain>
     </DeliveryInfoArea>
