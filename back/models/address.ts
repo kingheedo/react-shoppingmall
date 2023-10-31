@@ -4,21 +4,31 @@ import {sequelize} from './sequelize'
 
 class Address extends Model{
   public id!:number;
-  public postNum!: string;
-  public base!: string;
-  public detail!: string | null;
+  public rcName!: string;
+  public rcPhone!: string;
+  public rcPostNum!: string;
+  public rcPostBase!: string;
+  public rcPostDetail!: string | null;
   public UserId!: number;
 }
 Address.init({
-  postNum: {
+  rcName: {
+    type: DataTypes.STRING(20),
+    allowNull:false
+  },
+  rcPhone: {
+    type: DataTypes.STRING(11),
+    allowNull:false
+  },
+  rcPostNum: {
     type: DataTypes.STRING(5),
     allowNull:false
   },
-  base:{ 
+  rcPostBase:{ 
     type: DataTypes.STRING(100),
     allowNull: false
   },
-  detail: {
+  rcPostDetail: {
     type: DataTypes.STRING(100),
     allowNull: true
   }

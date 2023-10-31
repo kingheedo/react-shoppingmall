@@ -6,9 +6,6 @@ import * as passport from 'passport';
 import {isLoggedIn, isNotLoggedIn} from './middlewares';
 import { Op } from 'sequelize';
 
-
-
-
 router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
     try{
             const paymentLists = await Payment.findAll({
@@ -55,9 +52,9 @@ router.post('/logout',isLoggedIn, (req, res, next) => {
 
 router.get('/address', isLoggedIn, async(req, res, next) => {
     try{
-        const getAddresses=  await Address.findAll({
+        const getAddresses = await Address.findAll({
             where: {
-                id: req.user?.id
+                UserId: req.user?.id
             }
         })
         
@@ -73,9 +70,11 @@ router.post('/address', isLoggedIn, async(req, res, next) => {
     try{
         if(req.user){
             await Address.create({
-                postNum: req.body.postNum,
-                base: req.body.base,
-                detail: req.body.detail,
+                rcName: req.body.rcName,
+                rcPhone: req.body.rcPhone,
+                rcPostNum: req.body.rcPostNum,
+                rcPostBase: req.body.rcPostBase,
+                rcPostDetail: req.body.rcPostDetail,
                 UserId: req.user.id
             })
         }
