@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PostBtn from './PostBtn';
+import DeliveryModal from './DeliveryModal';
+import hypenPhoneNum from '../../../utils/hypenPhoneNum';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
@@ -101,7 +103,7 @@ const InputWrap = styled.div`
     }
 `;
 
-const BaseDeliveryCheck = styled.label`
+const SaveCheckBox = styled.label`
     display: flex;
     align-items: center;
     margin-top: 10px;
@@ -177,31 +179,35 @@ const MessageItem = styled.li`
       }
 `;
 
-type InfoType = {
-  name: string,
-    phoneNum: string,
-    address: {
-      postNum: string,
-      base: string,
-      detail: string
-    },
+export type Address = {
+  rcPostNum: string;
+  rcPostBase: string;
+  rcPostDetail: string;
+}
+
+export type InfoType = {
+    rcName: string,
+    rcPhone: string,
+    address: Address,
     message: string
 }
 
 interface IDeliveryInfoProps{
-  handleModalStep: () => void;
+  modalStep: number;
+  handleModalStep: (step: number) => void;
 }
 
 const DeliveryInfo = ({
+  modalStep,
   handleModalStep
 }: IDeliveryInfoProps) => {
   const [info, setInfo] = useState<InfoType>({
-    name: '',
-    phoneNum: '',
+    rcName: '',
+    rcPhone: '',
     address: {
-      postNum: '',
-      base: '',
-      detail: ''
+      rcPostNum: '',
+      rcPostBase: '',
+      rcPostDetail: ''
     },
     message: ''
   });
@@ -209,16 +215,31 @@ const DeliveryInfo = ({
     base: false,
     detail: false
   });
+  const [showMsgList, setShowMsgList] = useState(false);
+
+  /** 배송지 목록에서 하나의 배송지 선택 시 info 업데이트 핸들러 */
+  const handleUpdateInfo = (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => {
+    setInfo({
+      rcName: payload.rcName,
+      rcPhone: payload.rcPhone,
+      address: {
+        rcPostNum: payload.rcPostNum,
+        rcPostBase: payload.rcPostBase,
+        rcPostDetail: payload.rcPostDetail,
+      },
+      message: { ...info }.message
+    });
+  };
 
   /** 새로입력 클릭 시 */
   const onClickResetForm = () => {
     setInfo({
-      name: '',
-      phoneNum: '',
+      rcName: '',
+      rcPhone: '',
       address: {
-        postNum: '',
-        base: '',
-        detail: ''
+        rcPostNum: '',
+        rcPostBase: '',
+        rcPostDetail: ''
       },
       message: ''
     });
@@ -230,12 +251,14 @@ const DeliveryInfo = ({
     setInfo({
       ...tempInfo,
       address: {
-        postNum: payload.postNum,
-        base: payload.baseAddress,
-        detail: tempInfo.address.detail
+        rcPostNum: payload.postNum,
+        rcPostBase: payload.baseAddress,
+        rcPostDetail: tempInfo.address.rcPostDetail
       }
     });
   };
+
+  console.log('info',info);
 
   /** input 핸들러
    * 
@@ -247,6 +270,7 @@ const DeliveryInfo = ({
       ...info,
       [e.target.id]: e.target.id === 'address' 
         ? {
+          ...info.address,
           [e.target.name]: e.target.value
         }
         : e.target.value
@@ -255,7 +279,6 @@ const DeliveryInfo = ({
 
   /** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
   const handleShowResetBtn = (payload: 'base' | 'detail') => {
-    console.log('payload');
     const tempShowResetBtn = { ...showResetBtn };
     setShowResetBtn({
       ...showResetBtn,
@@ -273,7 +296,7 @@ const DeliveryInfo = ({
         ...tempInfo,
         address: {
           ...tempInfo.address,
-          base: ''
+          rcPostBase: ''
         }
       });
 
@@ -284,7 +307,7 @@ const DeliveryInfo = ({
         ...tempInfo,
         address: {
           ...tempInfo.address,
-          detail: ''
+          rcPostDetail: ''
         }
       });
     default:
@@ -292,7 +315,6 @@ const DeliveryInfo = ({
     }
   };
 
-  const [showMsgList, setShowMsgList] = useState(false);
   const onFocusMessage = () => {
     setShowMsgList(true);
   };
@@ -307,6 +329,13 @@ const DeliveryInfo = ({
 
   return (
     <DeliveryInfoArea>
+      {modalStep >= 0 && (
+        <DeliveryModal
+          step={modalStep}
+          handleModalStep={handleModalStep}
+          handleUpdateInfo={handleUpdateInfo}
+        />
+      )}
       <DeliveryInfoHeader>
         <h4>
           배송지 정보
@@ -315,27 +344,38 @@ const DeliveryInfo = ({
           <BtnGray onClick={onClickResetForm}>
             새로입력
           </BtnGray>
-          <BtnGray onClick={handleModalStep}>
+          <BtnGray onClick={() => handleModalStep(0)}>
             배송지 목록
           </BtnGray>
         </div>
       </DeliveryInfoHeader>
       <DeliveryInfoMain>
         <DeliveryInfoRow>
-          <label htmlFor="name">
+          <label htmlFor="rcName">
             이름
           </label>
           <InputWrap>
-            <input id="name" onChange={onChangeValue} value={info.name} type="text" />
+            <input 
+              id="rcName" 
+              name="rcName" 
+              onChange={onChangeValue} 
+              value={info.rcName} 
+              type="text" />
 
           </InputWrap>
         </DeliveryInfoRow>
         <DeliveryInfoRow>
-          <label htmlFor="phoneNum">
+          <label htmlFor="rcPhone">
             휴대폰
           </label>
           <InputWrap>
-            <input id="phoneNum" onChange={onChangeValue} value={info.phoneNum} type="text" />
+            <input 
+              id="rcPhone"
+              name="rcPhone"
+              onChange={onChangeValue} 
+              value={hypenPhoneNum(info.rcPhone)}
+              maxLength={11}
+              type="text" />
 
           </InputWrap>
         </DeliveryInfoRow>
@@ -352,7 +392,7 @@ const DeliveryInfo = ({
                 title="배송주소"
                 name="postNum" 
                 onChange={onChangeValue}
-                value={info.address.postNum} 
+                value={info.address.rcPostNum} 
                 type="text" 
                 readOnly
               />
@@ -372,7 +412,7 @@ const DeliveryInfo = ({
                 onChange={onChangeValue}
                 onFocus={() => handleShowResetBtn('base')}
                 onBlur={() => handleShowResetBtn('base')}
-                value={info.address.base} 
+                value={info.address.rcPostBase} 
                 type="text" 
                 readOnly
               />
@@ -390,18 +430,18 @@ const DeliveryInfo = ({
                 onChange={onChangeValue}
                 onFocus={() => handleShowResetBtn('detail')}
                 onBlur={() => handleShowResetBtn('detail')}
-                value={info.address.detail} 
+                value={info.address.rcPostDetail} 
                 maxLength={100}
                 type="text" />
               <ResetBtn 
                 onMouseDown={() => onClickResetInput('detail')}
                 className={`reset-btn ${showResetBtn.detail ? 'active' : ''}`}/>
             </InputWrap>
-            <BaseDeliveryCheck>
+            <SaveCheckBox>
               <input type="checkbox" />
               <i/>
               기본 배송지로 저장
-            </BaseDeliveryCheck>
+            </SaveCheckBox>
           </div>
         </DeliveryInfoRow>
         <DeliveryInfoRow>

@@ -8,17 +8,22 @@
 }
 
 export type PostAddressReq = {
-    postNum: string;
-    base: string;
-    detail: string;
+    rcName: string;
+    rcPhone: string;
+    rcPostNum: string;
+    rcPostBase: string;
+    rcPostDetail: string;
 }
+export type PostAddressRes = string;
 
 export type GetAddressesRes = {
     id: number;
-    postNum: string;
-    base: string;
-    detail: string;
-}
+    rcName: string;
+    rcPhone: string;
+    rcPostNum: string;
+    rcPostBase: string;
+    rcPostDetail: string;
+}[];
 
 export type GetUserRes = UserInfo
 

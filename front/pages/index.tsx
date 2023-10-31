@@ -63,8 +63,6 @@ const Home: FC = () => {
     return data?.pages?.flatMap(value => value);
   }, [data?.pages]);
   
-  console.log('list',list);
-
   return (
     <>
       <ImageSlider />

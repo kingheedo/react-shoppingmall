@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PostBtn from '../../PostBtn';
+import { useModal } from '../../../../../context/ModalProvider';
+import { useMutation } from '@tanstack/react-query';
+import apis from '../../../../../apis';
+import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
 
 const Form = styled.form`
 
+`;
+
+const Title = styled.h1`
+  line-height: 50px;
+  font-size: 21px;
+  font-weight: 700;
+  border-bottom: 1px solid #111;
 `;
 
 const Row = styled.div`
@@ -69,25 +80,92 @@ const AddressContainer = styled.div`
   } 
 `;
 
+const SaveCheckBox = styled.label`
+    display: flex;
+    align-items: center;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-right: 10px;
+    font-size: var(--fontD);
+    line-height: var(--fontDL);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    color: var(--gray900);
+    cursor: pointer;
+    margin-top: 30px;
+
+    > input{
+      &[type=checkbox]:checked{
+        +i{
+          background: url(/checkbox_check.svg) center/24px no-repeat;
+        }
+      }
+    }
+
+      > i {
+      width: 24px;
+      height: 24px;
+      display: inline-block;
+      margin-right: 6px;
+      background: url(/checkbox_uncheck.svg) center/24px no-repeat;
+      border-radius: 4px;
+      vertical-align: bottom;
+      }
+`;
+
+const SaveButton = styled.button`
+    margin-top: 30px;
+    display: block;
+    width: 100%;
+    height: 50px;
+    line-height: 48px;
+    font-size: 15px;
+    padding: 0 20px;
+    color: #fff;
+    background: #111;
+    border: 1px solid #111;
+`;
+
 type InfoType = {
-  name: string,
-    phoneNum: string,
+    rcName: string,
+    rcPhone: string,
     address: {
-      postNum: string,
-      base: string,
-      detail: string
+      rcPostNum: string,
+      rcPostBase: string,
+      rcPostDetail: string
     }
 }
 
-const DeliveryAddrForm = () => {
+interface IDeliveryAddrFormProps{
+  handleCloseModal: () => void;
+}
+
+const DeliveryAddrForm = ({
+  handleCloseModal
+}: IDeliveryAddrFormProps) => {
 
   const [info, setInfo] = useState<InfoType>({
-    name: '',
-    phoneNum: '',
+    rcName: '',
+    rcPhone: '',
     address: {
-      postNum: '',
-      base: '',
-      detail: ''
+      rcPostNum: '',
+      rcPostBase: '',
+      rcPostDetail: ''
+    }
+  });
+
+  const modal = useModal();
+  const { mutate: addAddress } = useMutation(() => apis.User.addAddress({
+    rcName: info.rcName,
+    rcPhone: info.rcPhone,
+    rcPostNum: info.address.rcPostNum,
+    rcPostBase: info.address.rcPostBase,
+    rcPostDetail: info.address.rcPostDetail
+  }), {
+    onSuccess: () => {
+      handleCloseModal();
     }
   });
 
@@ -96,44 +174,75 @@ const DeliveryAddrForm = () => {
     setInfo({
       ...tempInfo,
       address: {
-        postNum: payload.postNum,
-        base: payload.baseAddress,
-        detail: tempInfo.address.detail
+        rcPostNum: payload.postNum,
+        rcPostBase: payload.baseAddress,
+        rcPostDetail: tempInfo.address.rcPostDetail
       }
     });
   };
 
+  const onChangeInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInfo({
+      ...info,
+      [e.target.id]: e.target.id === 'address'
+        ? {
+          ...info.address,
+          [e.target.name]: e.target.value
+        }
+        : e.target.value
+    });
+  };
+
+  const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    modal?.confirm.saveAddress.handleConfirm(() => addAddress());
+  };
+
   return (
-    <Form>
+    <Form onSubmit={handleSave}>
+      <Title>
+        배송정보
+      </Title>
       <Row>
-        <label htmlFor="recipient-name">
+        <label htmlFor="rcName">
           이름
         </label>
         <input 
-          id="recipient-name" 
-          name="recipient-name" 
-          type="text" />
+          id="rcName" 
+          name="rcName"
+          type="text"
+          value={info.rcName}
+          onChange={onChangeInputVal}
+          required
+        />
       </Row>
       <Row>
-        <label htmlFor="recipient-phone">
+        <label htmlFor="rcPhone">
           휴대폰
         </label>
         <input 
-          id="recipient-phone" 
-          name="recipient-phone" 
-          type="text" />
+          id="rcPhone" 
+          name="rcPhone" 
+          type="text"
+          value={hypenPhoneNum(info.rcPhone)}
+          onChange={onChangeInputVal}
+          maxLength={11}
+          required
+        />
       </Row>
       <Row>
-        <label htmlFor="post-num">
+        <label htmlFor="rcPostNum">
           주소
         </label>
         <AddressContainer>
           <div className="post-num-wrap">
             <input 
-              id="post-num" 
-              name="post-num" 
+              id="address" 
+              name="rcPostNum" 
               type="text"
-              value={info.address.postNum}
+              value={info.address.rcPostNum}
+              onChange={onChangeInputVal}
+              required
               readOnly
             />
             <PostBtn
@@ -144,23 +253,35 @@ const DeliveryAddrForm = () => {
           </div>
           <div className="post-base-wrap">
             <input 
-              id="post-base" 
-              name="post-base" 
+              id="address" 
+              name="rcPostBase" 
               type="text"
-              value={info.address.base}
+              value={info.address.rcPostBase}
+              onChange={onChangeInputVal}
+              required
               readOnly
             />
           </div>
           <div className="post-detail-wrap">
             <input 
-              id="post-detail" 
-              name="post-detail" 
+              id="address" 
+              name="rcPostDetail" 
               type="text"
-              value={info.address.detail}
+              value={info.address.rcPostDetail}
+              onChange={onChangeInputVal}
+              required
             />
           </div>
         </AddressContainer>
       </Row>
+      <SaveCheckBox>
+        <input type="checkbox" />
+        <i/>
+          기본 배송지로 저장
+      </SaveCheckBox>
+      <SaveButton>
+        저장
+      </SaveButton>
     </Form>
   );
 };

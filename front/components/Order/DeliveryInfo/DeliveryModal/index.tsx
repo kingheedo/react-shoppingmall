@@ -1,14 +1,18 @@
-import React from 'react';
+/* eslint-disable react/display-name */
+import React, { memo, useMemo } from 'react';
 import styled from 'styled-components';
 import DeliveryAddrList from './DeliveryAddrList';
 import DeliveryAddrForm from './DeliveryAddrForm';
+import { Address, InfoType } from '..';
 
 interface IModalProps {
   width: number;
+  height: number;
 }
 
 const Bg = styled.div`
   position: fixed;
+  z-index: 10;
   display: grid;
   place-items: center;
   inset:0;
@@ -21,17 +25,11 @@ const Modal = styled.div<IModalProps>`
   position: absolute;
   z-index: 1;
   width: ${(props) => props.width}px;
+  height: ${(props) => props.height};
   min-height: 150px;
   max-height: 680px;
   background: #fff;
   padding: 35px 30px;
-`;
-
-const Title = styled.h1`
-  line-height: 50px;
-  font-size: 21px;
-  font-weight: 700;
-  border-bottom: 1px solid #111;
 `;
 
 const CloseBtn = styled.button`
@@ -45,44 +43,74 @@ const CloseBtn = styled.button`
     background: url(/btn_x.svg) no-repeat center center/15px auto;
 `;
 
-const AddBtnWrap = styled.div`
-  margin-top: 50px;
-
-  > button{
-      width: 100%;
-      height: 50px;
-      line-height: 48px;
-      font-size: 15px;
-      padding: 0 20px;
-      color: #fff;
-      background: #111;
-      border: 1px solid #111;
-  }
-`;
-
-interface IDeliveryProps {
+interface IModalContentProps{
   step: number;
   handleModalStep: (step: number) => void;
+  handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
 }
+
+interface IDeliveryModalProps {
+  step: number;
+  handleModalStep: (step: number) => void;
+  handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
+}
+
+const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalContentProps) => {
+  if (step === 0) {
+    return (
+      <DeliveryAddrList
+        handleModalStep={handleModalStep}
+        handleUpdateInfo={handleUpdateInfo}
+      />
+    );
+  } else if (step === 1) {
+    return (
+      <DeliveryAddrForm
+        handleCloseModal={() => handleModalStep(-1)}
+      />
+    );
+  }
+
+  return null;
+});
 
 const DeliveryModal = ({
   step,
-  handleModalStep
-}: IDeliveryProps) => {
+  handleModalStep,
+  handleUpdateInfo
+}: IDeliveryModalProps) => {
+
+  const ModalSize = useMemo(() => {
+    if (step === 0) {
+      return ({
+        width: 563,
+        height: '100%'
+      });
+    } else if (step === 1) {
+      return ({
+        width: 460,
+        height: 'auto'
+      });
+    }
+
+    return ({
+      width: 0,
+      height: 0
+    });
+  },[step]);
+  
   return (
     <Bg onClick={() => handleModalStep(-1)}>
       <Modal 
-        width={step === 0 ? 500 : step === 1 ? 460 : 500}
+        width={ModalSize.width}
+        height={ModalSize.height}
         onClick={(e) => e.stopPropagation()}>
         <CloseBtn onClick={() => handleModalStep(-1)}/>
-        {step === 0 && (
-          <DeliveryAddrList
-            handleNextStep={() => handleModalStep(1)}
-          />
-        )}
-        {step === 1 && (
-          <DeliveryAddrForm/>
-        )}
+        <ModalContent
+          step={step}
+          handleModalStep={handleModalStep}
+          handleUpdateInfo={handleUpdateInfo}
+        />
       </Modal>
     </Bg>
   );

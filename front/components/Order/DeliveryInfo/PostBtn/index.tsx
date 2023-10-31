@@ -49,8 +49,6 @@ const PostBtn = ({
 
   /** 우편번호 버튼 클릭 시 */
   const handleClick = () => {
-    console.log('handleClick');
-    
     open({ onComplete: handleComplete });
   };
 

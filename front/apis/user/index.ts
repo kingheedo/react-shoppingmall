@@ -1,8 +1,8 @@
 import request from '../request';
-import { GetAddressesRes, GetUserRes, PostAddressReq, PostLoginReq, PostLoginRes } from './schema';
+import { GetAddressesRes, GetUserRes, PostAddressReq, PostAddressRes, PostLoginReq, PostLoginRes } from './schema';
 
-export const addAddress = async() => {
-  return await request.get<PostAddressReq>('/user/address').then(res => res.data);
+export const addAddress = async(data: PostAddressReq) => {
+  return await request.post<PostAddressRes>('/user/address',data).then(res => res.data);
 };
 
 export const getAddresses = async() => {

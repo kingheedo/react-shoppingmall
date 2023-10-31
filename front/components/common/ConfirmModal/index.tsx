@@ -73,6 +73,13 @@ const Button = styled.button`
      }
 `;
 
+type Content = {
+  [key: string]: {
+    txt: string;
+    hideCancel: boolean;
+  }
+}
+
 interface IConfirmModalProps {
     type: ConfirmType;
     onOk: () => void;
@@ -84,7 +91,7 @@ const ConfirmModal = ({
   onOk,
   onClose
 }: IConfirmModalProps) => {
-  const content = {
+  const content: Content = {
     [ConfirmType.ADD_CART]: {
       txt: '장바구니에 상품이 담겼습니다.<br/>장바구니로 이동하시겠습니까?',
       hideCancel: false
@@ -101,6 +108,10 @@ const ConfirmModal = ({
     [ConfirmType.NO_SELECT_CART_ITEM]: {
       txt: '선택된 상품이 없습니다.',
       hideCancel: true
+    },
+    [ConfirmType.SAVE_ADDRESS]: {
+      txt: '배송지를 저장하시겠습니까?',
+      hideCancel: false
     }
   };
 
@@ -115,7 +126,7 @@ const ConfirmModal = ({
           </Button>
           {!content[type].hideCancel && (
             <Button onClick={onClose}>
-                    취소
+              취소
             </Button>)
           }
         </ButtonWrap>

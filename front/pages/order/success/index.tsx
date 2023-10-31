@@ -116,8 +116,6 @@ interface IOrderSuccessPageProps{
 
 const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
 
-  console.log('payment',payment);
-  
   return (
     <div className="order-succss-page">
       <BreadCrumb

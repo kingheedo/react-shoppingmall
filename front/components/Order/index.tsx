@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import DeliveryInfo from './DeliveryInfo';
 import Payments from './Payments';
 import Products from './Products';
-import DeliveryModal from './DeliveryInfo/DeliveryModal';
 
 const Title = styled.h1`
   margin-bottom: 40px;  
@@ -64,16 +63,11 @@ const Order = ({
         </Title>
         <Products list={list}/>
         <DeliveryInfo
-          handleModalStep={() => handleModalStep(0)}
+          modalStep={modalStep}
+          handleModalStep={handleModalStep}
         />
         <Payments totalPrice={totalPrice}/>
       </Main>
-      {modalStep >= 0 && (
-        <DeliveryModal
-          step={modalStep}
-          handleModalStep={handleModalStep}
-        />
-      )}
       
     </div>
   );
