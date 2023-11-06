@@ -258,8 +258,6 @@ const DeliveryInfo = ({
     });
   };
 
-  console.log('info',info);
-
   /** input 핸들러
    * 
    * 1. target의 id에 따라서 value값을 수정
@@ -390,7 +388,7 @@ const DeliveryInfo = ({
                 id="address" 
                 className="post-num-input"
                 title="배송주소"
-                name="postNum" 
+                name="rcPostNum" 
                 onChange={onChangeValue}
                 value={info.address.rcPostNum} 
                 type="text" 
@@ -408,7 +406,7 @@ const DeliveryInfo = ({
                 id="address" 
                 className="post-base-input"
                 title="배송주소"
-                name="base" 
+                name="rcPostBase" 
                 onChange={onChangeValue}
                 onFocus={() => handleShowResetBtn('base')}
                 onBlur={() => handleShowResetBtn('base')}
@@ -426,7 +424,7 @@ const DeliveryInfo = ({
                 id="address" 
                 className="post-detail-input"
                 title="상세주소"
-                name="detail" 
+                name="rcPostDetail" 
                 onChange={onChangeValue}
                 onFocus={() => handleShowResetBtn('detail')}
                 onBlur={() => handleShowResetBtn('detail')}

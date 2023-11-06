@@ -7,14 +7,20 @@
     cartLength: number;
 }
 
-export type PostAddressReq = {
+export type PostAddAddressReq = {
     rcName: string;
     rcPhone: string;
     rcPostNum: string;
     rcPostBase: string;
     rcPostDetail: string;
 }
-export type PostAddressRes = string;
+export type PostAddAddressRes = string;
+
+export type PatchAddressReq = PostAddAddressReq & {
+    id: number;
+}
+
+export type PatchAddressRes = PostAddAddressRes
 
 export type GetAddressesRes = {
     id: number;

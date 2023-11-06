@@ -1,8 +1,12 @@
 import request from '../request';
-import { GetAddressesRes, GetUserRes, PostAddressReq, PostAddressRes, PostLoginReq, PostLoginRes } from './schema';
+import { GetAddressesRes, GetUserRes, PatchAddressReq, PatchAddressRes, PostAddAddressReq, PostAddAddressRes, PostLoginReq, PostLoginRes } from './schema';
 
-export const addAddress = async(data: PostAddressReq) => {
-  return await request.post<PostAddressRes>('/user/address',data).then(res => res.data);
+export const addAddress = async(data: PostAddAddressReq) => {
+  return await request.post<PostAddAddressRes>('/user/address',data).then(res => res.data);
+};
+
+export const updateAddress = async(data: PatchAddressReq) => {
+  return await request.patch<PatchAddressRes>('/user/address',data).then(res => res.data);
 };
 
 export const getAddresses = async() => {
@@ -22,6 +26,7 @@ export const logout = async() => {
 
 export default {
   addAddress,
+  updateAddress,
   getAddresses,
   getUser,
   logIn,

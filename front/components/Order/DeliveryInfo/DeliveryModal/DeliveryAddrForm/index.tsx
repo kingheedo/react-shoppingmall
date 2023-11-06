@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import PostBtn from '../../PostBtn';
 import { useModal } from '../../../../../context/ModalProvider';
-import { useMutation } from '@tanstack/react-query';
-import apis from '../../../../../apis';
 import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
+import { InfoType } from '../..';
 
 const Form = styled.form`
 
@@ -128,74 +127,28 @@ const SaveButton = styled.button`
     border: 1px solid #111;
 `;
 
-type InfoType = {
-    rcName: string,
-    rcPhone: string,
-    address: {
-      rcPostNum: string,
-      rcPostBase: string,
-      rcPostDetail: string
-    }
-}
-
 interface IDeliveryAddrFormProps{
-  handleCloseModal: () => void;
+  info: Omit<InfoType,'message'>;
+  onChangeInputVal:(e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleAddress: (payload: {
+    postNum: string;
+    baseAddress: string;
+  }) => void;
+  onSave: () => void;
 }
 
 const DeliveryAddrForm = ({
-  handleCloseModal
+  info,
+  onChangeInputVal,
+  handleAddress,
+  onSave
 }: IDeliveryAddrFormProps) => {
 
-  const [info, setInfo] = useState<InfoType>({
-    rcName: '',
-    rcPhone: '',
-    address: {
-      rcPostNum: '',
-      rcPostBase: '',
-      rcPostDetail: ''
-    }
-  });
-
   const modal = useModal();
-  const { mutate: addAddress } = useMutation(() => apis.User.addAddress({
-    rcName: info.rcName,
-    rcPhone: info.rcPhone,
-    rcPostNum: info.address.rcPostNum,
-    rcPostBase: info.address.rcPostBase,
-    rcPostDetail: info.address.rcPostDetail
-  }), {
-    onSuccess: () => {
-      handleCloseModal();
-    }
-  });
-
-  const handleAddress = (payload:{ postNum: string, baseAddress: string }) => {
-    const tempInfo = { ...info };
-    setInfo({
-      ...tempInfo,
-      address: {
-        rcPostNum: payload.postNum,
-        rcPostBase: payload.baseAddress,
-        rcPostDetail: tempInfo.address.rcPostDetail
-      }
-    });
-  };
-
-  const onChangeInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInfo({
-      ...info,
-      [e.target.id]: e.target.id === 'address'
-        ? {
-          ...info.address,
-          [e.target.name]: e.target.value
-        }
-        : e.target.value
-    });
-  };
 
   const handleSave = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    modal?.confirm.saveAddress.handleConfirm(() => addAddress());
+    modal?.confirm.saveAddress.handleConfirm(() => onSave());
   };
 
   return (
@@ -275,7 +228,7 @@ const DeliveryAddrForm = ({
         </AddressContainer>
       </Row>
       <SaveCheckBox>
-        <input type="checkbox" />
+        <input name="default-address-input" type="checkbox" />
         <i/>
           기본 배송지로 저장
       </SaveCheckBox>

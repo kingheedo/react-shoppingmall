@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import apis from '../../../../../apis';
 import { Address, InfoType } from '../..';
 import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
+import { SaveType } from '..';
 
 const Title = styled.h1`
   line-height: 50px;
@@ -95,23 +96,42 @@ const AddBtnWrap = styled.div`
 
 interface IDeliveryAddrListProps {
   handleModalStep: (step: number) => void;
+  handleReviseInfo: (payload: Omit<InfoType,'message'> & { id: number }) => void;
+  handleSaveType: (payload: SaveType) => void;
   handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
 }
 
 const DeliveryAddrList = ({
   handleModalStep,
+  handleReviseInfo,
+  handleSaveType,
   handleUpdateInfo
 }: IDeliveryAddrListProps) => {
   const { data: addressList } = useQuery(['getAddresses'], () => apis.User.getAddresses());
   
+  /** 수정 버튼 클릭 시 */
+  const onClickRevise = (info: Pick<InfoType, 'rcName' | 'rcPhone'> & Address & { id: number }) => {
+    handleModalStep(1);
+    handleReviseInfo({
+      id: info.id,
+      rcName: info.rcName,
+      rcPhone: info.rcPhone,
+      address: {
+        rcPostNum: info.rcPostNum,
+        rcPostBase: info.rcPostBase,
+        rcPostDetail: info.rcPostDetail
+      }
+    });
+  };
+
   /** 선택 버튼 클릭 시 */
-  const onClickSelect = (address :Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => {
+  const onClickSelect = (info :Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => {
     handleUpdateInfo({
-      rcName: address.rcName,
-      rcPhone: address.rcPhone,
-      rcPostNum: address.rcPostNum,
-      rcPostBase: address.rcPostBase,
-      rcPostDetail: address.rcPostDetail,
+      rcName: info.rcName,
+      rcPhone: info.rcPhone,
+      rcPostNum: info.rcPostNum,
+      rcPostBase: info.rcPostBase,
+      rcPostDetail: info.rcPostDetail,
     });
     handleModalStep(-1);
   };
@@ -122,28 +142,34 @@ const DeliveryAddrList = ({
         배송지 목록
       </Title>
       <ul>
-        {addressList?.map(address => (
+        {addressList?.map(info => (
           <AddressItem key={AddressItem.id}>
             <div className="btn-wrap">
-              <button>
+              <button onClick={() => {
+                handleSaveType(SaveType.EDIT);
+                onClickRevise(info);
+              }}>
                 수정
               </button>
-              <button onClick={() => onClickSelect(address)}>
+              <button onClick={() => onClickSelect(info)}>
                 선택
               </button>
             </div>
             <p className="name-and-phone">
-              {address.rcName}&nbsp;{hypenPhoneNum(address.rcPhone)}
+              {info.rcName}&nbsp;{hypenPhoneNum(info.rcPhone)}
             </p>
             <p className="address">
-              &#91;{address.rcPostNum}&#93; {address.rcPostBase}&nbsp;{address.rcPostDetail}
+              &#91;{info.rcPostNum}&#93; {info.rcPostBase}&nbsp;{info.rcPostDetail}
             </p>
             
           </AddressItem>
         ))}
       </ul>
       <AddBtnWrap>
-        <button onClick={() => handleModalStep(1)}>
+        <button onClick={() => {
+          handleSaveType(SaveType.ADD);
+          handleModalStep(1);
+        }}>
           + 신규 배송지 추가
         </button>
       </AddBtnWrap>

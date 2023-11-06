@@ -1,13 +1,15 @@
 /* eslint-disable react/display-name */
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import DeliveryAddrList from './DeliveryAddrList';
 import DeliveryAddrForm from './DeliveryAddrForm';
 import { Address, InfoType } from '..';
+import { useMutation } from '@tanstack/react-query';
+import apis from '../../../../apis';
 
 interface IModalProps {
   width: number;
-  height: number;
+  height: number | string;
 }
 
 const Bg = styled.div`
@@ -43,6 +45,11 @@ const CloseBtn = styled.button`
     background: url(/btn_x.svg) no-repeat center center/15px auto;
 `;
 
+export enum SaveType {
+  ADD = 'ADD',
+  EDIT = 'EDIT'
+}
+
 interface IModalContentProps{
   step: number;
   handleModalStep: (step: number) => void;
@@ -56,17 +63,95 @@ interface IDeliveryModalProps {
 }
 
 const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalContentProps) => {
+    
+  const [info, setInfo] = useState<Omit<InfoType,'message'> & { id: number }>({
+    id: -1,
+    rcName: '',
+    rcPhone: '',
+    address: {
+      rcPostNum: '',
+      rcPostBase: '',
+      rcPostDetail: ''
+    }
+  });
+  const [saveType, setSaveType] = useState<SaveType>(SaveType.ADD);
+  
+  const { mutate: addAddress } = useMutation(() => apis.User.addAddress({
+    rcName: info.rcName,
+    rcPhone: info.rcPhone,
+    rcPostNum: info.address.rcPostNum,
+    rcPostBase: info.address.rcPostBase,
+    rcPostDetail: info.address.rcPostDetail
+  }), {
+    onSuccess: () => {
+      handleModalStep(-1);
+      alert('저장되었습니다.');
+    }
+  });
+
+  const { mutate: updateAddress } = useMutation(() => apis.User.updateAddress({
+    id: info.id,
+    rcName: info.rcName,
+    rcPhone: info.rcPhone,
+    rcPostNum: info.address.rcPostNum,
+    rcPostBase: info.address.rcPostBase,
+    rcPostDetail: info.address.rcPostDetail
+  }), {
+    onSuccess: () => {
+      handleModalStep(-1);
+      alert('저장되었습니다.');
+    }
+  });
+
   if (step === 0) {
+    const handleReviseInfo = (payload: Omit<InfoType,'message'> & { id: number }) => {
+      setInfo(payload);
+    };
+    const handleSaveType = (payload: SaveType) => {
+      setSaveType(payload);
+    };
+
     return (
       <DeliveryAddrList
         handleModalStep={handleModalStep}
+        handleReviseInfo={handleReviseInfo}
+        handleSaveType={handleSaveType}
         handleUpdateInfo={handleUpdateInfo}
       />
     );
   } else if (step === 1) {
+    console.log('saveType',saveType);
+  
+    const onChangeInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setInfo({
+        ...info,
+        [e.target.id]: e.target.id === 'address'
+          ? {
+            ...info.address,
+            [e.target.name]: e.target.value
+          }
+          : e.target.value
+      });
+    };
+
+    const handleAddress = (payload:{ postNum: string, baseAddress: string }) => {
+      const tempInfo = { ...info };
+      setInfo({
+        ...tempInfo,
+        address: {
+          rcPostNum: payload.postNum,
+          rcPostBase: payload.baseAddress,
+          rcPostDetail: tempInfo.address.rcPostDetail
+        }
+      });
+    };
+
     return (
       <DeliveryAddrForm
-        handleCloseModal={() => handleModalStep(-1)}
+        info={info}
+        onChangeInputVal={onChangeInputVal}
+        handleAddress={handleAddress}
+        onSave={saveType === SaveType.ADD ? addAddress : updateAddress}
       />
     );
   }
