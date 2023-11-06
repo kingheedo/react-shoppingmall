@@ -87,6 +87,29 @@ router.post('/address', isLoggedIn, async(req, res, next) => {
     }
 })
 
+router.patch('/address', isLoggedIn, async (req, res, next) => {
+    try{
+        await Address.update({
+            rcName: req.body.rcName,
+            rcPhone: req.body.rcPhone,
+            rcPostNum: req.body.rcPostNum,
+            rcPostBase: req.body.rcPostBase,
+            rcPostDetail: req.body.rcPostDetail,
+        },{
+            where: {
+                id: req.body.id,
+                UserId: req.user!.id
+            }
+        })
+
+        return res.status(200).send('배송지 수정완료');
+    }
+    catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
 router.get('/', async(req, res, next) =>{
     try{
         if(req.user){
