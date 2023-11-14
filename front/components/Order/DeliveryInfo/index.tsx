@@ -1,9 +1,11 @@
 /* eslint-disable no-fallthrough */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import PostBtn from './PostBtn';
 import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
+import { getUser } from '../../../context/LoginProvider';
+import { Address } from '../../../apis/user/schema';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
@@ -179,17 +181,11 @@ const MessageItem = styled.li`
       }
 `;
 
-export type Address = {
-  rcPostNum: string;
-  rcPostBase: string;
-  rcPostDetail: string;
-}
-
 export type InfoType = {
     rcName: string,
     rcPhone: string,
-    address: Address,
-    message: string
+    address: Omit<Address, 'id' | 'rcName' | 'rcPhone'> & { base: boolean },
+    message: string,
 }
 
 interface IDeliveryInfoProps{
@@ -201,15 +197,17 @@ const DeliveryInfo = ({
   modalStep,
   handleModalStep
 }: IDeliveryInfoProps) => {
+  const me = getUser();
   const [info, setInfo] = useState<InfoType>({
     rcName: '',
     rcPhone: '',
     address: {
       rcPostNum: '',
       rcPostBase: '',
-      rcPostDetail: ''
+      rcPostDetail: '',
+      base: false,
     },
-    message: ''
+    message: '',
   });
   const [showResetBtn, setShowResetBtn] = useState({
     base: false,
@@ -218,7 +216,7 @@ const DeliveryInfo = ({
   const [showMsgList, setShowMsgList] = useState(false);
 
   /** 배송지 목록에서 하나의 배송지 선택 시 info 업데이트 핸들러 */
-  const handleUpdateInfo = (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => {
+  const handleUpdateInfo = (payload: Omit<Address, 'id'> & { base?: boolean }) => {
     setInfo({
       rcName: payload.rcName,
       rcPhone: payload.rcPhone,
@@ -226,8 +224,9 @@ const DeliveryInfo = ({
         rcPostNum: payload.rcPostNum,
         rcPostBase: payload.rcPostBase,
         rcPostDetail: payload.rcPostDetail,
+        base: payload.base ? payload. base : { ...info }.address.base
       },
-      message: { ...info }.message
+      message: { ...info }.message,
     });
   };
 
@@ -239,9 +238,10 @@ const DeliveryInfo = ({
       address: {
         rcPostNum: '',
         rcPostBase: '',
-        rcPostDetail: ''
+        rcPostDetail: '',
+        base: false
       },
-      message: ''
+      message: '',
     });
   };
   
@@ -253,7 +253,8 @@ const DeliveryInfo = ({
       address: {
         rcPostNum: payload.postNum,
         rcPostBase: payload.baseAddress,
-        rcPostDetail: tempInfo.address.rcPostDetail
+        rcPostDetail: tempInfo.address.rcPostDetail,
+        base: tempInfo.address.base
       }
     });
   };
@@ -264,15 +265,34 @@ const DeliveryInfo = ({
    * 2. target id가 address 이면 target의 name의 값을 변경하도록
    */
   const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInfo({
-      ...info,
-      [e.target.id]: e.target.id === 'address' 
-        ? {
+    if (e.target.id === 'base-address-checkbox') {
+      setInfo({
+        ...info,
+        address: {
+          ...info.address,
+          base: e.target.checked
+        }
+      });
+
+      return;
+    }
+    if (e.target.id === 'address' ) {
+      setInfo({
+        ...info,
+        address: {
           ...info.address,
           [e.target.name]: e.target.value
         }
-        : e.target.value
+      });
+
+      return;
+    }
+    setInfo({
+      ...info,
+      [e.target.id]: e.target.value
     });
+
+    return;
   };
 
   /** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
@@ -324,6 +344,20 @@ const DeliveryInfo = ({
     });
     setShowMsgList(false);
   };
+
+  useEffect(() => {
+    setInfo({
+      rcName: me?.address.rcName || '',
+      rcPhone: me?.address.rcPhone || '',
+      address: {
+        rcPostNum: me?.address.rcPostNum || '',
+        rcPostBase: me?.address.rcPostBase || '',
+        rcPostDetail: me?.address.rcPostDetail || '',
+        base: false,
+      },
+      message: '',
+    });
+  }, [me]);
 
   return (
     <DeliveryInfoArea>
@@ -436,7 +470,7 @@ const DeliveryInfo = ({
                 className={`reset-btn ${showResetBtn.detail ? 'active' : ''}`}/>
             </InputWrap>
             <SaveCheckBox>
-              <input type="checkbox" />
+              <input id="base-address-checkbox" onChange={onChangeValue} type="checkbox" />
               <i/>
               기본 배송지로 저장
             </SaveCheckBox>

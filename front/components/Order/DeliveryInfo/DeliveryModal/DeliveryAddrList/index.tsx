@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import styled from 'styled-components';
 import apis from '../../../../../apis';
-import { Address, InfoType } from '../..';
 import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
 import { SaveType } from '..';
+import { Address } from '../../../../../apis/user/schema';
 
 const Title = styled.h1`
   line-height: 50px;
@@ -96,9 +96,9 @@ const AddBtnWrap = styled.div`
 
 interface IDeliveryAddrListProps {
   handleModalStep: (step: number) => void;
-  handleReviseInfo: (payload: Omit<InfoType,'message'> & { id: number }) => void;
+  handleReviseInfo: (payload: Address & { base: boolean }) => void;
   handleSaveType: (payload: SaveType) => void;
-  handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
+  handleUpdateInfo: (payload: Omit<Address, 'id'> & { base: boolean }) => void;
 }
 
 const DeliveryAddrList = ({
@@ -110,28 +110,28 @@ const DeliveryAddrList = ({
   const { data: addressList } = useQuery(['getAddresses'], () => apis.User.getAddresses());
   
   /** 수정 버튼 클릭 시 */
-  const onClickRevise = (info: Pick<InfoType, 'rcName' | 'rcPhone'> & Address & { id: number }) => {
+  const onClickRevise = (info: Address & { base: boolean }) => {
     handleModalStep(1);
     handleReviseInfo({
       id: info.id,
       rcName: info.rcName,
       rcPhone: info.rcPhone,
-      address: {
-        rcPostNum: info.rcPostNum,
-        rcPostBase: info.rcPostBase,
-        rcPostDetail: info.rcPostDetail
-      }
+      rcPostNum: info.rcPostNum,
+      rcPostBase: info.rcPostBase,
+      rcPostDetail: info.rcPostDetail,
+      base: info.base
     });
   };
 
   /** 선택 버튼 클릭 시 */
-  const onClickSelect = (info :Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => {
+  const onClickSelect = (info: Address & { base: boolean }) => {
     handleUpdateInfo({
       rcName: info.rcName,
       rcPhone: info.rcPhone,
       rcPostNum: info.rcPostNum,
       rcPostBase: info.rcPostBase,
       rcPostDetail: info.rcPostDetail,
+      base: info.base
     });
     handleModalStep(-1);
   };

@@ -228,7 +228,7 @@ const DeliveryAddrForm = ({
         </AddressContainer>
       </Row>
       <SaveCheckBox>
-        <input name="default-address-input" type="checkbox" />
+        <input onChange={onChangeInputVal} id="base-address-checkbox" type="checkbox" />
         <i/>
           기본 배송지로 저장
       </SaveCheckBox>

@@ -3,9 +3,10 @@ import React, { memo, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import DeliveryAddrList from './DeliveryAddrList';
 import DeliveryAddrForm from './DeliveryAddrForm';
-import { Address, InfoType } from '..';
 import { useMutation } from '@tanstack/react-query';
 import apis from '../../../../apis';
+import { Address } from '../../../../apis/user/schema';
+import { InfoType } from '..';
 
 interface IModalProps {
   width: number;
@@ -53,13 +54,13 @@ export enum SaveType {
 interface IModalContentProps{
   step: number;
   handleModalStep: (step: number) => void;
-  handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
+  handleUpdateInfo: (payload: Omit<Address, 'id'> & { base?: boolean }) => void;
 }
 
 interface IDeliveryModalProps {
   step: number;
   handleModalStep: (step: number) => void;
-  handleUpdateInfo: (payload:Pick<InfoType, 'rcName' | 'rcPhone'> & Address) => void;
+  handleUpdateInfo: (payload: Omit<Address, 'id'> & { base?: boolean }) => void;
 }
 
 const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalContentProps) => {
@@ -71,7 +72,8 @@ const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalCon
     address: {
       rcPostNum: '',
       rcPostBase: '',
-      rcPostDetail: ''
+      rcPostDetail: '',
+      base: false
     }
   });
   const [saveType, setSaveType] = useState<SaveType>(SaveType.ADD);
@@ -81,10 +83,19 @@ const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalCon
     rcPhone: info.rcPhone,
     rcPostNum: info.address.rcPostNum,
     rcPostBase: info.address.rcPostBase,
-    rcPostDetail: info.address.rcPostDetail
+    rcPostDetail: info.address.rcPostDetail,
+    base: info.address.base
   }), {
     onSuccess: () => {
       handleModalStep(-1);
+      handleUpdateInfo({
+        rcName: info.rcName,
+        rcPhone: info.rcPhone,
+        rcPostNum: info.address.rcPostNum,
+        rcPostBase: info.address.rcPostBase,
+        rcPostDetail: info.address.rcPostDetail,
+        base: info.address.base
+      });
       alert('저장되었습니다.');
     }
   });
@@ -95,17 +106,36 @@ const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalCon
     rcPhone: info.rcPhone,
     rcPostNum: info.address.rcPostNum,
     rcPostBase: info.address.rcPostBase,
-    rcPostDetail: info.address.rcPostDetail
+    rcPostDetail: info.address.rcPostDetail,
+    base: info.address.base
   }), {
     onSuccess: () => {
       handleModalStep(-1);
+      handleUpdateInfo({
+        rcName: info.rcName,
+        rcPhone: info.rcPhone,
+        rcPostNum: info.address.rcPostNum,
+        rcPostBase: info.address.rcPostBase,
+        rcPostDetail: info.address.rcPostDetail,
+        base: info.address.base
+      });
       alert('저장되었습니다.');
     }
   });
 
   if (step === 0) {
-    const handleReviseInfo = (payload: Omit<InfoType,'message'> & { id: number }) => {
-      setInfo(payload);
+    const handleReviseInfo = (payload: Address & { base: boolean }) => {
+      setInfo({
+        id: payload.id,
+        rcName: payload.rcName,
+        rcPhone: payload.rcPhone,
+        address: {
+          rcPostNum: payload.rcPostNum,
+          rcPostBase: payload.rcPostBase,
+          rcPostDetail: payload.rcPostDetail,
+          base: payload.base
+        }
+      });
     };
     const handleSaveType = (payload: SaveType) => {
       setSaveType(payload);
@@ -119,18 +149,34 @@ const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalCon
         handleUpdateInfo={handleUpdateInfo}
       />
     );
-  } else if (step === 1) {
-    console.log('saveType',saveType);
-  
+  }
+  if (step === 1) {
     const onChangeInputVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setInfo({
-        ...info,
-        [e.target.id]: e.target.id === 'address'
-          ? {
+      if (e.target.id === 'base-address-checkbox') {        
+        setInfo({
+          ...info,
+          address: {
+            ...info.address,
+            base: e.target.checked
+          }
+        });
+
+        return;
+      }
+      if (e.target.id === 'address' ) {
+        setInfo({
+          ...info,
+          address: {
             ...info.address,
             [e.target.name]: e.target.value
           }
-          : e.target.value
+        });
+
+        return;
+      }
+      setInfo({
+        ...info,
+        [e.target.id]: e.target.value
       });
     };
 
@@ -141,7 +187,8 @@ const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalCon
         address: {
           rcPostNum: payload.postNum,
           rcPostBase: payload.baseAddress,
-          rcPostDetail: tempInfo.address.rcPostDetail
+          rcPostDetail: tempInfo.address.rcPostDetail,
+          base: tempInfo.address.base
         }
       });
     };

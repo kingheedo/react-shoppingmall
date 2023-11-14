@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { PropsWithChildren, createContext, useContext, useMemo } from 'react';
 import apis from '../apis';
 import { useRouter } from 'next/router';
 import { GetUserRes } from '../apis/user/schema';
@@ -11,7 +11,7 @@ const LoginProvider = ({ children }: PropsWithChildren) => {
   const { data: getUserData } = useQuery(
     ['getUser', router.pathname], 
     () => apis.User.getUser());
-
+  
   const userInfo = useMemo(() => {
     return getUserData || null;
   }, [getUserData]);

@@ -1,18 +1,28 @@
- type UserInfo = {
-    info: {
-        id: number;
-        email: string;
-        name: string;
-    };
-    cartLength: number;
-}
-
-export type PostAddAddressReq = {
+export type Address = {
+    id: number;
     rcName: string;
     rcPhone: string;
     rcPostNum: string;
     rcPostBase: string;
     rcPostDetail: string;
+ }
+
+ type UserInfo = {
+    info: {
+        email: string;
+        id: number;
+        name: string;
+        addressId?: number;
+        provider: 'local' | 'kakao' | 'naver';
+        naverId?: string;
+        kakaoId?: string;
+    };
+    cartLength: number;
+    address: Address
+}
+
+export type PostAddAddressReq = Omit<Address, 'id'> & {
+    base: boolean;
 }
 export type PostAddAddressRes = string;
 
@@ -22,14 +32,9 @@ export type PatchAddressReq = PostAddAddressReq & {
 
 export type PatchAddressRes = PostAddAddressRes
 
-export type GetAddressesRes = {
-    id: number;
-    rcName: string;
-    rcPhone: string;
-    rcPostNum: string;
-    rcPostBase: string;
-    rcPostDetail: string;
-}[];
+export type GetAddressesRes = (Address & {
+    base: boolean;
+})[];
 
 export type GetUserRes = UserInfo
 
