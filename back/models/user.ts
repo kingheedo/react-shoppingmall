@@ -9,7 +9,7 @@ class User extends Model{
     public password!:string | null;
     public kakaoId!: string | null;
     public naverId!: string | null;
-    public provider!: 'local' | 'kakao';
+    public provider!: 'local' | 'kakao' | 'naver';
     public addressId!: number | null;
     public readonly createdAt!:Date;
     public readonly updatedAt!:Date;

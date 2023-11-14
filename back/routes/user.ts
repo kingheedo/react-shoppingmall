@@ -68,16 +68,24 @@ router.get('/address', isLoggedIn, async(req, res, next) => {
 
 router.post('/address', isLoggedIn, async(req, res, next) => {
     try{
-        if(req.user){
-            await Address.create({
+            const createdAddress =  await Address.create({
                 rcName: req.body.rcName,
                 rcPhone: req.body.rcPhone,
                 rcPostNum: req.body.rcPostNum,
                 rcPostBase: req.body.rcPostBase,
                 rcPostDetail: req.body.rcPostDetail,
-                UserId: req.user.id
-            })
-        }
+                UserId: req.user!.id
+            });
+
+            if(req.body.base && createdAddress){
+                await User.update({
+                    addressId: createdAddress.id
+                },{
+                    where: {
+                        id: req.user!.id
+                    }
+                })
+            }
 
         return res.status(201).send('배송지 추가 완료')
     }
@@ -100,7 +108,17 @@ router.patch('/address', isLoggedIn, async (req, res, next) => {
                 id: req.body.id,
                 UserId: req.user!.id
             }
-        })
+        });
+
+        if(req.body.base && req.body.id){
+            await User.update({
+                addressId: req.body.id
+            }, {
+                where: {
+                    id: req.user!.id
+                }
+            })
+        }
 
         return res.status(200).send('배송지 수정완료');
     }
@@ -113,23 +131,33 @@ router.patch('/address', isLoggedIn, async (req, res, next) => {
 router.get('/', async(req, res, next) =>{
     try{
         if(req.user){
-    const info = await User.findOne({
-        where : {id : req.user.id},
-        attributes: {
-            exclude : ['password']
-        }
-        })
-        const cartLength = await Cart.count({
-            where: {UserId: req.user.id}
-        })
+            const info = await User.findOne({
+                where : {id : req.user.id},
+                attributes: {
+                    exclude : ['password','createdAt','updatedAt']
+                }
+            });
+            const cartLength = await Cart.count({
+                where: {UserId: req.user.id}
+            });
+            const address = await Address.findOne({
+                where: {
+                    id: info?.addressId,
+                    UserId: req.user.id
+                },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'UserId']
+                }
+            });
 
-        const userInfo = {
-            info,
-            cartLength
-        }
-        
+            const userInfo = {
+                info,
+                cartLength,
+                address
+            };
+            
 
-        return res.status(200).json(userInfo);
+            return res.status(200).json(userInfo);
         }else{
             return res.status(200).json(null);
         }
