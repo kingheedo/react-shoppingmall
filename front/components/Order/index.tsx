@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import DeliveryInfo from './DeliveryInfo';
 import Payments from './Payments';
 import Products from './Products';
+import { Address } from '../../apis/user/schema';
 
 const Title = styled.h1`
   margin-bottom: 40px;  
@@ -28,6 +29,17 @@ const BrandName = styled.span`
     overflow: hidden;
     color: #8e8e8e;
 `;
+export type InfoType = {
+    rcName: string,
+    rcPhone: string,
+    address: Omit<Address, 'id' | 'rcName' | 'rcPhone'> & { base: boolean },
+    message: string,
+}
+
+export type PaymentInfo = {
+    orderName: string;
+    totalPrice: number;
+}
 
 interface IOrderProps{
   list : GetCartListRes[]
@@ -37,15 +49,42 @@ const Order = ({
   list 
 }: IOrderProps) => {
   const [modalStep, setModalStep] = useState(-1);
-  const totalPrice = useMemo(() => {
-    let price = 0;
-    for (let i = 0; i < list.length; i++) {
-      price += list[i].totalPrice;
-    }
+  const [address, setAddress] = useState<InfoType>({
+    rcName: '',
+    rcPhone: '',
+    address: {
+      rcPostNum: '',
+      rcPostBase: '',
+      rcPostDetail: '',
+      base: false,
+    },
+    message: '',
+  });
 
-    return price;
+  const handleAddress = (payload: InfoType) => {
+    setAddress(payload);
+  };
+  /** 주문 이름 및 총 가격 */
+  const paymentInfo: PaymentInfo = useMemo(() => {
+    let orderName = '';
+    let totalPrice = 0;
+    if (list.length > 1) {
+      orderName = `${list[0].Product.productName}외 ${list.length - 1}건`;
+    } else {
+      orderName = list[0].Product.productName;
+    }
     
-  },[list]);
+    for (let i = 0; i < list.length; i++) {
+      totalPrice += list[i].totalPrice;
+    }
+    
+    return ({
+      orderName,
+      totalPrice,
+      address
+    });
+
+  },[list,address]);
 
   /** 배송 모달 스텝 핸들러 */
   const handleModalStep = (step: number) => {
@@ -65,8 +104,9 @@ const Order = ({
         <DeliveryInfo
           modalStep={modalStep}
           handleModalStep={handleModalStep}
+          handleAddress={handleAddress}
         />
-        <Payments totalPrice={totalPrice}/>
+        <Payments info={paymentInfo}/>
       </Main>
       
     </div>

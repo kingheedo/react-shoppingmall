@@ -180,7 +180,7 @@ const AlterBtn = styled.button`
   background: #fff;
   color: #111;
 `;
-const BuyNowBtn = styled.button`
+const BuyNowLink = styled(Link)`
   position: absolute;
   bottom: 30px;
   left: 20px;
@@ -579,7 +579,14 @@ const CartComponent = () => {
                         <span>{new Intl.NumberFormat('ko-KR').format(info.totalPrice)}</span>
                         {/* <em>33%</em> */}
                       </div>
-                      <BuyNowBtn>바로구매</BuyNowBtn>
+                      <BuyNowLink href={{
+                        pathname: '/order',
+                        query: { ids: ((JSON.stringify([info.id]))) },
+                        
+                      }}
+                      >
+                        바로구매
+                      </BuyNowLink>
                       <DeleteBtn onClick={() => onClickDelete({ type: Delete.EACH, id: info.id })} />
                     </Td>
                   </tr>

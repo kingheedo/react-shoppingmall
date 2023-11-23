@@ -19,10 +19,10 @@ const PostNumBtn = styled.button`
 const scriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
 
 interface IPostBtnProps{
-  handleAddress: ({ postNum, baseAddress }: { postNum: string, baseAddress: string }) => void;
+  handlePost: ({ postNum, baseAddress }: { postNum: string, baseAddress: string }) => void;
 }
 const PostBtn = ({
-  handleAddress,
+  handlePost,
   children
 }: IPostBtnProps & PropsWithChildren) => {
   const open = useDaumPostcodePopup(scriptUrl);
@@ -43,7 +43,7 @@ const PostBtn = ({
     }
 
     if (data.zonecode && (data.address || data.roadAddress)) {
-      handleAddress({ postNum: data.zonecode, baseAddress: data.address || data.roadAddress });
+      handlePost({ postNum: data.zonecode, baseAddress: data.address || data.roadAddress });
     }
   };
 

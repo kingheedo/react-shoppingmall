@@ -3,6 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import BillInfo from './BillInfo';
+import { PaymentInfo } from '..';
+import { getUser } from '../../../context/LoginProvider';
+import { useRouter } from 'next/router';
 
 const PaymentWidget = styled.div`
   width: 100%;
@@ -36,33 +39,52 @@ const SubmitOrder = styled.div`
 `;
 
 interface IPaymentsProps {
-  totalPrice: number;
+  info: PaymentInfo;
 }
 
 const clientKey = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CLIENT_KEY!;
 const customerKey = process.env.NEXT_PUBLIC_TOSS_PAYMENTS_CUSTOMER_KEY!;
 
+/** 토스페이먼츠 결제모듈 컴포넌트 */
 const Payments = ({
-  totalPrice
+  info
 }: IPaymentsProps) => {
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
+  const userInfo = getUser();
+  const router = useRouter();
+  console.log('info',info);
   
-  /** 결제하기 버튼 클릭 시  */
+  /** 결제하기 버튼 클릭 시
+   * 1. db에 주문 정보 및 배송지 정보 저장 필요
+   * 2. 결제하기 api 요청 이후 orderId, paymnetKey, amount 존재 시 주문성공페이지로 라우팅
+    */
   const onClickPaymentBtn = async() => {
     const paymentWidget = paymentWidgetRef.current;
-
     try {
-      await paymentWidget?.requestPayment({
+      const data = await paymentWidget?.requestPayment({
         orderId: nanoid(),
-        orderName: '토스 티셔츠 외 2건',
-        customerName: '김토스',
-        customerEmail: 'customer123@gmail.com',
-        successUrl: `${window.location.origin}/order/success`,
-        failUrl: `${window.location.origin}`
+        orderName: info.orderName,
+        customerName: userInfo?.info.name,
+        customerEmail: userInfo?.info.email,
+        // successUrl: `${window.location.origin}/order/success`,
+        // failUrl: `${window.location.origin}`
       });
+      if (data.orderId && data.paymentKey && data.amount) {
+        router.push({
+          pathname: '/order/success',
+          query: {
+            orderId: data.orderId,
+            paymentKey: data.paymentKey,
+            amount: data.amount
+          },
+        },
+        '/order/success'
+        );
+      }
+      
     }
     catch (error) {
       console.error(error);
@@ -74,7 +96,7 @@ const Payments = ({
       const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
       const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
         '#payment-widget',
-        { value: totalPrice },
+        { value: info.totalPrice },
       );
       paymentWidget.renderAgreement('#agreement');
 
@@ -90,15 +112,15 @@ const Payments = ({
       return;
     }
 
-    paymentMethodsWidget.updateAmount(totalPrice);
-  }, [totalPrice]);
-  
+    paymentMethodsWidget.updateAmount(info.totalPrice);
+  }, [info.totalPrice]);
+
   return (
     <div className="payment-wrapper">
       <PaymentWidget id="payment-widget"/>
       <Agreement id="agreement"/>
       <BillInfo
-        totalPrice={totalPrice}
+        totalPrice={info.totalPrice}
       />
       <SubmitOrder>
         <p>위 주문 내용을 확인하였으며 결제에 동의합니다.</p>

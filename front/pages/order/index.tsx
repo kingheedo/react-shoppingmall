@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async(context) => {
   }
 };
 
-const OrderPage = (props: any) => {
+const OrderPage = (props: { ids: number[] }) => {
   const { data: list } = useQuery(['getCartList'], () =>
     apis.Cart.getCartList(),
   );

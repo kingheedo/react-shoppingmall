@@ -6,6 +6,7 @@ import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
 import { getUser } from '../../../context/LoginProvider';
 import { Address } from '../../../apis/user/schema';
+import { InfoType } from '..';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
@@ -181,21 +182,17 @@ const MessageItem = styled.li`
       }
 `;
 
-export type InfoType = {
-    rcName: string,
-    rcPhone: string,
-    address: Omit<Address, 'id' | 'rcName' | 'rcPhone'> & { base: boolean },
-    message: string,
-}
-
 interface IDeliveryInfoProps{
   modalStep: number;
   handleModalStep: (step: number) => void;
+  handleAddress: (payload: InfoType) => void;
 }
 
 const DeliveryInfo = ({
   modalStep,
-  handleModalStep
+  handleModalStep,
+  handleAddress
+  
 }: IDeliveryInfoProps) => {
   const me = getUser();
   const [info, setInfo] = useState<InfoType>({
@@ -246,7 +243,7 @@ const DeliveryInfo = ({
   };
   
   /** 우편번호 및 기본 배송지 핸들러 */
-  const handleAddress = (payload:{ postNum: string, baseAddress: string }) => {
+  const handlePost = (payload:{ postNum: string, baseAddress: string }) => {
     const tempInfo = { ...info };
     setInfo({
       ...tempInfo,
@@ -345,6 +342,7 @@ const DeliveryInfo = ({
     setShowMsgList(false);
   };
 
+  /** 유저 정보에 따라 info 값 업데이트 */
   useEffect(() => {
     setInfo({
       rcName: me?.address.rcName || '',
@@ -358,6 +356,14 @@ const DeliveryInfo = ({
       message: '',
     });
   }, [me]);
+
+  /** info가 변경될 때마다 Order 컴포넌트의 address 값 업데이트
+   * 
+   * 결제 성공시 배송지 확인을 위해
+   */
+  useEffect(() => {
+    handleAddress(info);
+  }, [info]);
 
   return (
     <DeliveryInfoArea>
@@ -429,7 +435,7 @@ const DeliveryInfo = ({
                 readOnly
               />
               <PostBtn
-                handleAddress={handleAddress}
+                handlePost={handlePost}
               >
                 우편번호
               </PostBtn>

@@ -1,60 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BreadCrumb from '../../../components/common/BreadCrumb';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import styled from 'styled-components';
-
-type Payment = {
-  orderId: string;
-  orderName: string;
-  approvedAt: string;
-  receipt: {
-    url: string;
-  };
-  totalAmount: number;
-  method: '카드' | '가상계좌' | '계좌이체';
-  virtualAccount?:{
-    bankCode: string;
-    customerName: string;
-    dueDate: string;
-    accountNumber: string;
-  }
-}
-
-export const getServerSideProps:GetServerSideProps = async(context) => {
-  const { query: { paymentKey, orderId, amount } } = context;
-
-  try {
-    const { data: payment } = await axios.post<Payment>(
-      'https://api.tosspayments.com/v1/payments/confirm',
-      {
-        paymentKey,
-        orderId,
-        amount,
-      },
-      {
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_SECRET_KEY}:`
-          ).toString('base64')}`,
-        },
-      }
-    );
-
-    return {
-      props: { payment }
-    };
-  }
-  catch (error) {
-    console.error(error);
-
-    return {
-      props: {
-
-      }
-    };
-  }
-};
+import { useRouter } from 'next/router';
 
 const Main = styled.div`
   width: 960px;
@@ -107,7 +56,88 @@ const OrderDetail = styled.div`
 const BankCodeObj: {
   [key: string]: string;
 } = {
-  '06': '국민'
+  '39': '경남',
+  '12': '단위농협',
+  '32': '부산',
+  '45': '새마을',
+  '64': '산림',
+  '88': '신한',
+  '48': '신협',
+  '27': '씨티',
+  '20': '우리',
+  '71': '우체국',
+  '50': '저축',
+  '37': '전북',
+  '35': '제주',
+  '90': '카카오',
+  '92': '토스',
+  '81': '하나',
+  '54': '',
+  '03': '기업',
+  '06': '국민',
+  '31': '대구',
+  '02': '산업',
+  '11': '농협',
+  '23': 'SC제일',
+  '07': '수협'
+};
+type Payment = {
+  orderId: string;
+  paymentKey: string;
+  orderName: string;
+  approvedAt: string;
+  amount: number;
+  receipt: {
+    url: string;
+  };
+  totalAmount: number;
+  method: '카드' | '가상계좌' | '계좌이체';
+  virtualAccount?:{
+    bankCode: string;
+    customerName: string;
+    dueDate: string;
+    accountNumber: string;
+  }
+}
+
+export const getServerSideProps:GetServerSideProps = async(context) => {
+  const { query: {
+    orderId,
+    paymentKey,
+    amount
+  } } = context;
+  
+  try {
+    const { data: payment } = await axios.post<Payment>(
+      'https://api.tosspayments.com/v1/payments/confirm',
+      {
+        orderId: orderId,
+        paymentKey: paymentKey,
+        amount: amount
+        
+      },
+      {
+        headers: {
+          Authorization: `Basic ${Buffer.from(
+            `${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_SECRET_KEY}:`
+          ).toString('base64')}`,
+        },
+      }
+    );
+
+    return {
+      props: { payment }
+    };
+  }
+  catch (error) {
+    console.error(error);
+
+    return {
+      props: {
+
+      }
+    };
+  }
 };
 
 interface IOrderSuccessPageProps{
@@ -115,6 +145,13 @@ interface IOrderSuccessPageProps{
 }
 
 const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!payment) {
+      router.push('/');
+    }
+  }, [payment]);
 
   return (
     <div className="order-succss-page">
@@ -127,7 +164,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
             주문이 완료되었습니다.
           </h2>
           <p>
-            주문하신 주문번호는 <strong>{payment.orderId}</strong> 입니다.
+            주문하신 주문번호는 <strong>{payment?.orderId}</strong> 입니다.
           </p>
           <ul>
             <li className="total-amount">
@@ -135,7 +172,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 입금금액
               </span>
               <strong>
-                {payment.totalAmount.toLocaleString('ko-KR')}원
+                {payment?.totalAmount.toLocaleString('ko-KR')}원
               </strong>
             </li>
             <li className="account-info">
@@ -143,7 +180,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 계좌정보
               </span>
               <strong>
-                {payment.virtualAccount && BankCodeObj[payment.virtualAccount.bankCode]}{payment.virtualAccount?.accountNumber}{payment.virtualAccount?.customerName}
+                {payment?.virtualAccount && BankCodeObj[payment?.virtualAccount.bankCode]}{payment?.virtualAccount?.accountNumber}{payment?.virtualAccount?.customerName}
               </strong>
             </li>
             <li className="due-date">
@@ -151,7 +188,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 입금마감
               </span>
               <strong>
-                {payment.virtualAccount?.dueDate.split('T')[0]}까지
+                {payment?.virtualAccount?.dueDate.split('T')[0]}까지
               </strong>
             </li>
           </ul>
