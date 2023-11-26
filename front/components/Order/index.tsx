@@ -29,7 +29,7 @@ const BrandName = styled.span`
     overflow: hidden;
     color: #8e8e8e;
 `;
-export type InfoType = {
+export type DeliveryType = {
     rcName: string,
     rcPhone: string,
     address: Omit<Address, 'id' | 'rcName' | 'rcPhone'> & { base: boolean },
@@ -39,6 +39,8 @@ export type InfoType = {
 export type PaymentInfo = {
     orderName: string;
     totalPrice: number;
+    delivery: DeliveryType;
+    cartIds: number[];
 }
 
 interface IOrderProps{
@@ -49,7 +51,7 @@ const Order = ({
   list 
 }: IOrderProps) => {
   const [modalStep, setModalStep] = useState(-1);
-  const [address, setAddress] = useState<InfoType>({
+  const [delivery, setDelivery] = useState<DeliveryType>({
     rcName: '',
     rcPhone: '',
     address: {
@@ -61,13 +63,16 @@ const Order = ({
     message: '',
   });
 
-  const handleAddress = (payload: InfoType) => {
-    setAddress(payload);
+  const handleAddress = (payload: DeliveryType) => {
+    setDelivery(payload);
   };
   /** 주문 이름 및 총 가격 */
   const paymentInfo: PaymentInfo = useMemo(() => {
     let orderName = '';
     let totalPrice = 0;
+    let cartIds = [];
+
+    cartIds = list.map(cartItem => cartItem.id);
     if (list.length > 1) {
       orderName = `${list[0].Product.productName}외 ${list.length - 1}건`;
     } else {
@@ -79,12 +84,13 @@ const Order = ({
     }
     
     return ({
+      cartIds,
       orderName,
       totalPrice,
-      address
+      delivery
     });
 
-  },[list,address]);
+  },[list,delivery]);
 
   /** 배송 모달 스텝 핸들러 */
   const handleModalStep = (step: number) => {

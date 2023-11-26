@@ -6,6 +6,9 @@ import BillInfo from './BillInfo';
 import { PaymentInfo } from '..';
 import { getUser } from '../../../context/LoginProvider';
 import { useRouter } from 'next/router';
+import { useMutation } from '@tanstack/react-query';
+import { PostPaymentReq } from '../../../apis/payment/schema';
+import apis from '../../../apis';
 
 const PaymentWidget = styled.div`
   width: 100%;
@@ -55,7 +58,7 @@ const Payments = ({
   > | null>(null);
   const userInfo = getUser();
   const router = useRouter();
-  console.log('info',info);
+  const { mutate: addPayment } = useMutation((data: PostPaymentReq) => apis.Payment.addPayment(data));
   
   /** 결제하기 버튼 클릭 시
    * 1. db에 주문 정보 및 배송지 정보 저장 필요
@@ -72,8 +75,32 @@ const Payments = ({
         // successUrl: `${window.location.origin}/order/success`,
         // failUrl: `${window.location.origin}`
       });
-      if (data.orderId && data.paymentKey && data.amount) {
-        router.push({
+      const { orderId, paymentKey, amount , paymentType } = data;
+
+      if (orderId && paymentKey && amount) {
+        // 주소 추가
+        await apis.User.addAddress({
+          rcName: info.delivery.rcName,
+          rcPhone: info.delivery.rcPhone,
+          rcPostNum: info.delivery.address.rcPostNum,
+          rcPostBase: info.delivery.address.rcPostBase,
+          rcPostDetail: info.delivery.address.rcPostDetail,
+          base: info.delivery.address.base
+        });
+
+        await addPayment({
+          orderId,
+          paymentKey,
+          paymentType,
+          cartIds: info.cartIds,
+          rcName: info.delivery.rcName,
+          rcPhone: info.delivery.rcPhone,
+          rcPostNum: info.delivery.address.rcPostNum,
+          rcPostBase: info.delivery.address.rcPostBase,
+          rcPostDetail: info.delivery.address.rcPostDetail,
+        });
+
+        router.replace({
           pathname: '/order/success',
           query: {
             orderId: data.orderId,

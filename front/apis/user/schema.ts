@@ -24,7 +24,7 @@ export type Address = {
 export type PostAddAddressReq = Omit<Address, 'id'> & {
     base: boolean;
 }
-export type PostAddAddressRes = string;
+export type PostAddAddressRes = number;
 
 export type PatchAddressReq = PostAddAddressReq & {
     id: number;

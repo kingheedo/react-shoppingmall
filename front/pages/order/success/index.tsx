@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import BreadCrumb from '../../../components/common/BreadCrumb';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import styled from 'styled-components';
 import { useRouter } from 'next/router';
+import apis from '../../../apis';
+import { useQuery } from '@tanstack/react-query';
 
 const Main = styled.div`
   width: 960px;
@@ -146,12 +148,15 @@ interface IOrderSuccessPageProps{
 
 const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
   const router = useRouter();
+  const { data } = useQuery(['getPayments'], () => apis.Payment.getPayments(payment.orderId));
 
   useEffect(() => {
     if (!payment) {
-      router.push('/');
+      router.replace('/');
     }
   }, [payment]);
+  
+  console.log('data',data);
 
   return (
     <div className="order-succss-page">
