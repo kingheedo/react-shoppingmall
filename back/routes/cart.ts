@@ -27,7 +27,7 @@ router.get('/', isLoggedIn, async(req, res, next) => {
             ]
             }]
         })
-        res.status(202).json(fullCartitem)
+        return res.status(202).json(fullCartitem)
     }catch(error){
         console.error(error);   
         next(error)

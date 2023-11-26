@@ -68,26 +68,41 @@ router.get('/address', isLoggedIn, async(req, res, next) => {
 
 router.post('/address', isLoggedIn, async(req, res, next) => {
     try{
-            const createdAddress =  await Address.create({
-                rcName: req.body.rcName,
-                rcPhone: req.body.rcPhone,
-                rcPostNum: req.body.rcPostNum,
-                rcPostBase: req.body.rcPostBase,
-                rcPostDetail: req.body.rcPostDetail,
-                UserId: req.user!.id
-            });
-
-            if(req.body.base && createdAddress){
-                await User.update({
-                    addressId: createdAddress.id
-                },{
-                    where: {
-                        id: req.user!.id
-                    }
-                })
+        if(req.body.rcPostNum && req.body.rcPostBase && req.body.rcPostDetail){
+            const address =  await Address.findOne({
+                where: {
+                    [Op.and]: [
+                        {rcPostNum: req.body.rcPostNum}, 
+                        {rcPostBase: req.body.rcPostBase}, 
+                        {rcPostDetail: req.body.rcPostDetail}
+                    ]
+                }
+            })
+            if(address){
+                return res.status(200).send('이미 존재하는 주소입니다.');
             }
+        };
 
-        return res.status(201).send('배송지 추가 완료')
+        const createdAddress =  await Address.create({
+            rcName: req.body.rcName,
+            rcPhone: req.body.rcPhone,
+            rcPostNum: req.body.rcPostNum,
+            rcPostBase: req.body.rcPostBase,
+            rcPostDetail: req.body.rcPostDetail,
+            UserId: req.user!.id
+        });
+
+        if(req.body.base && createdAddress){
+            await User.update({
+                addressId: createdAddress.id
+            },{
+                where: {
+                    id: req.user!.id
+                }
+            })
+        }
+
+        return res.status(200).send('주소 추가 완료');
     }
     catch(error){
         console.error(error);

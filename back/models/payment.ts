@@ -6,7 +6,7 @@ class Payment extends Model{
     public readonly id! : number;
     public readonly orderId!: string;
     public readonly paymentKey!: string;
-    public readonly paymentType!: 'NORMAL' | 'BRANDPAY' | 'KEYIN';\
+    public readonly paymentType!: 'NORMAL' | 'BRANDPAY' | 'KEYIN';
     public readonly address!: string;
     public readonly createdAt! : Date;
     public readonly updatedAt! : Date;
@@ -30,6 +30,26 @@ class Payment extends Model{
                 allowNull: false,
                 defaultValue: ''
             },
+            rcName: {
+                type: DataTypes.STRING(20),
+                allowNull:false
+            },
+            rcPhone: {
+                type: DataTypes.STRING(11),
+                allowNull:false
+            },
+            rcPostNum: {
+                type: DataTypes.STRING(5),
+                allowNull:false
+            },
+            rcPostBase:{ 
+                type: DataTypes.STRING(100),
+                allowNull: false
+            },
+            rcPostDetail: {
+                type: DataTypes.STRING(100),
+                allowNull: true
+            }
         },{
             modelName: 'Payment',
             tableName: 'payments',
@@ -40,7 +60,6 @@ class Payment extends Model{
     export const associate = (db:dbTtype) =>{
         db.Payment.belongsTo(db.HistoryCart);
         db.Payment.belongsTo(db.User);
-        db.Payment.hasMany(db.Address);
 
     }
     export default Payment

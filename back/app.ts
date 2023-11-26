@@ -4,7 +4,8 @@ import authRouter from './routes/auth';
 import cartRouter from './routes/cart'
 import productRouter from './routes/product'
 import productsRouter from './routes/products'
-import userRouter from './routes/user'
+import userRouter from './routes/user';
+import paymentRouter from './routes/payment';
 import * as cors from 'cors'
 import passportConfig from './passport'
 import * as session from "express-session"
@@ -66,10 +67,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRouter);
-app.use('/user', userRouter)
-app.use('/product',productRouter)
-app.use('/products',productsRouter)
-app.use('/cart',cartRouter)
+app.use('/user', userRouter);
+app.use('/product',productRouter);
+app.use('/products',productsRouter);
+app.use('/cart',cartRouter);
+app.use('/payment', paymentRouter);
 
 app.get('/', (req, res, next) => {
     res.send('백엔드 정상 동작')
