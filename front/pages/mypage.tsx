@@ -1,14 +1,14 @@
-import Router from 'next/router';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import styled from 'styled-components';
 import {
   Breadcrumb, Typography,
 } from 'antd';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import moment from 'moment';
 import axios from 'axios';
-import AppLayout from '../components/AppLayout';
-import Payment from '../components/Payment';
+import { QueryClient, dehydrate, useQuery, useQueryClient } from '@tanstack/react-query';
+import apis from '../apis';
 
 moment.locale('ko');
 const { Title } = Typography;
@@ -35,8 +35,26 @@ const PageTitle = styled(Title)`
      width: 36vw;
 `;
 
-const Mypage: FC = () => {
+export const getServerSideProps: GetServerSideProps = async(context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
 
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(['getAllPayments'], () => apis.Payment.getAllPayments());
+  
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient)
+    }
+  };
+};
+
+const Mypage: FC = () => {
+  const { data: payments } = useQuery(['getAllPayments'], () => apis.Payment.getAllPayments());
+  
   return (
     <Container>
       <Wrapper>
@@ -55,6 +73,11 @@ const Mypage: FC = () => {
         </PageTitle>
         <PaymentListDiv>
           {/* {paymentLists?.map((payment) => <Payment key={payment.id} payment={payment} />)} */}
+          {payments?.map((payment,idx) => (
+            <div key={idx}>
+              {payment.orderId}
+            </div>
+          ) )}
         </PaymentListDiv>
       </Wrapper>
     </Container>

@@ -13,9 +13,14 @@ const Main = styled.div`
   padding: 80px var(--gap) 120px;
 `;
 
-const OrderDetail = styled.div`
+const OrderCheckWrap = styled.div`
   background: url(/bg_fin_check.svg) no-repeat 2px 46px/70px auto;
   padding: 138px 0 50px;
+
+  + .info-row{
+    border-top: 1px solid #e5e5e5;
+  }
+
   > h2{
     font-size: 25px;
     line-height: 36px;
@@ -51,6 +56,37 @@ const OrderDetail = styled.div`
         > strong{
           color: #8e1fff;
         }
+      }
+  }
+`;
+
+const InfoRow = styled.div`
+  border-top: 1px solid #444;
+  padding: 60px 0;
+
+  > h3 {
+    font-size: 19px;
+    color: #111;
+    line-height: 28px;
+  }
+  
+  > p {
+    margin-top: 32px;
+    font-size: 17px;
+    color: #444;
+    
+      > strong{
+        font-size: 17px;
+        font-weight: 700;
+
+        + span {
+          display: inline-block;
+          margin-left: 5px;
+        }
+      }
+
+      span {
+        display: block;
       }
   }
 `;
@@ -163,8 +199,8 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
       <BreadCrumb
         list={[{ content: '주문완료' }]}
       />
-      <Main className="order-success">
-        <OrderDetail>
+      <Main>
+        <OrderCheckWrap>
           <h2>
             주문이 완료되었습니다.
           </h2>
@@ -198,7 +234,31 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
             </li>
           </ul>
 
-        </OrderDetail>
+        </OrderCheckWrap>
+        <InfoRow id="address" className="info-row">
+          <h3>배송지 정보</h3>
+          <p>
+            <strong>왕희도</strong>
+            <span>
+              010-4303-5403
+            </span>
+            <span>
+              경기도 용인시 처인구 이동읍 염티로 40 1층
+            </span>
+          </p>
+        </InfoRow>
+        {/* <InfoRow className="info-row">
+          <h3>배송지 정보</h3>
+          <p>
+            <strong>왕희도</strong>
+            <span>
+              010-4303-5403
+            </span>
+            <span>
+              경기도 용인시 처인구 이동읍 염티로 40 1층
+            </span>
+          </p>
+        </InfoRow> */}
       </Main>
     </div>
   );

@@ -1,31 +1,23 @@
-enum Payment {
+enum PaymentType {
   NORMAL = 'NORMAL',
   BRANDPAY = 'BRANDPAY',
   KEYIN = 'KEYIN',
 }
-export type PostPaymentReq = {
+type PaymentInfo = {
     orderId: string;
     paymentKey: string;
-    paymentType: Payment.NORMAL | Payment.BRANDPAY | Payment.KEYIN,
-    cartIds: number[];
+    paymentType: PaymentType.NORMAL | PaymentType.BRANDPAY | PaymentType.KEYIN,
     rcName: string;
     rcPhone: string;
     rcPostNum: string;
     rcPostBase: string;
     rcPostDetail: string;
 }
+export type PostPaymentReq = PaymentInfo & { cartIds: number };
 
 export type PostPaymentRes = string;
 
 export type GetPaymentsReq = string;
-export type GetPaymentsRes = {
-    orderId: string;
-    paymentKey: string;
-    paymentType: Payment.NORMAL | Payment.BRANDPAY | Payment.KEYIN,
-    cartIds: number[];
-    rcName: string;
-    rcPhone: string;
-    rcPostNum: string;
-    rcPostBase: string;
-    rcPostDetail: string;
-}
+export type GetPaymentsRes = PaymentInfo & { cartIds: number };
+
+export type GetAllPaymentsRes = PaymentInfo[];
