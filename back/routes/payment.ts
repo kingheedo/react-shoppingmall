@@ -1,8 +1,9 @@
 import * as express from 'express';
 import { isLoggedIn } from './middlewares';
-import { Address, Payment } from '../models';
+import { Address, HistoryCart, Payment, Product } from '../models';
 const router = express.Router();
 
+/** 결제내역 생성 */
 router.post('/', isLoggedIn, async(req, res, next) => {
   try{
     const { 
@@ -42,12 +43,22 @@ router.post('/', isLoggedIn, async(req, res, next) => {
   }
 });
 
+/** orderId에 해당하는 결재 내역 */
 router.get('/:orderId', isLoggedIn, async (req, res ,next) => {
   try{
-    const payment = await Payment.findOne({
+    const payment = await Payment.findAll({
       where: {
         orderId: req.params.orderId
-      }
+      },
+      attributes: {
+        exclude: ['HistoryCartId', 'ProductId']
+      },
+      include: [{
+        model: HistoryCart,
+        include: [{
+          model: Product
+        }]
+      }]
     });
 
     return res.status(200).json(payment);
@@ -56,6 +67,17 @@ router.get('/:orderId', isLoggedIn, async (req, res ,next) => {
     console.error(error);
     next(error);
   }
+})
+
+/** 모든 결제 내역 */
+router.get('/', isLoggedIn,async (req, res, next) => {
+  const payments = await Payment.findAll({
+    where: {
+      UserId: req.user!.id
+    }
+  })
+
+  return res.status(200).json(payments);
 })
 
 
