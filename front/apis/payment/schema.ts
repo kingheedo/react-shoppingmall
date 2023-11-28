@@ -1,3 +1,5 @@
+import { GetCartListRes } from '../cart/schema';
+
 enum PaymentType {
   NORMAL = 'NORMAL',
   BRANDPAY = 'BRANDPAY',
@@ -13,11 +15,11 @@ type PaymentInfo = {
     rcPostBase: string;
     rcPostDetail: string;
 }
-export type PostPaymentReq = PaymentInfo & { cartIds: number };
+export type PostPaymentReq = PaymentInfo & { cartIds: number[] };
 
 export type PostPaymentRes = string;
 
 export type GetPaymentsReq = string;
-export type GetPaymentsRes = PaymentInfo & { cartIds: number };
+export type GetPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: GetCartListRes })[];
 
 export type GetAllPaymentsRes = PaymentInfo[];

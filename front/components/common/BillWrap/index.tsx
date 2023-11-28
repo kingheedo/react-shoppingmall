@@ -27,31 +27,31 @@ const Bill = styled.div`
 
   .total-delivery{
     padding-left: 80px;
-    background: url(bg_calc.gif) no-repeat;
+    background: url(/bg_calc.gif) no-repeat;
     background-position: 30px 26px;
   }
 
   .total-discount {
     padding-left: 80px;
     color: #8e1fff;
-    background: url(bg_calc.gif) no-repeat;
+    background: url(/bg_calc.gif) no-repeat;
     background-position: 30px -40px;
   }
 
   .total-payment{
     padding-left: 80px;
-    background: url(bg_calc.gif) no-repeat;
+    background: url(/bg_calc.gif) no-repeat;
     background-position: 30px -104px;
   }
 `;
 
-interface IPaymentsProps {
+interface IBillWrapProps {
   totalPrice: number;
 }
 
-const BillInfo = ({
+const BillWrap = ({
   totalPrice
-}: IPaymentsProps) => {
+}: IBillWrapProps) => {
   return (
     <Bill>
       <div className="total-price">
@@ -94,4 +94,4 @@ const BillInfo = ({
   );
 };
 
-export default BillInfo;
+export default BillWrap;

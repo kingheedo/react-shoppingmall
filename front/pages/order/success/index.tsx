@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect } from 'react';
 import BreadCrumb from '../../../components/common/BreadCrumb';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
@@ -6,6 +6,8 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import apis from '../../../apis';
 import { useQuery } from '@tanstack/react-query';
+import BillWrap from '../../../components/common/BillWrap';
+import LinkBtn from '../../../components/common/LinkBtn';
 
 const Main = styled.div`
   width: 960px;
@@ -89,6 +91,35 @@ const InfoRow = styled.div`
         display: block;
       }
   }
+  &.payment {
+    > ul {
+      margin-top: 40px;
+
+      > li{
+        &:first-child{
+          border-top: 1px solid #f7f7f7;
+        }
+        display: block;
+        padding: 25px 0;
+        border-bottom: 1px solid #f7f7f7;
+      }
+    }
+  }
+`;
+const SubmitWrap = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 35px;
+  
+  > a{
+    text-align: center;
+    
+    &:first-child{
+      background: #fff;
+      color: #111;
+    }
+  }
+  
 `;
 
 const BankCodeObj: {
@@ -119,7 +150,7 @@ const BankCodeObj: {
   '23': 'SC제일',
   '07': '수협'
 };
-type Payment = {
+type TossPayment = {
   orderId: string;
   paymentKey: string;
   orderName: string;
@@ -146,7 +177,7 @@ export const getServerSideProps:GetServerSideProps = async(context) => {
   } } = context;
   
   try {
-    const { data: payment } = await axios.post<Payment>(
+    const { data: tossPayment } = await axios.post<TossPayment>(
       'https://api.tosspayments.com/v1/payments/confirm',
       {
         orderId: orderId,
@@ -164,7 +195,7 @@ export const getServerSideProps:GetServerSideProps = async(context) => {
     );
 
     return {
-      props: { payment }
+      props: { tossPayment }
     };
   }
   catch (error) {
@@ -179,20 +210,20 @@ export const getServerSideProps:GetServerSideProps = async(context) => {
 };
 
 interface IOrderSuccessPageProps{
-  payment: Payment;
+  tossPayment: TossPayment;
 }
 
-const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
+const OrderSuccessPage = ({ tossPayment }: IOrderSuccessPageProps) => {
   const router = useRouter();
-  const { data } = useQuery(['getPayments'], () => apis.Payment.getPayments(payment.orderId));
+  const { data: payments } = useQuery(['getPayments'], () => apis.Payment.getPayments(tossPayment.orderId));
 
   useEffect(() => {
-    if (!payment) {
+    if (!tossPayment) {
       router.replace('/');
     }
-  }, [payment]);
+  }, [tossPayment]);
   
-  console.log('data',data);
+  console.log('payments',payments);
 
   return (
     <div className="order-succss-page">
@@ -205,7 +236,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
             주문이 완료되었습니다.
           </h2>
           <p>
-            주문하신 주문번호는 <strong>{payment?.orderId}</strong> 입니다.
+            주문하신 주문번호는 <strong>{tossPayment?.orderId}</strong> 입니다.
           </p>
           <ul>
             <li className="total-amount">
@@ -213,7 +244,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 입금금액
               </span>
               <strong>
-                {payment?.totalAmount.toLocaleString('ko-KR')}원
+                {tossPayment?.totalAmount.toLocaleString('ko-KR')}원
               </strong>
             </li>
             <li className="account-info">
@@ -221,7 +252,7 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 계좌정보
               </span>
               <strong>
-                {payment?.virtualAccount && BankCodeObj[payment?.virtualAccount.bankCode]}{payment?.virtualAccount?.accountNumber}{payment?.virtualAccount?.customerName}
+                {tossPayment?.virtualAccount && BankCodeObj[tossPayment?.virtualAccount.bankCode]}{tossPayment?.virtualAccount?.accountNumber}{tossPayment?.virtualAccount?.customerName}
               </strong>
             </li>
             <li className="due-date">
@@ -229,36 +260,49 @@ const OrderSuccessPage = ({ payment }: IOrderSuccessPageProps) => {
                 입금마감
               </span>
               <strong>
-                {payment?.virtualAccount?.dueDate.split('T')[0]}까지
+                {tossPayment?.virtualAccount?.dueDate.split('T')[0]}까지
               </strong>
             </li>
           </ul>
 
         </OrderCheckWrap>
-        <InfoRow id="address" className="info-row">
+        <InfoRow id="address" className="info-row address">
           <h3>배송지 정보</h3>
           <p>
-            <strong>왕희도</strong>
+            <strong>{payments && payments[0].rcName}</strong>
             <span>
-              010-4303-5403
+              {payments && payments[0].rcPhone}
             </span>
             <span>
-              경기도 용인시 처인구 이동읍 염티로 40 1층
+              {`${payments && payments[0].rcPostBase} ${payments && payments[0].rcPostDetail}`}
             </span>
           </p>
         </InfoRow>
-        {/* <InfoRow className="info-row">
-          <h3>배송지 정보</h3>
-          <p>
-            <strong>왕희도</strong>
-            <span>
-              010-4303-5403
-            </span>
-            <span>
-              경기도 용인시 처인구 이동읍 염티로 40 1층
-            </span>
-          </p>
-        </InfoRow> */}
+        <InfoRow id="payment" className="info-row payment">
+          <h3>주문상품</h3>
+          <ul>
+            {payments?.map(payment => (
+              <li key={payment.id}>
+                <span className="name">
+                  {`${payment.HistoryCart.Product.productName}, ${payment.HistoryCart.size}, ${payment.HistoryCart.quantity}개`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </InfoRow>
+        <BillWrap
+          totalPrice={tossPayment.totalAmount}
+        />
+        <SubmitWrap>
+          <LinkBtn
+            href={'/'}
+            content={'쇼핑 계속하기'}
+          />
+          <LinkBtn
+            href={'/mypage'}
+            content={'주문 조회'}
+          />
+        </SubmitWrap>
       </Main>
     </div>
   );

@@ -2,13 +2,13 @@ import { PaymentWidgetInstance, loadPaymentWidget } from '@tosspayments/payment-
 import React, { useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
-import BillInfo from './BillInfo';
 import { PaymentInfo } from '..';
 import { getUser } from '../../../context/LoginProvider';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import { PostPaymentReq } from '../../../apis/payment/schema';
 import apis from '../../../apis';
+import BillWrap from '../../common/BillWrap';
 
 const PaymentWidget = styled.div`
   width: 100%;
@@ -18,7 +18,7 @@ const Agreement = styled.div`
   width: 100%;
 `;
 
-const SubmitOrder = styled.div`
+const SubmitWrap = styled.div`
   margin-top: 50px;
   text-align: center;
   > p{
@@ -146,15 +146,15 @@ const Payments = ({
     <div className="payment-wrapper">
       <PaymentWidget id="payment-widget"/>
       <Agreement id="agreement"/>
-      <BillInfo
+      <BillWrap
         totalPrice={info.totalPrice}
       />
-      <SubmitOrder>
+      <SubmitWrap>
         <p>위 주문 내용을 확인하였으며 결제에 동의합니다.</p>
         <button onClick={onClickPaymentBtn}>
           결제하기
         </button>
-      </SubmitOrder>
+      </SubmitWrap>
     </div>
   );
 };
