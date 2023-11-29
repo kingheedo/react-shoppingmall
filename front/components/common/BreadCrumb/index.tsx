@@ -42,8 +42,8 @@ const BreadCrumb = ({
         <BreadcrumbLi>
           <BreadcrumbLiLink href="/">Home</BreadcrumbLiLink>
         </BreadcrumbLi>
-        {list.map((item,idx) => (
-          idx === list.length - 1 && item.href
+        {list.map((item) => (
+          item.href
             ? (
               <BreadcrumbLi key={item.content}>
                 <BreadcrumbLiLink href={item.href}>{item.content}</BreadcrumbLiLink>
