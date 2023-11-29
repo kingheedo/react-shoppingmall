@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { isLoggedIn } from './middlewares';
-import { Address, HistoryCart, Payment, Product } from '../models';
+import { Address, HistoryCart, Image, Payment, Product } from '../models';
 const router = express.Router();
 
 /** 결제내역 생성 */
@@ -74,7 +74,28 @@ router.get('/', isLoggedIn,async (req, res, next) => {
   const payments = await Payment.findAll({
     where: {
       UserId: req.user!.id
-    }
+    },
+    attributes: {
+      exclude: ['HistoryCartId'],
+    },
+    include: [{
+      model: HistoryCart,
+      attributes: {
+        exclude: ['ProductId','createdAt', 'updatedAt']
+      },
+      include: [{
+        model: Product,
+          attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        include: [{
+          model: Image,
+          attributes: {
+            exclude: ['ProductId','createdAt', 'updatedAt']
+          },
+        }]
+      }]
+    }]
   })
 
   return res.status(200).json(payments);
