@@ -1,5 +1,6 @@
+import axios from 'axios';
 import request from '../request';
-import { GetAllPaymentsRes, GetPaymentsReq, GetPaymentsRes, PostPaymentReq, PostPaymentRes } from './schema';
+import { GetAllPaymentsRes, GetPaymentsReq, GetPaymentsRes, GetTossPmntOrderReq, GetTossPmntOrderRes, PostPaymentReq, PostPaymentRes } from './schema';
 
 /** 결제 내역 추가 */
 const addPayment = async(data: PostPaymentReq) => {
@@ -16,8 +17,21 @@ const getAllPayments = async() => {
   return await request.get<GetAllPaymentsRes>('/payment').then(res => res.data);
 };
 
+/** 토스 결재내역조회
+ * 
+ * orderId로 조회
+ */
+const getTossPmntOrder = (orderId: GetTossPmntOrderReq) => {
+  return axios.get<GetTossPmntOrderRes>(`https://api.tosspayments.com/v1/payments/orders/${orderId}`, {
+    headers: {
+      Authorization: 'Basic dGVzdF9za192Wm5qRUplUVZ4S2tOUjZMNGJlRDNQbU9vQk4wOg=='
+    }
+  }).then(res => res.data);
+};
+
 export default {
   addPayment,
   getPayments,
-  getAllPayments
+  getAllPayments,
+  getTossPmntOrder
 };
