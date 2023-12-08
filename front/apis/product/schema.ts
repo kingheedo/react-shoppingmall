@@ -6,19 +6,7 @@ export enum SizeOption {
 }
 
 export type GetProductsReq = number;
-export type GetProductsRes = {
-  id : number;
-  UserId: number;
-  price: number;
-  productName: string;
-  stock: number,
-  Images: {
-    src: string
-  }[];
-  Likers: {
-  id: number;
-}[]
-};
+export type GetProductsRes = Omit<GetSingleProductRes,'Likers' & 'Sizes'>
 
 export type PostAddLikeReq = number;
 export type PostAddLikeRes = string;

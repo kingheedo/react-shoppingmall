@@ -1,6 +1,7 @@
 import * as express from 'express';
 import { isLoggedIn } from './middlewares';
 import { Address, HistoryCart, Image, Payment, Product } from '../models';
+import { Op } from 'sequelize';
 const router = express.Router();
 
 /** 결제내역 생성 */
@@ -69,12 +70,20 @@ router.get('/:orderId', isLoggedIn, async (req, res ,next) => {
   }
 })
 
-/** 모든 결제 내역 */
+/** 모든 결제 내역 조회*/
 router.get('/', isLoggedIn,async (req, res, next) => {
+  const startDate = new Date(req.query.startDate as string).setHours(0,0,0,0);
+  const endDate = new Date(req.query.endDate as string);
   const payments = await Payment.findAll({
     where: {
-      UserId: req.user!.id
+      UserId: req.user!.id,
+      createdAt: {
+        [Op.between]: [new Date(startDate).toISOString(), new Date(endDate).toISOString()]
+      }
     },
+    order: [
+      ['createdAt', 'DESC']
+    ],
     attributes: {
       exclude: ['HistoryCartId'],
     },
@@ -97,7 +106,8 @@ router.get('/', isLoggedIn,async (req, res, next) => {
       }]
     }]
   })
-
+  console.log('payments',payments);
+  
   return res.status(200).json(payments);
 })
 

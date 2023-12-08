@@ -19,7 +19,10 @@ const PostNumBtn = styled.button`
 const scriptUrl = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
 
 interface IPostBtnProps{
-  handlePost: ({ postNum, baseAddress }: { postNum: string, baseAddress: string }) => void;
+  handlePost: (payload: {
+    postNum: string;
+    baseAddress: string;
+  }) => void;
 }
 const PostBtn = ({
   handlePost,

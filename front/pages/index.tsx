@@ -70,26 +70,14 @@ const Home: FC = () => {
         <H2>Clothes</H2>
         <ListContainer ref={loadRef}>
           {list?.map((product) => (
-            <Product key={product.id} product={product} />
+            <Product 
+              key={product.id} 
+              product={product} />
           ))}
         </ListContainer>
       </Wrapper>
     </>
   );
 };
-// export const getServerSideProps = wrapper.getServerSideProps((store) => async (context) => {
-//   // console.log('context.req.headers', context.req.headers);
-//   const cookie = context.req ? context.req.headers.cookie : '';
-//   axios.defaults.headers.Cookie = '';
-//   if (context.req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-  // await store.dispatch(loadUser());
-//   await store.dispatch(loadProducts());
-//   await store.dispatch(loadProductsInCart());
-//   return {
-//     props: {},
-//   };
-// });
 
 export default Home;

@@ -6,7 +6,7 @@ import DeliveryAddrForm from './DeliveryAddrForm';
 import { useMutation } from '@tanstack/react-query';
 import apis from '../../../../apis';
 import { Address } from '../../../../apis/user/schema';
-import { InfoType } from '..';
+import { DeliveryType } from '../..';
 
 interface IModalProps {
   width: number;
@@ -65,7 +65,7 @@ interface IDeliveryModalProps {
 
 const ModalContent = memo(({ step, handleModalStep,handleUpdateInfo }: IModalContentProps) => {
     
-  const [info, setInfo] = useState<Omit<InfoType,'message'> & { id: number }>({
+  const [info, setInfo] = useState<Omit<DeliveryType,'message'> & { id: number }>({
     id: -1,
     rcName: '',
     rcPhone: '',

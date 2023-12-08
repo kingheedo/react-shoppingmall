@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import PostBtn from '../../PostBtn';
 import { useModal } from '../../../../../context/ModalProvider';
 import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
-import { InfoType } from '../..';
+import { DeliveryType } from '../../..';
 
 const Form = styled.form`
 
@@ -128,7 +128,7 @@ const SaveButton = styled.button`
 `;
 
 interface IDeliveryAddrFormProps{
-  info: Omit<InfoType,'message'>;
+  info: Omit<DeliveryType,'message'>;
   onChangeInputVal:(e: React.ChangeEvent<HTMLInputElement>) => void;
   handleAddress: (payload: {
     postNum: string;
@@ -199,7 +199,7 @@ const DeliveryAddrForm = ({
               readOnly
             />
             <PostBtn
-              handleAddress={handleAddress}
+              handlePost={handleAddress}
             >
                 주소찾기
             </PostBtn>

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "allowJs": true,
-    "target": "ES5",
+    "target": "ES6",
     "lib": [
       "es5",
       "es6",

@@ -7,7 +7,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import apis from '../apis';
 import { getUser } from '../context/LoginProvider';
 import { Modal } from 'antd';
-import { TmainProduct } from '../reducers/reducerTypes/productType';
+import { GetSingleProductRes } from '../apis/product/schema';
 
 const CardItem = styled.div`
   position: relative;
@@ -109,7 +109,7 @@ const HeartTxt = styled.em`
 `;
 
 interface IProductProps {
-  product: TmainProduct;
+  product: Omit<GetSingleProductRes, 'Sizes'>;
 }
 const Product = ({ product }:IProductProps) => {
   const [show, setShow] = useState(false);

@@ -6,7 +6,7 @@ import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
 import { getUser } from '../../../context/LoginProvider';
 import { Address } from '../../../apis/user/schema';
-import { InfoType } from '..';
+import { DeliveryType } from '..';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
@@ -185,7 +185,7 @@ const MessageItem = styled.li`
 interface IDeliveryInfoProps{
   modalStep: number;
   handleModalStep: (step: number) => void;
-  handleAddress: (payload: InfoType) => void;
+  handleAddress: (payload: DeliveryType) => void;
 }
 
 const DeliveryInfo = ({
@@ -195,7 +195,7 @@ const DeliveryInfo = ({
   
 }: IDeliveryInfoProps) => {
   const me = getUser();
-  const [info, setInfo] = useState<InfoType>({
+  const [info, setInfo] = useState<DeliveryType>({
     rcName: '',
     rcPhone: '',
     address: {

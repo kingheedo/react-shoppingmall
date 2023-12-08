@@ -14,8 +14,9 @@ type PaymentInfo = {
     rcPostNum: string;
     rcPostBase: string;
     rcPostDetail: string;
+    createdAt: string;
 }
-type HistoryCart = {
+export type HistoryCart = {
     id: number,
     quantity: number,
     totalPrice: number,
@@ -33,15 +34,23 @@ type HistoryCart = {
         }[]
     }
 }
-export type PostPaymentReq = PaymentInfo & { cartIds: number[] };
+export type PostPaymentReq = Partial<PaymentInfo> & { cartIds: number[] };
 
 export type PostPaymentRes = string;
 
 export type GetPaymentsReq = string;
 export type GetPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: GetCartListRes })[];
 
-export type GetAllPaymentsRes = (PaymentInfo & { HistoryCart: HistoryCart })[];
+export type GetAllPaymentsReq = {
+  startDate: Date;
+  endDate: Date;
+}
+export type GetAllPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: HistoryCart })[];
 
+export enum SettlementState {
+  INCOMPLETED = 'INCOMPLETED',
+  COMPLETED = 'COMPLETED'
+}
 export type GetTossPmntOrderReq = string;
 export type GetTossPmntOrderRes = {
   mId: string,
@@ -63,22 +72,22 @@ export type GetTossPmntOrderRes = {
     customerName: string,
     dueDate: string,
     expired: boolean,
-    settlementStatus: 'INCOMPLETED' | 'COMPLETED ',
+    settlementStatus: SettlementState,
     refundStatus: 'NONE' | 'PENDING' | 'FAILED' | 'PARTIAL_FAILED' | 'COMPLETED',
     refundReceiveAccount: null
   },
   transfer?: {
     bankCode: string;
-    settlementStatus: 'INCOMPLETED' | 'COMPLETED ',
+    settlementStatus: SettlementState,
   },
   mobilePhone?: {
     customerMobilePhone: string;
-    settlementStatus: 'INCOMPLETED' | 'COMPLETED ',
+    settlementStatus: SettlementState,
     receiptUrl: string;
   },
   giftCertificate?: {
     approveNo: string;
-    settlementStatus: 'INCOMPLETED' | 'COMPLETED ',
+    settlementStatus: SettlementState,
   },
   cashReceipt?: {
     type: '소득공제' | '지출증빙';
