@@ -205,10 +205,11 @@ const Mypage: FC = () => {
   const [paymentsState, setPaymentsState] = useState<Map<string, PayemntState>>(() => new Map());
   const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 3)));
   const [endDate, setEndDate] = useState(new Date());
-  const [isInquired, setIsInquired] = useState(true);
+  const [isInquired, setIsInquired] = useState(true); //조회하기 버튼 클릭 여부
+  const [isCanceled, setIsCanceled] = useState(false); //결제 취소 여부
   const { data: payments } = useQuery(
     ['getAllPayments',
-      startDate || endDate || isInquired],
+      startDate || endDate || isInquired, isCanceled],
     () => apis.Payment.getAllPayments({
       startDate: new Date(
         startDate.getUTCFullYear(),
@@ -231,15 +232,26 @@ const Mypage: FC = () => {
     });
   
   /** 결제 진행 상황 텍스트 */
-  const getSettlementStatus = (status: SettlementState) => {
-    switch (status) {
-    case SettlementState.INCOMPLETED:
-        
-      return '입금 대기';
+  const getSettlementStatus = (payload: { method: '카드' | '가상계좌' | '간편결제' | '휴대폰' | '계좌이체' | '문화상품권' | '도서문화상품권' | '게임문화상품권', status: SettlementState }) => {
+    switch (payload.status) {
+    case SettlementState.DONE:{
+      if (payload.method === '가상계좌') {
+        return '입금 완료';
+      } else {
+        return '결제 완료';
+      }
+    }
 
-    case SettlementState.COMPLETED:
+    case SettlementState.EXPIRED:
         
-      return '입금 완료';
+      return '유효기간 만료';
+
+    case SettlementState.CANCELED:
+
+      return '전체 취소';
+    case SettlementState.WAITING_FOR_DEPOSIT:
+
+      return '입금 대기';
     default:
       return '';
     }
@@ -248,6 +260,18 @@ const Mypage: FC = () => {
   /** 조회하기 버튼 클릭 시 */
   const onClickInquiry = () => {
     setIsInquired(true);
+  };
+
+  /** 결제 취소 버튼 클릭 시 */
+  const onClickCancel = (paymentKey: string) => {
+    apis.Payment.cancelTossPmntOrder(paymentKey)
+      .then(() => {
+        setIsCanceled(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+    ;
   };
   useEffect(() => {
     (async () => {
@@ -275,9 +299,10 @@ const Mypage: FC = () => {
           }));
       }
       setIsInquired(false);
+      setIsCanceled(false);
     })();
     
-  },[payments,isInquired]);
+  },[payments,isInquired, isCanceled]);
 
   console.log('paymentsState',paymentsState);
   
@@ -336,19 +361,28 @@ const Mypage: FC = () => {
                       <span>
                         {`${new Date(val1.dbPayments[0].createdAt).getFullYear()}.${new Date(val1.dbPayments[0].createdAt).getMonth() + 1}.${new Date(val1.dbPayments[0].createdAt).getDate()}`}
                       </span>
-                      <span>
-                        입금액&nbsp; 
-                        <strong>
-                          {val1.tossPayment.totalAmount.toLocaleString('ko-KR')}
-                        </strong>
-                        원
-                      </span>
-                      <span>
-                        입금기한&nbsp;
-                        <strong>
-                          {moment(val1.tossPayment.virtualAccount.dueDate).format('YYYY.MM.DD HH:MM:SS')}
-                        </strong>
-                      </span>
+                      {(val1.tossPayment.cancels && val1.tossPayment.cancels[0] || !val1.tossPayment.virtualAccount) 
+                        ? (
+                          null
+                        )
+                        : (
+                          <>
+                            <span>
+                              입금액&nbsp; 
+                              <strong>
+                                {val1.tossPayment.totalAmount.toLocaleString('ko-KR')}
+                              </strong>
+                              원
+                            </span>
+                            <span>
+                            입금기한&nbsp;
+                              <strong>
+                                {moment(val1.tossPayment.virtualAccount.dueDate).format('YYYY.MM.DD HH:MM:SS')}
+                              </strong>
+                            </span>
+                          </>
+                        )
+                      }
                       <Link href={'#'}>
                         주문상세
                       </Link>
@@ -362,9 +396,10 @@ const Mypage: FC = () => {
                       <strong>
                       왕희도
                       </strong>
-                      <Link href={'#'}>
-                      배송지 확인/변경
-                      </Link>
+                      {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                        <Link href={'#'}>
+                        배송지 확인/변경
+                        </Link>)}
                     </th>
                   </tr>
                 </thead>
@@ -386,18 +421,20 @@ const Mypage: FC = () => {
                           </div>
                         </td>
                         <td>
-                          <span className="status">{getSettlementStatus(val1.tossPayment.virtualAccount.settlementStatus)}</span>
+                          <span className="status">{getSettlementStatus({ method: val1.tossPayment.method, status: val1.tossPayment.status })}</span>
                         </td>
                         <td/>
                         <td>
-                          <div className="btn-group">
-                            <button>
-                              전체취소
-                            </button>
-                            <button>
+                          {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                            <div className="btn-group">
+                              <button onClick={() => onClickCancel(val1.tossPayment.paymentKey)}>
+                                전체취소
+                              </button>
+                              {/* <button>
                               결제수단 변경
-                            </button>
-                          </div>
+                              </button> */}
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}

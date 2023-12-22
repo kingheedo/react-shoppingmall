@@ -48,8 +48,14 @@ export type GetAllPaymentsReq = {
 export type GetAllPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: HistoryCart })[];
 
 export enum SettlementState {
-  INCOMPLETED = 'INCOMPLETED',
-  COMPLETED = 'COMPLETED'
+  READY = 'READY',
+  IN_PROGRESS = 'IN_PROGRESS',
+  WAITING_FOR_DEPOSIT = 'WAITING_FOR_DEPOSIT',
+  DONE = 'DONE',
+  CANCELED = 'CANCELED',
+  PARTIAL_CANCELED = 'PARTIAL_CANCELED',
+  ABORTED = 'ABORTED',
+  EXPIRED = 'EXPIRED'
 }
 export type GetTossPmntOrderReq = string;
 export type GetTossPmntOrderRes = {
@@ -59,7 +65,7 @@ export type GetTossPmntOrderRes = {
   orderId: string,
   orderName: string,
   taxExemptionAmount: number,
-  status: 'READY' | 'IN_PROGRESS' | 'WAITING_FOR_DEPOSIT' | 'DONE' | 'CANCELED' | 'PARTIAL_CANCELED' | 'ABORTED' | 'EXPIRED',
+  status: SettlementState,
   requestedAt: string,
   approvedAt?: string,
   useEscrow: boolean,
@@ -126,7 +132,7 @@ export type GetTossPmntOrderRes = {
     canceledAt: string;
     transactionKey: string;
     receiptKey?:string;
-  },
+  }[],
   secret?: string,
   type: 'NORMAL' | 'BILLING' | 'BRANDPAY',
   easyPay?: {
@@ -155,3 +161,5 @@ export type GetTossPmntOrderRes = {
   method: '카드' | '가상계좌' | '간편결제' | '휴대폰' | '계좌이체' | '문화상품권' | '도서문화상품권' | '게임문화상품권';
   version: string;
 }
+
+export type CancelTossPmntOrderReq = string;
