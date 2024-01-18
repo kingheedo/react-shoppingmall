@@ -4,12 +4,12 @@ import React, { FC, useCallback, useState } from 'react';
 import Router, { useRouter } from 'next/router';
 import styled from 'styled-components';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
-import apis from '../apis';
-import { getUser } from '../context/LoginProvider';
 import { Modal } from 'antd';
-import { GetSingleProductRes } from '../apis/product/schema';
+import { GetSingleProductRes } from '../../apis/product/schema';
+import { getUser } from '../../context/LoginProvider';
+import apis from '../../apis';
 
-const CardItem = styled.div`
+const CardItem = styled.li`
   position: relative;
   cursor: pointer;
   display: flex;

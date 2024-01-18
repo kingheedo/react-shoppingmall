@@ -21,7 +21,7 @@ import { useModal } from '../../../context/ModalProvider';
 import { getUser } from '../../../context/LoginProvider';
 
 const Container = styled.div`
-  width: 1280px;
+  max-width: 1440px;
   height: 100%;
   margin: 6rem auto 0;
   padding: 0 20px;
@@ -315,13 +315,13 @@ type BuyInfo = {
   quantity: number;
 };
 
-const QueryProduct = () => {
+const ProductPage = () => {
   const me = getUser();
   const router = useRouter();
   const id = router.query.id!;
   const modal = useModal();
   const queryClient = useQueryClient();
-  const { data } = useQuery(
+  const { data: product } = useQuery(
     ['getSingleProduct', id],
     () => apis.Product.getSingleProduct(id),
     {
@@ -335,6 +335,7 @@ const QueryProduct = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries(['getUser']);
+      queryClient.invalidateQueries(['getCartList']);
     },
   });
 
@@ -345,9 +346,9 @@ const QueryProduct = () => {
   const [buyNow, setBuyNow] = useState(true);
 
   const [buyInfo, setBuyInfo] = useState<BuyInfo>({
-    productId: data?.id || -1,
+    productId: product?.id || -1,
     size: '',
-    totalPrice: data?.price || 0,
+    totalPrice: product?.price || 0,
     quantity: 1,
   });
 
@@ -358,21 +359,21 @@ const QueryProduct = () => {
 
   /** 수량 조절 */
   const onClickQuant = (quantity: 'inc' | 'dec') => {
-    if (!data) {
+    if (!product) {
       return;
     }
 
     if (quantity === 'inc') {
       setBuyInfo((prev) => ({
         ...prev,
-        totalPrice: prev.totalPrice + data.price,
+        totalPrice: prev.totalPrice + product.price,
         quantity: prev.quantity + 1,
       }));
     } else {
       if (buyInfo.quantity !== 1) {
         setBuyInfo((prev) => ({
           ...prev,
-          totalPrice: prev.totalPrice - data.price,
+          totalPrice: prev.totalPrice - product.price,
           quantity: prev.quantity - 1,
         }));
       }
@@ -380,7 +381,7 @@ const QueryProduct = () => {
   };
 
   const onClickAddCart = () => {
-    if (!data) {
+    if (!product) {
       return;
     }
     if (!me) {
@@ -412,99 +413,78 @@ const QueryProduct = () => {
   return (
     <Container>
       <Wrapper>
-        {data && (
-          <>
-            <Content>
-              <ProductImage
-                className="image"
-                alt="data.Images[0]"
-                src={`${backUrl}/${data.Images[0].src}`}
-              />
-
-              <InfoArea className="info-area">
-                <Tags>무료배송</Tags>
-                <BrandName className="brand-name">
-                  <Link href="/">8 seconds</Link>
-                </BrandName>
-                <ProductName>{data.productName}</ProductName>
-                <PriceInfo>{data.price.toLocaleString('ko-KR')}</PriceInfo>
-                <ReviewWrap>
-                  <ScoreWrap>
-                    <Rate />
-                    <Score>4.5</Score>
-                  </ScoreWrap>
-                  <Review href="/">리뷰10건</Review>
-                </ReviewWrap>
-                <OptionWrap>
-                  <Row>
-                    <Type>사이즈</Type>
-                    <SelectWrap>
-                      {data.Sizes.map((size) => (
-                        <SelectItm
-                          className={
-                            buyInfo.size === size.option ? 'active' : ''
-                          }
-                          onClick={() => onClickSize(size.option)}
-                          key={size.option}
-                        >
-                          {size.option}
-                        </SelectItm>
-                      ))}
-                    </SelectWrap>
-                  </Row>
-                  <Row>
-                    <Type>배송방법</Type>
-                    <SelectWrap>
-                      <SelectItm className={`${buyInfo.size ? 'active' : ''}`}>
-                        택배
+        {product && (
+          <Content>
+            <ProductImage
+              className="image"
+              alt="product.Images[0]"
+              src={`${backUrl}/${product.Images[0].src}`}
+            />
+            <InfoArea className="info-area">
+              <Tags>무료배송</Tags>
+              <BrandName className="brand-name">
+                <Link href="/">8 seconds</Link>
+              </BrandName>
+              <ProductName>{product.productName}</ProductName>
+              <PriceInfo>{product.price.toLocaleString('ko-KR')}</PriceInfo>
+              <ReviewWrap>
+                <ScoreWrap>
+                  <Rate />
+                  <Score>4.5</Score>
+                </ScoreWrap>
+                <Review href="/">리뷰10건</Review>
+              </ReviewWrap>
+              <OptionWrap>
+                <Row>
+                  <Type>사이즈</Type>
+                  <SelectWrap>
+                    {product.Sizes.map((size) => (
+                      <SelectItm
+                        className={
+                          buyInfo.size === size.option ? 'active' : ''
+                        }
+                        onClick={() => onClickSize(size.option)}
+                        key={size.option}
+                      >
+                        {size.option}
                       </SelectItm>
-                    </SelectWrap>
-                  </Row>
-                </OptionWrap>
-                <BuyWrap>
-                  <BuyTxt>{buyInfo.size}</BuyTxt>
-                  <PriceArea>
-                    <Quantity>
-                      <MinusBtn
-                        className={buyInfo.quantity === 1 ? 'disabled' : ''}
-                        onClick={() => onClickQuant('dec')}
-                      />
-                      {buyInfo.quantity}
-                      <PlusBtn onClick={() => onClickQuant('inc')} />
-                    </Quantity>
-                    <PriceWrap>
-                      <Price>
-                        {(buyInfo.totalPrice || data.price).toLocaleString('ko-KR')}
-                      </Price>
-                      <PriceUnit>원</PriceUnit>
-                    </PriceWrap>
-                  </PriceArea>
-                </BuyWrap>
-                <DecisionWrap>
-                  <BasketBtn onClick={onClickAddCart}>장바구니</BasketBtn>
-                  <BuyBtn>바로구매</BuyBtn>
-                </DecisionWrap>
-              </InfoArea>
-
-              {/* <Modal
-                    centered
-                    open={visibleModal}
-                    footer={null}
-                    onCancel={noneVisbleModal}
-                  >
-                    <Result
-                      status="success"
-                      title={`장바구니에 상품이 담겼습니다.
-                            장바구니로 이동하시겠습니까?`}
-                      extra={[
-                        <Button onClick={onhandleModal} key="move">확인</Button>,
-                        <Button onClick={noneVisbleModal} key="cancel">취소</Button>,
-                      ]}
+                    ))}
+                  </SelectWrap>
+                </Row>
+                <Row>
+                  <Type>배송방법</Type>
+                  <SelectWrap>
+                    <SelectItm className={`${buyInfo.size ? 'active' : ''}`}>
+                        택배
+                    </SelectItm>
+                  </SelectWrap>
+                </Row>
+              </OptionWrap>
+              <BuyWrap>
+                <BuyTxt>{buyInfo.size}</BuyTxt>
+                <PriceArea>
+                  <Quantity>
+                    <MinusBtn
+                      className={buyInfo.quantity === 1 ? 'disabled' : ''}
+                      onClick={() => onClickQuant('dec')}
                     />
-                  </Modal> */}
-            </Content>
-            {/* <Review product={data} /> */}
-          </>
+                    {buyInfo.quantity}
+                    <PlusBtn onClick={() => onClickQuant('inc')} />
+                  </Quantity>
+                  <PriceWrap>
+                    <Price>
+                      {(buyInfo.totalPrice || product.price).toLocaleString('ko-KR')}
+                    </Price>
+                    <PriceUnit>원</PriceUnit>
+                  </PriceWrap>
+                </PriceArea>
+              </BuyWrap>
+              <DecisionWrap>
+                <BasketBtn onClick={onClickAddCart}>장바구니</BasketBtn>
+                <BuyBtn>바로구매</BuyBtn>
+              </DecisionWrap>
+            </InfoArea>
+          </Content>
         )}
       </Wrapper>
     </Container>
@@ -532,4 +512,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 };
-export default QueryProduct;
+export default ProductPage;

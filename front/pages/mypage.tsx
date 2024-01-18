@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
-import styled from 'styled-components';import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import styled from 'styled-components';
+import { GetServerSideProps } from 'next';
 import moment from 'moment';
 import axios from 'axios';
 import { QueryClient, dehydrate, useQuery } from '@tanstack/react-query';
@@ -8,11 +8,11 @@ import apis from '../apis';
 import BreadCrumb from '../components/common/BreadCrumb';
 import { backUrl } from '../config/backUrl';
 import { GetAllPaymentsRes, GetTossPmntOrderRes, SettlementState } from '../apis/payment/schema';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ko from 'date-fns/locale/ko';
 
-moment.locale('ko');
-
+registerLocale('ko', ko);
 const Main = styled.div`
   width: 960px;
   margin: 0 auto;
@@ -175,6 +175,34 @@ const DatePickContainer = styled.div`
   }
 `;
 
+const DatePickerHeader = styled.div`
+  position: relative;
+  border: 0;
+  background: #fff;
+  color: #111;
+  font-size: 17px;
+  line-height: 18px;
+  font-weight: 700;
+
+  button {
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 18px;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+}
+.prev-btn{
+    left:8px;
+    background: url(/btn_prev_gray.svg) no-repeat center center/10px auto;
+}
+.next-btn{
+    right: 8px;
+    background: url(/btn_next_gray.svg) no-repeat center center/10px auto;
+}
+`;
+
 export const getServerSideProps: GetServerSideProps = async(context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
@@ -327,6 +355,18 @@ const Mypage: FC = () => {
                 startDate={startDate}
                 maxDate={endDate}
                 dateFormat={'yyyy-MM-dd'}
+                locale="ko"
+                renderCustomHeader={({
+                  date,
+                  decreaseMonth,
+                  increaseMonth
+                }) => (
+                  <DatePickerHeader>
+                    <button className="prev-btn" onClick={decreaseMonth}/>
+                    {`${date.getFullYear()} ${date.getMonth() + 1}`}
+                    <button className="next-btn" onClick={increaseMonth}/>
+                  </DatePickerHeader>
+                )}
               />
               {' ~ '}
               <DatePicker
@@ -335,6 +375,18 @@ const Mypage: FC = () => {
                 endDate={endDate}
                 minDate={startDate}
                 dateFormat={'yyyy-MM-dd'}
+                locale="ko"
+                renderCustomHeader={({
+                  date,
+                  decreaseMonth,
+                  increaseMonth
+                }) => (
+                  <DatePickerHeader>
+                    <button className="prev-btn" onClick={decreaseMonth}/>
+                    {`${date.getFullYear()} ${date.getMonth() + 1}`}
+                    <button className="next-btn" onClick={increaseMonth}/>
+                  </DatePickerHeader>
+                )}
               />
             </DatePickContainer>
             <button
@@ -383,9 +435,9 @@ const Mypage: FC = () => {
                           </>
                         )
                       }
-                      <Link href={'#'}>
+                      {/* <Link href={'#'}>
                         주문상세
-                      </Link>
+                      </Link> */}
                     </th>
                   </tr>
                   <tr className="row">
@@ -396,10 +448,10 @@ const Mypage: FC = () => {
                       <strong>
                       왕희도
                       </strong>
-                      {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                      {/* {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
                         <Link href={'#'}>
                         배송지 확인/변경
-                        </Link>)}
+                        </Link>)} */}
                     </th>
                   </tr>
                 </thead>

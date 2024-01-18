@@ -391,7 +391,7 @@ const CartComponent = () => {
   const { mutate: deleteItem } = useMutation((ids: number[]) => apis.Cart.deleteItem(ids), {
     onSettled: () => {
       queryClient.invalidateQueries(['getCartList']);
-    },
+    }
   });
 
   /** 장바구니 아이템 옵션변경 */

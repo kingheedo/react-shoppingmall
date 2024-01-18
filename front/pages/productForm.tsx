@@ -14,7 +14,7 @@ import Router from 'next/router';
 import axios from 'axios';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { CheckboxValueType } from 'antd/lib/checkbox/Group';
-import AppLayout from '../components/AppLayout';
+import AppLayout from '../components/layout';
 import useInput from '../hooks/useInput';
 
 const CheckboxGroup = Checkbox.Group;

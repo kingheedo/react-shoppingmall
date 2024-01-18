@@ -165,7 +165,6 @@ const SignIn = () => {
   const { mutate: postLogin } = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
     onSuccess: () => {
       queryClient.invalidateQueries(['getUser']).then(() => Router.back());
-
     },
     onError: () => {
       alert('로그인 오류');

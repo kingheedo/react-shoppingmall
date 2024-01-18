@@ -42,4 +42,12 @@ export type PostLoginReq = {
     email: string;
     password: string;
 }
-export type PostLoginRes = UserInfo;
+export type PostLoginRes = {
+    email: string;
+    id: number;
+    name: string;
+    addressId?: number;
+    provider: 'local' | 'kakao' | 'naver';
+    naverId?: string;
+    kakaoId?: string;
+};
