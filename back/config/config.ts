@@ -1,5 +1,3 @@
-import * as dotenv from "dotenv";
-dotenv.config();
 type Config = {
   username: string,
   password: string,
@@ -15,7 +13,7 @@ interface ConfigGroup{
  const config: ConfigGroup= {
   "development": { //개발용
     "username": "root",
-    "password": process.env.DB_PASSWORD!,
+    "password": process.env.DB_PASSWORD! || '@vlwk9294',
     "database": "react-shoppingmall",
     "host": "127.0.0.1",
     "dialect": "mysql"

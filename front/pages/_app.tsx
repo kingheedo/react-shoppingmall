@@ -17,23 +17,7 @@ const ShoppingMall = ({ Component, pageProps, ...appProps }: AppProps) => {
       }
     }
   }));
-  //특정 컴포넌트에만 레이아웃 적용
-  if (['/signin','/signup'].includes(appProps.router.pathname)) {
-    return (
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <Hydrate state={pageProps.dehydratedState}>
-            <Head>
-              <meta charSet="utf-8" />
-              <title>shoppingmall</title>
-            </Head>
-            <Component {...pageProps} />
-          </Hydrate>
-        </QueryClientProvider>
-      </RecoilRoot>
-    );
-  }
-
+  
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>

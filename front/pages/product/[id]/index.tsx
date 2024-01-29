@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
@@ -19,6 +19,7 @@ import { backUrl } from '../../../config/backUrl';
 import Link from 'next/link';
 import { useModal } from '../../../context/ModalProvider';
 import { getUser } from '../../../context/LoginProvider';
+import ReviewList from '../../../components/ReviewList';
 
 const Container = styled.div`
   max-width: 1440px;
@@ -39,9 +40,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
 `;
-const Content = styled.div`
+const ItemInfoWrap = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-bottom: 120px;
 `;
 const ProductImage = styled.img`
   min-width: 541px;
@@ -308,6 +310,38 @@ const BuyBtn = styled.a`
   cursor: pointer;
 `;
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const id = context.params?.id!;
+
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(['getSingleProduct', id], () =>
+    apis.Product.getSingleProduct(id),
+  );
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+};
+
+export type RevieListType = {
+    id: number;
+    content: string;
+    rate: number;
+    userEmail: string;
+    date: string;
+    reviewImage: string
+    
+}
+
 type BuyInfo = {
   productId: number;
   size: SizeOption | '';
@@ -339,12 +373,6 @@ const ProductPage = () => {
     },
   });
 
-  const productId = parseInt(router.query.id as string, 10);
-  const [size, onSelectSize] = useInput('사이즈');
-  const [quantity, setQuantity] = useState(1);
-  const [visibleModal, setVisibleModal] = useState(false);
-  const [buyNow, setBuyNow] = useState(true);
-
   const [buyInfo, setBuyInfo] = useState<BuyInfo>({
     productId: product?.id || -1,
     size: '',
@@ -352,6 +380,18 @@ const ProductPage = () => {
     quantity: 1,
   });
 
+  const reviewList: RevieListType[] = useMemo(() => {
+    return product?.Reviews.map(review => ({
+      id: review.id,
+      content: review.content,
+      rate: review.rate,
+      userEmail: review.User.email,
+      date: review.createdAt,
+      reviewImage: review.ReviewImages[0]?.src
+      //size 및 quantity 추가
+    })) || [];
+  },[product]);
+  
   /** 사이즈 옵션 선택 시 */
   const onClickSize = (option: SizeOption) => {
     setBuyInfo((prev: BuyInfo) => ({ ...prev, size: option }));
@@ -380,6 +420,7 @@ const ProductPage = () => {
     }
   };
 
+  /** 장바구니 클릭 시 */
   const onClickAddCart = () => {
     if (!product) {
       return;
@@ -406,110 +447,111 @@ const ProductPage = () => {
     }
   };
 
-  useEffect(() => {
-    console.log('buyinfo', buyInfo);
-  }, [buyInfo]);
+  /** 리뷰 건 수 클릭 시 리뷰 리스트로 스크롤 */
+  const onClickReviewLink = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    document.querySelector('#review-list')?.scrollIntoView({
+      behavior: 'smooth'
+    });
+  };
+
+  /** 평균 리뷰 점수 */
+  const averageRate = useMemo(() => {
+    let rate = 0;
+    const reviewLength = product?.Reviews.length;
+    product?.Reviews.forEach(review => rate += review.rate);
+
+    return reviewLength ? (rate / reviewLength).toFixed(1) : 0;
+  },[product]);
 
   return (
     <Container>
       <Wrapper>
         {product && (
-          <Content>
-            <ProductImage
-              className="image"
-              alt="product.Images[0]"
-              src={`${backUrl}/${product.Images[0].src}`}
-            />
-            <InfoArea className="info-area">
-              <Tags>무료배송</Tags>
-              <BrandName className="brand-name">
-                <Link href="/">8 seconds</Link>
-              </BrandName>
-              <ProductName>{product.productName}</ProductName>
-              <PriceInfo>{product.price.toLocaleString('ko-KR')}</PriceInfo>
-              <ReviewWrap>
-                <ScoreWrap>
-                  <Rate />
-                  <Score>4.5</Score>
-                </ScoreWrap>
-                <Review href="/">리뷰10건</Review>
-              </ReviewWrap>
-              <OptionWrap>
-                <Row>
-                  <Type>사이즈</Type>
-                  <SelectWrap>
-                    {product.Sizes.map((size) => (
-                      <SelectItm
-                        className={
-                          buyInfo.size === size.option ? 'active' : ''
-                        }
-                        onClick={() => onClickSize(size.option)}
-                        key={size.option}
-                      >
-                        {size.option}
-                      </SelectItm>
-                    ))}
-                  </SelectWrap>
-                </Row>
-                <Row>
-                  <Type>배송방법</Type>
-                  <SelectWrap>
-                    <SelectItm className={`${buyInfo.size ? 'active' : ''}`}>
+          <>
+            <ItemInfoWrap>
+              <ProductImage
+                className="image"
+                alt="product.Images[0]"
+                src={`${backUrl}/${product.Images[0].src}`}
+              />
+              <InfoArea className="info-area">
+                <Tags>무료배송</Tags>
+                <BrandName className="brand-name">
+                  <Link href="/">8 seconds</Link>
+                </BrandName>
+                <ProductName>{product.productName}</ProductName>
+                <PriceInfo>{product.price.toLocaleString('ko-KR')}</PriceInfo>
+                <ReviewWrap>
+                  <ScoreWrap>
+                    <Rate />
+                    <Score>{averageRate}</Score>
+                  </ScoreWrap>
+                  <Review
+                    onClick={e => onClickReviewLink(e)}
+                    href="#review-list">
+                    {product.Reviews.length}건
+                  </Review>
+                </ReviewWrap>
+                <OptionWrap>
+                  <Row>
+                    <Type>사이즈</Type>
+                    <SelectWrap>
+                      {product.Sizes.map((size) => (
+                        <SelectItm
+                          className={
+                            buyInfo.size === size.option ? 'active' : ''
+                          }
+                          onClick={() => onClickSize(size.option)}
+                          key={size.option}
+                        >
+                          {size.option}
+                        </SelectItm>
+                      ))}
+                    </SelectWrap>
+                  </Row>
+                  <Row>
+                    <Type>배송방법</Type>
+                    <SelectWrap>
+                      <SelectItm className={`${buyInfo.size ? 'active' : ''}`}>
                         택배
-                    </SelectItm>
-                  </SelectWrap>
-                </Row>
-              </OptionWrap>
-              <BuyWrap>
-                <BuyTxt>{buyInfo.size}</BuyTxt>
-                <PriceArea>
-                  <Quantity>
-                    <MinusBtn
-                      className={buyInfo.quantity === 1 ? 'disabled' : ''}
-                      onClick={() => onClickQuant('dec')}
-                    />
-                    {buyInfo.quantity}
-                    <PlusBtn onClick={() => onClickQuant('inc')} />
-                  </Quantity>
-                  <PriceWrap>
-                    <Price>
-                      {(buyInfo.totalPrice || product.price).toLocaleString('ko-KR')}
-                    </Price>
-                    <PriceUnit>원</PriceUnit>
-                  </PriceWrap>
-                </PriceArea>
-              </BuyWrap>
-              <DecisionWrap>
-                <BasketBtn onClick={onClickAddCart}>장바구니</BasketBtn>
-                <BuyBtn>바로구매</BuyBtn>
-              </DecisionWrap>
-            </InfoArea>
-          </Content>
+                      </SelectItm>
+                    </SelectWrap>
+                  </Row>
+                </OptionWrap>
+                <BuyWrap>
+                  <BuyTxt>{buyInfo.size}</BuyTxt>
+                  <PriceArea>
+                    <Quantity>
+                      <MinusBtn
+                        className={buyInfo.quantity === 1 ? 'disabled' : ''}
+                        onClick={() => onClickQuant('dec')}
+                      />
+                      {buyInfo.quantity}
+                      <PlusBtn onClick={() => onClickQuant('inc')} />
+                    </Quantity>
+                    <PriceWrap>
+                      <Price>
+                        {(buyInfo.totalPrice || product.price).toLocaleString('ko-KR')}
+                      </Price>
+                      <PriceUnit>원</PriceUnit>
+                    </PriceWrap>
+                  </PriceArea>
+                </BuyWrap>
+                <DecisionWrap>
+                  <BasketBtn onClick={onClickAddCart}>장바구니</BasketBtn>
+                  <BuyBtn>바로구매</BuyBtn>
+                </DecisionWrap>
+              </InfoArea>
+            </ItemInfoWrap>
+
+            <ReviewList
+              list={reviewList}
+            />
+          </>
         )}
       </Wrapper>
     </Container>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const id = context.params?.id!;
-
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(['getSingleProduct', id], () =>
-    apis.Product.getSingleProduct(id),
-  );
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
 };
 export default ProductPage;

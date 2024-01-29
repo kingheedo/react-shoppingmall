@@ -18,15 +18,10 @@ router.get('/', async (req: Request<any,any,any,{id : string}>, res, next) =>{
         order: [['id', 'ASC']],
         include: [{
             model: Image,
-        },{
-            model: Review,
-            include:[{
-                model: User,
-                attributes: ['id','email']
-            }]
-        },{
+        },
+        {
             model: User,
-            through: { // 다대다 table의 정보 가져오지 않기, 좋아요 누른 사람의 아이디만 가져오기 ex {id: 1}
+            through: { // 다대다 table의 모든정보 가져오지 않기(좋아요 누른 사람의 아이디만 가져오기 ex {id: 1})
                 attributes: []
             },
             attributes: ['id'],

@@ -10,6 +10,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Autoplay, Navigation } from 'swiper/modules';
 
+const BgSlide = styled.div`
+    min-width: 1280px;
+`;
+
 const ListContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -86,7 +90,7 @@ const Home: FC = () => {
 
   return (
     <>
-      <section className="bg-slide">
+      <BgSlide>
         <Swiper
           spaceBetween={30}
           centeredSlides={true}
@@ -109,7 +113,7 @@ const Home: FC = () => {
             )
           )}
         </Swiper>
-      </section>
+      </BgSlide>
       <ProductsSection>
         <ListContainer ref={loadRef}>
           {list?.map((product) => (

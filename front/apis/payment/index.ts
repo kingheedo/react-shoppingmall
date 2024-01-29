@@ -14,7 +14,7 @@ const getPayments = async(orderId:GetPaymentsReq) => {
 
 /** 모든 결재내역 */
 const getAllPayments = async(data: GetAllPaymentsReq) => {
-  return await request.get<GetAllPaymentsRes>(`/payment/?startDate=${data.startDate}&endDate=${data.endDate}`).then(res => res.data);
+  return await request.get<GetAllPaymentsRes>(`/payment/?startDate=${data.startDate}&endDate=${data.endDate}&page=${data.page}`).then(res => res.data);
 };
 
 /** 토스 결재내역조회

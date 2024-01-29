@@ -5,6 +5,25 @@ export enum SizeOption {
   XL = 'XL',
 }
 
+export type ReviewType = {
+    id: number;
+    content: string;
+    rate: number;
+    createdAt: string;
+    updatedAt: string;
+    UserId: number;
+    ProductId: number;
+    User: {
+        email: string;
+        HistoryCart: {
+            size: string;
+            quantity: number;
+        }[];
+    },
+    ReviewImages: {
+        src: string;
+    }[]
+}
 export type GetProductsReq = number;
 export type GetProductsRes = Omit<GetSingleProductRes,'Likers' & 'Sizes'>
 
@@ -32,4 +51,15 @@ export type GetSingleProductRes = {
         src: string;
         ProductId: number;
     }[];
+    Reviews: ReviewType[];
 }
+
+export type PostReviewReq = {
+  content: string;
+  rate: number;
+  productId: number;
+  paymentId: number;
+  image: string[];
+}
+
+export type PostReviewRes = string;

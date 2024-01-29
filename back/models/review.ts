@@ -1,16 +1,21 @@
 
-import { CreateOptions, DataTypes, Model } from 'sequelize'
-import {dbTtype} from '.'
+import { DataTypes, HasManyAddAssociationMixin, Model } from 'sequelize'
+import {ReviewImage, dbTtype} from '.'
 import {sequelize} from './sequelize'
  class Review extends Model{
     public readonly id! : number;
     public readonly content! : string;
     public readonly rate! : number;
-    public readonly reviewUnique! : string;
     public readonly createdAt! : Date;
     public readonly updatedAt! : Date;
+    public readonly addReviewImages!: HasManyAddAssociationMixin<ReviewImage | ReviewImage[], number>;
     }
     Review.init({
+            id: {
+                type: DataTypes.INTEGER,
+                primaryKey: true,
+                autoIncrement: true
+            },
             content : {
                 type : DataTypes.STRING(50),
                 allowNull : false,
@@ -18,10 +23,6 @@ import {sequelize} from './sequelize'
             rate: {
                 type : DataTypes.INTEGER,
                 allowNull: false,
-            },
-            reviewUnique : { 
-                type: DataTypes.STRING(200), 
-                unique: true 
             }
         },{
             sequelize,   
@@ -32,7 +33,8 @@ import {sequelize} from './sequelize'
         })
     
      export const associate =(db:dbTtype) =>{
-        db.Review.belongsTo(db.User)
-        db.Review.belongsTo(db.Product)
+         db.Review.hasMany(db.ReviewImage);
+         db.Review.belongsTo(db.User);
+         db.Review.belongsTo(db.Product);
     }
     export default Review

@@ -8,19 +8,19 @@ class Image extends Model{
     public readonly createdAt! : Date;
     public readonly updatedAt! : Date;
 }
-    Image.init({
-            src: {
-                type : DataTypes.STRING(200),
-                allowNull : false,
-            },
-        },{
-            modelName: 'Image',
-            tableName: 'images',
-            charset: 'utf8',
-            collate: 'utf8_general_ci', 
-            sequelize,   
-        })
-    export const associate = (db:dbTtype) =>{
-        db.Image.belongsTo(db.Product);
-    }
+Image.init({
+    src: {
+        type : DataTypes.STRING(200),
+        allowNull : false,
+    },
+},{
+    modelName: 'Image',
+    tableName: 'images',
+    charset: 'utf8',
+    collate: 'utf8_general_ci', 
+    sequelize,   
+})
+export const associate = (db:dbTtype) =>{
+    db.Image.belongsTo(db.Product);
+}
 export default Image;

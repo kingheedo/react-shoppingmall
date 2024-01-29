@@ -44,7 +44,7 @@ const Content = styled.div`
     font-weight: 700;
     color: #333;
 `;
-const ButtonWrap = styled.div`
+const ButtonGroup = styled.div`
     display: flex;
 `;
 const Button = styled.button`
@@ -55,7 +55,6 @@ const Button = styled.button`
     line-height: 48px;
     font-weight: 400;
     font-size: 15px;
-    box-sizing: border-box;
     border-radius: 0;
 
      &:nth-of-type(1){
@@ -91,6 +90,7 @@ const ConfirmModal = ({
   onOk,
   onClose
 }: IConfirmModalProps) => {
+  
   const content: Content = {
     [ConfirmType.ADD_CART]: {
       txt: '장바구니에 상품이 담겼습니다.<br/>장바구니로 이동하시겠습니까?',
@@ -120,16 +120,16 @@ const ConfirmModal = ({
       <ContentArea onClick={e => e.stopPropagation()}>
         <CloseBtn onClick={onClose}/>
         <Content dangerouslySetInnerHTML={{ __html: content[type].txt }}/>
-        <ButtonWrap>
+        <ButtonGroup>
           <Button onClick={onOk}>
-                    확인
+            확인
           </Button>
           {!content[type].hideCancel && (
             <Button onClick={onClose}>
               취소
             </Button>)
           }
-        </ButtonWrap>
+        </ButtonGroup>
       </ContentArea>
     </Bg>
   );

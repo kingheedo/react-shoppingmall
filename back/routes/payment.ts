@@ -30,7 +30,8 @@ router.post('/', isLoggedIn, async(req, res, next) => {
           rcPostBase,
           rcPostDetail,
           HistoryCartId : cartId,
-          UserId: req.user!.id
+          UserId: req.user!.id,
+          isReviewed: false
         })
       )
       await Promise.all(addPayments);
@@ -72,15 +73,18 @@ router.get('/:orderId', isLoggedIn, async (req, res ,next) => {
 
 /** 모든 결제 내역 조회*/
 router.get('/', isLoggedIn,async (req, res, next) => {
-  const startDate = new Date(req.query.startDate as string).setHours(0,0,0,0);
-  const endDate = new Date(req.query.endDate as string);
-  const payments = await Payment.findAll({
+  try{
+    const startDate = new Date(req.query.startDate as string).setHours(0,0,0,0);
+    const endDate = new Date(req.query.endDate as string);
+    const payments = await Payment.findAll({
     where: {
       UserId: req.user!.id,
       createdAt: {
         [Op.between]: [new Date(startDate).toISOString(), new Date(endDate).toISOString()]
       }
     },
+    limit: 10,
+    offset: parseInt((req.query.page as string), 10) * 10,
     order: [
       ['createdAt', 'DESC']
     ],
@@ -106,9 +110,12 @@ router.get('/', isLoggedIn,async (req, res, next) => {
       }]
     }]
   })
-  console.log('payments',payments);
-  
   return res.status(200).json(payments);
+  }
+catch(error){
+  console.error(error);
+  next(error);
+}
 })
 
 

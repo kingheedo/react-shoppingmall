@@ -5,7 +5,7 @@ import * as path from 'path'
 import * as fs from 'fs';
 import * as AWS from 'aws-sdk'
 import * as multerS3 from 'multer-s3'
-import { Product, Review, User, Image, Size, HistoryCart } from '../models';
+import { Product, Review, User, Image, Size, HistoryCart, Payment, ReviewImage } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
 
@@ -50,9 +50,10 @@ const upload = multer({
 router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
     console.log('req.files',req.files);
     if(Array.isArray(req.files)){
-    res.json((req.files as Express.Multer.File[]).map((v) => v.filename))
+     return res.json((req.files as Express.Multer.File[]).map((v) => v.filename))
     }
 })
+
 router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
         const product = await Product.create({
@@ -67,9 +68,9 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             const promises:Promise<Image>[] = req.body.image.map((image:string)=> Image.create({
                     src: image
                 }));
-                const images = await Promise.all(promises)
-                    
-                await product.addImages(images)
+            const images = await Promise.all(promises)
+                
+            await product.addImages(images)
             
         }
         if(req.body.productSize){
@@ -98,7 +99,7 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             attributes: ['option'],
             },]
         })
-        res.status(202).json(fullProduct);
+         return res.status(202).json(fullProduct);
     }catch(error){
         console.error(error);
         next(error);
@@ -115,77 +116,140 @@ router.get('/name/:spelling', async(req, res, next) => {
             },
             attributes: ['id','productName']
         })
-        res.status(202).json(SearchProducts)
+        return res.status(202).json(SearchProducts)
     }catch(error){
         console.error(error);
         next(error);
     }
 })
 
-router.get('/:postId', async(req, res, next ) => {
+router.get('/:productId', async(req, res, next ) => {
     try{
         let where= {};
-    if(parseInt(req.params.postId,10)){
+    if(parseInt(req.params.productId,10)){
         where ={
-            id: parseInt(req.params.postId,10)
+            id: parseInt(req.params.productId,10)
         }
     }
+
+    let result = [];
         const loadProduct = await Product.findOne({
         where,
         include: [{
             model: Image
-        },{
-            model : Review,
-            include: [{
-                model : User,
-                attributes : ['id','email'],
-                include: [{
-                    model : HistoryCart,
-                    attributes: [
-                        'size','quantity'
-                    ],
-                }]
-            }]
-        },{
+        },
+        // {
+        //     model : Review,
+        //     include: [
+        //     {
+        //     model : User,
+        //     attributes : ['email'],
+        //     include: [{
+        //         model : HistoryCart,
+        //         where: {
+        //             ProductId: req.params.productId
+        //         },
+        //         through: { // 다대다 table의 모든정보 가져오지 않기(size랑 quantity만)
+        //             attributes: []
+                    
+        //         },
+
+        //         attributes: [
+        //             'size','quantity'
+        //         ],
+        //     }]
+        //     },
+        //     {
+        //         model: ReviewImage,
+        //         attributes: ['src']
+        //     }    
+        // ]},
+        {
             model: User,
             attributes: ['id','email'],
             as : 'Likers'
         },{
             model: Size,
             attributes: ['option']
+        }],
+    });
+
+    
+    const reviews = await Review.findAll({
+        where: {
+            ProductId: parseInt(req.params.productId,10)
+        },
+        include: [{
+            model: User,
+            attributes: ['email'],
+            include: [{
+                model: HistoryCart,
+                attributes: ['quantity','totalPrice','size'],
+                where: {
+                    ProductId: parseInt(req.params.productId,10)
+                },
+                through:{
+                   attributes: [
+                    'isReviewed'
+                   ],
+                   where: {
+                    isReviewed: true
+                   }
+                }
+            }],
+        },{
+            model: ReviewImage,
+            attributes: ['src']
         }]
     })
-    res.status(202).json(loadProduct)
+
+
+    return res.status(202).json({...loadProduct?.get(),Reviews: reviews});
     }catch(error){
         console.error(error);
         next(error)
     }
 })
-router.post('/:productId/review',isLoggedIn, async(req, res, next) => {
-    try{
 
-        const exReview  = await Review.findOne({
-            where : {[Op.and] : [{ProductId: parseInt(req.params.productId,10)}, {UserId : req.user!.id},{reviewUnique : req.body.reviewUnique}]},
-        })
-            if(exReview){
-                return res.status(404).json('이미 작성하신 리뷰가 존재합니다.')
+router.post('/review/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
+    console.log('req.files', req.files);
+    if(Array.isArray(req.files)){
+        return res.json((req.files as Express.Multer.File[]).map(v => v.filename))
+    }
+})
+
+router.post('/:productId/review', isLoggedIn, async(req, res,next) => {
+    try{
+        const review = await Review.create({
+            content: req.body.content,
+            rate: req.body.rate,
+            ProductId: req.params.productId,
+            UserId: req.user?.id
+        });
+
+        if(review && Array.isArray(req.body.image) && req.body.image.length > 0){
+            const promise: Promise<ReviewImage>[] = req.body.image.map((src: string) => ReviewImage.create({
+                src: src
+            }))
+            
+            const reviewImages = await Promise.all(promise);
+
+            await review.addReviewImages(reviewImages);
+        }
+        const payment = await Payment.findOne({
+            where: {
+                id: req.body.paymentId
             }
-        await Review.create({
-            content : req.body.content,
-            ProductId : parseInt(req.params.productId, 10),
-            UserId : req.user!.id,
-            rate : req.body.rate,
-            reviewUnique : req.body.reviewUnique,
+        });
+
+        await payment?.update({
+            isReviewed: true
         })
-//  사진. 
-        const review = await Review.findOne({
-            where : {
-                [Op.and] : [{reviewUnique : req.body.reviewUnique},{ProductId: parseInt(req.params.productId,10)}, {UserId : req.user!.id}]
-            },
-            attributes : ['reviewUnique' , 'id']
-        })
-        res.status(201).json({Review : review,})
-    }catch(error){
+        
+
+        return res.status(202).send('리뷰 작성 완료');
+    }
+    catch(error){
         console.error(error);
         next(error);
     }

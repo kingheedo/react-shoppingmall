@@ -14,6 +14,7 @@ type PaymentInfo = {
     rcPostNum: string;
     rcPostBase: string;
     rcPostDetail: string;
+    isReviewed: 0 | 1; //0이면 작성하지 않음, 1이면 작성
     createdAt: string;
 }
 export type HistoryCart = {
@@ -44,6 +45,7 @@ export type GetPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: GetC
 export type GetAllPaymentsReq = {
   startDate: Date;
   endDate: Date;
+  page: number;
 }
 export type GetAllPaymentsRes = (PaymentInfo & { id: number } & { HistoryCart: HistoryCart })[];
 

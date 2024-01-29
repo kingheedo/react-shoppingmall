@@ -7,10 +7,15 @@ class Payment extends Model{
     public readonly orderId!: string;
     public readonly paymentKey!: string;
     public readonly paymentType!: 'NORMAL' | 'BRANDPAY' | 'KEYIN';
-    public readonly address!: string;
+    public readonly rcName!: string;
+    public readonly rcPhone!: string;
+    public readonly rcPostNum!: string;
+    public readonly rcPostBase!: string;
+    public readonly rcPostDetail!: string;
+    public readonly isReviewed!: boolean;
     public readonly createdAt! : Date;
     public readonly updatedAt! : Date;
-}
+}   
     Payment.init({
             id: {
                 type: DataTypes.INTEGER,
@@ -49,6 +54,10 @@ class Payment extends Model{
             rcPostDetail: {
                 type: DataTypes.STRING(100),
                 allowNull: true
+            },
+            isReviewed: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
             }
         },{
             modelName: 'Payment',
@@ -60,6 +69,5 @@ class Payment extends Model{
     export const associate = (db:dbTtype) =>{
         db.Payment.belongsTo(db.HistoryCart);
         db.Payment.belongsTo(db.User);
-
     }
     export default Payment

@@ -111,6 +111,8 @@ const HeartTxt = styled.em`
 interface IProductProps {
   product: Omit<GetSingleProductRes, 'Sizes'>;
 }
+
+//메인페이지 상품
 const Product = ({ product }:IProductProps) => {
   const [show, setShow] = useState(false);
   const queryClient = useQueryClient();

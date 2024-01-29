@@ -8,13 +8,16 @@ import apis from '../../apis';
 import { useSetRecoilState } from 'recoil';
 import { LoginState } from '../../store';
 
+const Header = styled.header`
+  min-width: 1280px;
+`;
+
 const TopArea = styled.div`
   background: #000;
 `;
 
 const TopAreaInner = styled.div`
    max-width: 1440px;
-  min-width: 1280px;
   margin: 0 auto;
   height: 40px;
   padding: 0 var(--gap);
@@ -119,8 +122,8 @@ const Layout = ({ children }: PropsWithChildren) => {
   );
 
   return (
-    <>
-      <header>
+    <React.Fragment>
+      <Header>
         <TopArea>
           <TopAreaInner>
             <div className="util">
@@ -146,9 +149,9 @@ const Layout = ({ children }: PropsWithChildren) => {
             <HomeLogo href="/"/>
           </NavBar>
         </GnbArea>
-      </header>
+      </Header>
       {children}
-    </>
+    </React.Fragment>
   );
 };
 

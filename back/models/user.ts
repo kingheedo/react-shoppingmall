@@ -58,10 +58,10 @@ class User extends Model{
     export const associate = (db:dbTtype) => {
         db.User.hasMany(db.Address);
         db.User.hasMany(db.Product);
-        db.User.hasMany(db.Review);
         db.User.belongsToMany(db.Product, {through: 'Like', as :'Liked'});
         db.User.belongsToMany(db.Product, {through: {model: db.Cart,unique: false }});
         db.User.belongsToMany(db.Product, {through: {model: db.HistoryCart,unique: false }});
+        db.User.belongsToMany(db.Product, {through: {model: db.Review, unique: true}})
         db.User.belongsToMany(db.HistoryCart,{through: {model: db.Payment,unique : false}});
     }
     export default User;
