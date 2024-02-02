@@ -1,5 +1,5 @@
 import request from '../request';
-import { GetProductsReq, GetProductsRes, GetSingleProductReq, GetSingleProductRes, PostAddLikeReq, PostAddLikeRes, PostReviewReq, PostReviewRes } from './schema';
+import { GetKeywordProductsReq, GetKeywordProductsRes, GetProductsReq, GetProductsRes, GetSingleProductReq, GetSingleProductRes, PostAddLikeReq, PostAddLikeRes, PostReviewReq, PostReviewRes } from './schema';
 
 /** 좋아요 클릭 */
 const addLike = async(productId:PostAddLikeReq) => await request.post<PostAddLikeRes>(`/product/like/${productId}`).then(res => res.data);
@@ -15,6 +15,8 @@ const getReviews = async() => await request.get('product/lists').then(res => res
 const postReview = async(data: PostReviewReq) => await request.post<PostReviewRes>(`/product/${data.productId}/review`,data).then(res => res.data);
 /** 리뷰 이미지 등록 */
 const postReviewImage = (data: FormData) => request.post<string>('/product/review/images', data).then(res => res.data);
+/** 키워드 검색 */
+const getKeywordProducts = (data: GetKeywordProductsReq) => request.get<GetKeywordProductsRes>(`/product/search?keyword=${encodeURIComponent(data)}`).then(res => res.data);
 export default {
   getProducts,
   getSingleProduct,
@@ -22,5 +24,6 @@ export default {
   unLike,
   getReviews,
   postReview,
-  postReviewImage
+  postReviewImage,
+  getKeywordProducts
 };

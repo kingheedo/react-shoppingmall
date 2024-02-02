@@ -35,7 +35,7 @@ const ImageHover = styled.img`
   transition: opacity 0.2s ease-out;
   opacity: 0;
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 0;
   &:hover {
     opacity: 1;
@@ -44,6 +44,13 @@ const ImageHover = styled.img`
 
 const ProductImgWrapper = styled.div`
   position: relative;
+`;
+
+const Rank = styled.span`
+    font-size: var(--fontD);
+    line-height: var(--fontDL);
+    color: var(--gray900);
+    font-weight: 700;
 `;
 
 const ProductInfoWrapper = styled.div`
@@ -109,11 +116,12 @@ const HeartTxt = styled.em`
 `;
 
 interface IProductProps {
+  idx: number;
   product: Omit<GetSingleProductRes, 'Sizes'>;
 }
 
 //메인페이지 상품
-const Product = ({ product }:IProductProps) => {
+const Product = ({ idx,product }:IProductProps) => {
   const [show, setShow] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -230,7 +238,9 @@ const Product = ({ product }:IProductProps) => {
       onMouseLeave={onMouseHover}
     >
       <ProductImgWrapper>
-        
+        <Rank>
+          {idx}
+        </Rank>
         <Image alt={`${product?.Images[0]}`} src={`http://localhost:3065/${product?.Images[0]?.src}`}/>
         <ImageHover alt={`${product?.Images[1]}`} src={`http://localhost:3065/${product?.Images[1]?.src}`}/>
         <ProductLikeBtn style={{ background: product.Likers.find(value => value.id === me?.info.id) ? `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center` }} onClick={onClickLike}/>

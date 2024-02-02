@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useCallback } from 'react';
+import React, { PropsWithChildren, useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import styled from 'styled-components';
 import Router from 'next/router';
@@ -7,6 +7,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../apis';
 import { useSetRecoilState } from 'recoil';
 import { LoginState } from '../../store';
+
+interface ISearchActiveProps {
+  isActive: boolean;
+}
 
 const Header = styled.header`
   min-width: 1280px;
@@ -81,6 +85,7 @@ const GnbArea = styled.div`
 `;
 
 const NavBar = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   max-width: 1440px;
@@ -97,11 +102,100 @@ const HomeLogo = styled.a`
   height: 40px;
   background: url(/logo.webp) no-repeat;
   object-fit: cover;
+  margin-right: auto;
+`;
+
+const SearchLayer = styled.div<ISearchActiveProps>`
+  position: absolute;
+  top: 59px;
+  right: 0;
+  z-index: 2;
+  outline: 1px solid #000;
+  width: 338px;
+  height: 404px;
+  background: #fff;
+  padding: 24px 10px 24px 20px;
+  opacity: ${(props) => props.isActive ? 1 : 0};
+  transition: ${(props) => props.isActive ? 'all 0.3s 0.3s;' : 'all 0.3s'}; 
+
+  ul {
+    li{
+      padding: 8px 0 7px;
+      font-size: var(--fontD);
+      line-height: var(--fontDL);
+      color: var(--gray600);
+      :hover{
+        text-decoration: underline;
+      }
+
+      a{
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+`;
+
+const SearchInputWrap = styled.div`
+  position: relative;
+  background: #fff;
+  height: 46px;
+  
+  input[type='search'] {
+    width: calc(100% - 54px);
+    height: 100%;
+    border: 0;
+    outline: none;
+    font-size: var(--fontD);
+    line-height: var(--fontDL);
+    color: var(--gray900);
+
+    :focus{
+      border: 0 !important;
+    }
+
+    ::-webkit-search-cancel-button{
+      -webkit-appearance: none;
+      width: 1em;
+      height: 1em;
+      border-radius: 50em;
+      background: url(https://pro.fontawesome.com/releases/v5.10.0/svgs/solid/times-circle.svg) no-repeat 50% 50%;
+    }
+  }
+`;
+
+const SearchArea = styled.div<ISearchActiveProps>`
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  ${SearchInputWrap}{
+    transition: all 0.3s;
+    width: ${(props: ISearchActiveProps) => props.isActive ? '338px' : '28px'};
+    outline: ${(props: ISearchActiveProps) => props.isActive ? '1px solid #000' : '1px solid #fff'};
+    padding-left: ${(props: ISearchActiveProps) => props.isActive ? '20px' : '0'};
+    input {
+      opacity: ${(props: ISearchActiveProps) => props.isActive ? 1 : 0};
+    }
+  }
+`;
+
+const SearchBtn = styled.button`
+  opacitiy: 1;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  background: url(/search-28.svg);
 `;
 
 const Layout = ({ children }: PropsWithChildren) => {
   const me = getUser();
   const setLoginState = useSetRecoilState(LoginState);
+  const [searchActive, setSearchActive] = useState(false);
+  const [keyword, setKeyword] = useState<string>('');
   const queryClient = useQueryClient();
   const { data: cartList } = useQuery(['getCartList'], () => apis.Cart.getCartList(), {
     enabled: !!me?.info.id 
@@ -112,7 +206,15 @@ const Layout = ({ children }: PropsWithChildren) => {
       setLoginState(null);
     }
   });
-  
+
+  const { data: searchedProducts } = useQuery({
+    queryKey: ['getSearchedProducts', keyword],
+    queryFn: () => apis.Product.getKeywordProducts(keyword),
+    enabled: !!keyword
+  });
+
+  console.log('searchedProducts',searchedProducts);
+
   const onClickLogOut = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     logout();
@@ -120,6 +222,32 @@ const Layout = ({ children }: PropsWithChildren) => {
   },
   [],
   );
+
+  /** 검색 value 핸들러 */
+  const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('e',e.target.value);
+    setKeyword(e.target.value);
+  };
+
+  /** 검색창 활성화 유무 핸들러 */
+  const handleSearchActive = (e: MouseEvent) => {
+    const el = e.target as HTMLElement;
+    if (el.role === 'search-btn') {
+      return;
+    }
+    
+    if (el.role === 'search-input' || el.role === 'search-layer') {
+      return;      
+    }
+    setSearchActive(false);
+    setKeyword('');
+  };
+  
+  useEffect(() => {
+    document.body.addEventListener('click', handleSearchActive);
+
+    return () => document.body.removeEventListener('click', handleSearchActive);
+  }, [searchActive]);
 
   return (
     <React.Fragment>
@@ -147,6 +275,30 @@ const Layout = ({ children }: PropsWithChildren) => {
         <GnbArea>
           <NavBar>
             <HomeLogo href="/"/>
+            <SearchArea isActive ={searchActive ? true : false}>
+              <SearchInputWrap>
+                <input 
+                  role="search-input" 
+                  type={'search'} 
+                  placeholder="검색어를 입력하세요" 
+                  onChange={onChangeSearch} 
+                  value={keyword}/>
+                <SearchBtn onClick={() => {
+                  searchActive ? setSearchActive(false) : setSearchActive(true);
+                }} role="search-btn"/>
+              </SearchInputWrap>
+            </SearchArea>
+            <SearchLayer role="search-layer" isActive ={searchActive ? true : false}>
+              <ul>
+                {searchedProducts?.map(product => (
+                  <li key={product.id}>
+                    <Link href={`/product/${product.id}`}>
+                      {product.productName}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </SearchLayer>
           </NavBar>
         </GnbArea>
       </Header>

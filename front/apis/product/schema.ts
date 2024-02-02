@@ -63,3 +63,9 @@ export type PostReviewReq = {
 }
 
 export type PostReviewRes = string;
+
+export type GetKeywordProductsReq = string;
+export type GetKeywordProductsRes = {
+    id: number;
+    productName: string;
+}[];

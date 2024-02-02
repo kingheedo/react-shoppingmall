@@ -116,9 +116,10 @@ const Home: FC = () => {
       </BgSlide>
       <ProductsSection>
         <ListContainer ref={loadRef}>
-          {list?.map((product) => (
+          {list?.map((product,idx) => (
             <Product 
               key={product.id} 
+              idx={idx + 1}
               product={product} />
           ))}
         </ListContainer>
