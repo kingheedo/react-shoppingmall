@@ -1,4 +1,4 @@
-import { BelongsToManyGetAssociationsMixin, BelongsToManyRemoveAssociationMixin, DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,HasManyGetAssociationsMixin,HasManyRemoveAssociationMixin,Model } from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, BelongsToManyRemoveAssociationMixin, DATEONLY, DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,HasManyGetAssociationsMixin,HasManyRemoveAssociationMixin,Model } from 'sequelize';
 import { dbTtype, Image, Review, Size, User } from '.';
 import { sequelize } from './sequelize';
 
@@ -29,6 +29,10 @@ class Product extends Model{
                 type : DataTypes.INTEGER,
                 allowNull : false,
             },
+            sex: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            }
 
         },{
             sequelize,
