@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import { PaymentInfo } from '..';
-import { getUser } from '../../../context/LoginProvider';
+import { getUser } from '../../../context/AuthProvider';
 import { useRouter } from 'next/router';
 import { useMutation } from '@tanstack/react-query';
 import { PostPaymentReq } from '../../../apis/payment/schema';

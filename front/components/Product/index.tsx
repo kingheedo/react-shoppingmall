@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from 'antd';
 import { GetSingleProductRes } from '../../apis/product/schema';
-import { getUser } from '../../context/LoginProvider';
+import { getUser } from '../../context/AuthProvider';
 import apis from '../../apis';
 
 const CardItem = styled.li`

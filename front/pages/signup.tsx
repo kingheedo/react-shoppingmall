@@ -6,6 +6,9 @@ import Router from 'next/router';
 import styled from 'styled-components';
 
 import useInput from '../hooks/useInput';
+import { useMutation } from '@tanstack/react-query';
+import apis from '../apis';
+import { PostSignUpRes } from '../apis/user/schema';
 
 const Container = styled.div`
   width: 100vw;
@@ -35,6 +38,11 @@ const Signup = () => {
   const [checkpassword, setCheckPassword] = useState(false);
   const [check, setCheck] = useState(false);
   const [checkerror, setCheckError] = useState(false);
+
+  const { mutate: postSignUp } = useMutation({
+    mutationFn: () => apis.User.signUp({ email, name, password }),
+    onSuccess: (data) => alert(data)
+  });
   // useEffect(() => {
   //   if (signUpDone) {
   //     dispatch(
@@ -76,6 +84,7 @@ const Signup = () => {
       if (!(email && password && name && confirmpassword && check)) {
         return alert('빈칸이 존재합니다.');
       }
+      postSignUp();
       // dispatch(signUp({ email, name, password }));
     },
     [email, password, name, confirmpassword, check, checkpassword],
@@ -157,6 +166,9 @@ const Signup = () => {
             </Form.Item>
 
             <Form.Item>
+              <Button onClick={(e) => onSubmitForm} type="primary" htmlType="submit">
+                    CREATE
+              </Button>
               {/* {signUpLoading ? (
                 <Button type="primary" loading>
                   Loading

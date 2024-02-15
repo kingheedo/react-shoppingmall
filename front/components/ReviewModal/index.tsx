@@ -254,7 +254,7 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
         </ImageSelect>
         {tempImage.length > 0 && (
           <ImageWrap>
-            <TempImage src={`${backUrl}/${tempImage}`} alt={tempImage[0]} />
+            <TempImage src={`${backUrl}/${tempImage[0]}`} alt={tempImage[0]} />
             <button className="delete-req-btn" onClick={onClickDeleteRq}/>
           </ImageWrap>
         )}

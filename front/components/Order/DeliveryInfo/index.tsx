@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import PostBtn from './PostBtn';
 import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
-import { getUser } from '../../../context/LoginProvider';
+import { getUser } from '../../../context/AuthProvider';
 import { Address } from '../../../apis/user/schema';
 import { DeliveryType } from '..';
 

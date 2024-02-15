@@ -18,7 +18,7 @@ import { SizeOption } from '../../../apis/product/schema';
 import { backUrl } from '../../../config/backUrl';
 import Link from 'next/link';
 import { useModal } from '../../../context/ModalProvider';
-import { getUser } from '../../../context/LoginProvider';
+import { getUser } from '../../../context/AuthProvider';
 import ReviewList from '../../../components/ReviewList';
 
 const Container = styled.div`

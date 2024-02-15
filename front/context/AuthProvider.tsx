@@ -7,9 +7,9 @@ import { useRecoilValue } from 'recoil';
 import { LoginState } from '../store';
 
 const noAccessPathList = ['/cart', '/mypage', '/order'];
-const LoginContext = createContext<GetUserRes | null>(null);
+const AuthContext = createContext<GetUserRes | null>(null);
 
-const LoginProvider = ({ children }: PropsWithChildren) => {
+const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const getLoginState = useRecoilValue(LoginState);
   const { data: getUserData } = useQuery(
@@ -31,12 +31,12 @@ const LoginProvider = ({ children }: PropsWithChildren) => {
   console.log('userInfo',userInfo);
 
   return (
-    <LoginContext.Provider value={userInfo}>
+    <AuthContext.Provider value={userInfo}>
       {children}
-    </LoginContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-export const getUser = () => useContext(LoginContext);
+export const getUser = () => useContext(AuthContext);
 
-export default LoginProvider;
+export default AuthProvider;

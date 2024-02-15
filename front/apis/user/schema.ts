@@ -9,8 +9,8 @@ export type Address = {
 
  type UserInfo = {
     info: {
-        email: string;
         id: number;
+        email: string;
         name: string;
         addressId?: number;
         provider: 'local' | 'kakao' | 'naver';
@@ -51,3 +51,11 @@ export type PostLoginRes = {
     naverId?: string;
     kakaoId?: string;
 };
+
+export type PostSignUpReq = {
+    email: string;
+    password: string;
+    name: string;
+}
+
+export type PostSignUpRes = string;

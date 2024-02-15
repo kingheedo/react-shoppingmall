@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useCallback, useEffect, useState } from 'reac
 import Link from 'next/link';
 import styled from 'styled-components';
 import Router from 'next/router';
-import { getUser } from '../../context/LoginProvider';
+import { getUser } from '../../context/AuthProvider';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../apis';
 import { useSetRecoilState } from 'recoil';

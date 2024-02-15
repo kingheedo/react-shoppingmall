@@ -5,7 +5,7 @@ import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider,Hydrate } from '@tanstack/react-query';
 import Layout from '../components/layout';
 import '../styles/global.css';
-import LoginProvider from '../context/LoginProvider';
+import AuthProvider from '../context/AuthProvider';
 import ModalProvider from '../context/ModalProvider';
 import { RecoilRoot } from 'recoil';
 
@@ -27,11 +27,11 @@ const ShoppingMall = ({ Component, pageProps, ...appProps }: AppProps) => {
             <title>shoppingmall</title>
           </Head>
           <ModalProvider>
-            <LoginProvider>
+            <AuthProvider>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </LoginProvider>
+            </AuthProvider>
           </ModalProvider>
         </Hydrate>
       </QueryClientProvider>
