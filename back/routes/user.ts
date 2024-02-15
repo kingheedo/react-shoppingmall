@@ -184,7 +184,8 @@ router.get('/', async(req, res, next) =>{
 });
 
 router.post('/login',isNotLoggedIn, (req, res, next) =>{
-    passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{
+   try{
+     passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{
     if(err){
         console.error(err);
         return next(err)
@@ -206,6 +207,11 @@ router.post('/login',isNotLoggedIn, (req, res, next) =>{
         return res.status(201).json(withOutPasswordUser);
     })
     })(req, res, next)
+   }
+   catch(error){
+    next(error);
+    console.error(error);
+   }
 });
 
 router.post('/', isNotLoggedIn,  async(req, res, next) => {

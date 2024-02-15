@@ -6,6 +6,7 @@ import productRouter from './routes/product'
 import productsRouter from './routes/products'
 import userRouter from './routes/user';
 import paymentRouter from './routes/payment';
+import adminRouter from './routes/admin';
 import * as cors from 'cors'
 import passportConfig from './passport'
 import * as session from "express-session"
@@ -41,7 +42,7 @@ if(prod){
 }else{
     app.use(morgan('dev'));
     app.use(cors({
-        origin: 'http://localhost:3060',
+        origin: ['http://localhost:3060', 'http://localhost:3070'],
         credentials: true,
     }))
     }
@@ -72,6 +73,7 @@ app.use('/product',productRouter);
 app.use('/products',productsRouter);
 app.use('/cart',cartRouter);
 app.use('/payment', paymentRouter);
+app.use('/admin', adminRouter);
 
 app.get('/', (req, res, next) => {
     res.send('백엔드 정상 동작')

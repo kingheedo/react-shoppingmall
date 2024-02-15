@@ -54,18 +54,19 @@ router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) 
     }
 })
 
-router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
+router.post('/', isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
         const product = await Product.create({
             productName : req.body.productName,
-            price : req.body.productPrice,
-            stock : req.body.productStock,
+            price : req.body.price,
+            stock : req.body.stock,
+            sex: req.body.sex,
             UserId : req.user!.id,
         })
 
         console.log('req.body',req.body)
-        if(req.body.image){
-            const promises:Promise<Image>[] = req.body.image.map((image:string)=> Image.create({
+        if(req.body.images){
+            const promises:Promise<Image>[] = req.body.images.map((image:string)=> Image.create({
                     src: image
                 }));
             const images = await Promise.all(promises)
@@ -73,9 +74,9 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             await product.addImages(images)
             
         }
-        if(req.body.productSize){
-            if(Array.isArray(req.body.productSize)){
-                const promises:Promise<Size>[] = req.body.productSize.map((size:string) => Size.create({
+        if(req.body.sizes){
+            if(Array.isArray(req.body.sizes)){
+                const promises:Promise<Size>[] = req.body.sizes.map((size:string) => Size.create({
                     option: size
                 }))
                 const sizes =  await Promise.all(
@@ -84,7 +85,7 @@ router.post('/',isLoggedIn, upload.none(), async(req, res, next)=>{
             await product.addSizes(sizes)
             }else{
                 const size = await Size.create({
-                    option: req.body.productSize
+                    option: req.body.sizes
                 })
                 await product.addSize(size)
             }
@@ -139,32 +140,6 @@ router.get('/:productId', async(req, res, next ) => {
         include: [{
             model: Image
         },
-        // {
-        //     model : Review,
-        //     include: [
-        //     {
-        //     model : User,
-        //     attributes : ['email'],
-        //     include: [{
-        //         model : HistoryCart,
-        //         where: {
-        //             ProductId: req.params.productId
-        //         },
-        //         through: { // 다대다 table의 모든정보 가져오지 않기(size랑 quantity만)
-        //             attributes: []
-                    
-        //         },
-
-        //         attributes: [
-        //             'size','quantity'
-        //         ],
-        //     }]
-        //     },
-        //     {
-        //         model: ReviewImage,
-        //         attributes: ['src']
-        //     }    
-        // ]},
         {
             model: User,
             attributes: ['id','email'],

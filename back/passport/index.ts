@@ -8,7 +8,6 @@ type IUser ={
 }
 export default() => {
     passport.serializeUser((user:IUser, done) => {
-
     done(null, user.id);
 
   });

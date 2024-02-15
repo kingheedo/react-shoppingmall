@@ -6,9 +6,11 @@ class Product extends Model{
     public readonly  id! : number;
     public readonly  productName! : string;
     public readonly  price! : number;
-    public readonly stock! : number;
+    public readonly  stock! : number;
     public readonly  createdAt! : Date;
     public readonly  updatedAt! : Date;
+    public readonly  Sizes! : string[];
+    public readonly  Images! : string[];
     public addImages! : HasManyAddAssociationsMixin<Image, number>
     public addSizes! : HasManyAddAssociationsMixin<Size, number>
     public addSize! : HasManyAddAssociationMixin<Size, number>

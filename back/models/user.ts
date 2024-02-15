@@ -15,6 +15,11 @@ class User extends Model{
     public readonly updatedAt!:Date;
 }
     User.init({
+            level: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            },
             email: {
                 type: DataTypes.STRING(30),
                 allowNull : true,
