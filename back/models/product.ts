@@ -1,4 +1,4 @@
-import { BelongsToManyGetAssociationsMixin, BelongsToManyRemoveAssociationMixin, DATEONLY, DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,HasManyGetAssociationsMixin,HasManyRemoveAssociationMixin,Model } from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, BelongsToManyRemoveAssociationMixin, DATEONLY, DataTypes,HasManyAddAssociationMixin,HasManyAddAssociationsMixin,HasManyGetAssociationsMixin,HasManyRemoveAssociationMixin,HasManySetAssociationsMixin,Model } from 'sequelize';
 import { dbTtype, Image, Review, Size, User } from '.';
 import { sequelize } from './sequelize';
 
@@ -14,9 +14,12 @@ class Product extends Model{
     public addImages! : HasManyAddAssociationsMixin<Image, number>
     public addSizes! : HasManyAddAssociationsMixin<Size, number>
     public addSize! : HasManyAddAssociationMixin<Size, number>
-    public getReviews!: HasManyGetAssociationsMixin<Review>
     public addLikers! : BelongsToManyRemoveAssociationMixin<User, number>
+    public getReviews!: HasManyGetAssociationsMixin<Review>
     public removeLikers! : BelongsToManyRemoveAssociationMixin<User, number>
+    public setSizes!: HasManySetAssociationsMixin<Size, number>
+    public setImages!: HasManySetAssociationsMixin<Image, number>
+
 }
             Product.init({
             productName : {
