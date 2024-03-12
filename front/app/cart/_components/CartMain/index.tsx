@@ -1,14 +1,14 @@
+'use client';
+
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
-import axios from 'axios';
-import apis from '../apis';
-import { useModal } from '../context/ModalProvider';
-import { ChangeOption, GetCartListRes, Size } from '../apis/cart/schema';
-import OptionModal from '../components/Cart/OptionModal';
-import BreadCrumb from '../components/common/BreadCrumb';
+import { ChangeOption, GetCartListRes, Size } from '../../../../apis/cart/schema';
+import OptionModal from '../../../../components/Cart/OptionModal';
+import BreadCrumb from '../../../../components/common/BreadCrumb';
+import { useModal } from '../../../../context/ModalProvider';
+import apis from '../../../../apis';
 
 const Cart = styled.div``;
 
@@ -32,7 +32,7 @@ const Main = styled.main`
       cursor: pointer;
     }
 
-    :checked {
+    &:checked {
       +i {
         background-position: 0 0;
         background-color: #111;
@@ -305,19 +305,19 @@ const CalcItem = styled.div`
     color: #444;
     font-size: 15px;
   }
-  :nth-of-type(2) {
+  &:nth-of-type(2) {
     padding-left: 80px;
     background: url('/bg_calc.gif') no-repeat;
     background-position: 30px 26px;
   }
 
-  :nth-of-type(3) {
+  &:nth-of-type(3) {
     padding-left: 80px;
     background: url('/bg_calc.gif') no-repeat;
     background-position: 30px -40px;
   }
 
-  :nth-of-type(4) {
+  &:nth-of-type(4) {
     padding-left: 80px;
     background: url('/bg_calc.gif') no-repeat;
     background-position: 30px -104px;
@@ -353,7 +353,7 @@ export enum Delete {
   EACH = 'EACH'
 }
 
-const CartPage = () => {
+const CartMain = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
   const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
   const [opSize, setOpSize] = useState(Size.SM);
@@ -370,6 +370,7 @@ const CartPage = () => {
     };
   }, [selectd]);
   const modal = useModal();
+  console.log('checkedList',checkedList);
   
   const queryClient = useQueryClient();
   const { data: list } = useQuery(['getCartList'], () =>
@@ -663,17 +664,4 @@ const CartPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async(context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-
-  return {
-    props: {}
-  };
-};
-
-export default CartPage;
+export default CartMain;

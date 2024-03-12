@@ -1,30 +1,28 @@
 import styled from 'styled-components';
-import { RevieListType } from '../../pages/product/[id]';
 import { ko } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { backUrl } from '../../config/backUrl';
 import { useRef, useState } from 'react';
+import { RevieListType } from '../../app/product/[id]/_component/item';
 
 interface IContentProps{
   isOpened: boolean;
 }
 
 const Wrapper = styled.div`
-    padding-top: 30px;
     border-top: 4px solid #111;
     
   > h3 {
     font-size: var(--fontG);
     line-height: var(--fontGL);
     font-weight: 700;
-    margin-bottom: 30px;
+    padding: 30px 0;
+    border-bottom: 1px solid #111;
   }
   ul{
     li{
       min-height: 125px;
-      :first-child{
-        border-top: 1px solid #111;
-      };
+     
       display: flex;
       padding: 20px 0;
     }
@@ -49,9 +47,9 @@ const Rating = styled.div`
   }
 `;
 
-const Content = styled.div`
+const Content = styled.div<IContentProps>`
     display: flex;
-    flex-direction: ${(props:IContentProps) => props.isOpened ? 'column' : 'row'};
+    flex-direction: ${(props) => props.isOpened ? 'column' : 'row'};
     flex: 1;
     justify-content: space-between;
     padding: 0 72px 0 36px;
@@ -135,7 +133,6 @@ const ReviewList = ({ list }: IReviewListProps) => {
       }
       str += '*';
     }
-    console.log('str',str);
     
     for (let k = str.length; str.length < payload.length; k++) {
       str += payload[k];

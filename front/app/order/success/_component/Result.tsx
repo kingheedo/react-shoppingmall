@@ -1,14 +1,13 @@
-import React, { useEffect } from 'react';
-import BreadCrumb from '../../../components/common/BreadCrumb';
-import { GetServerSideProps } from 'next';
-import axios from 'axios';
-import styled from 'styled-components';
-import { useRouter } from 'next/router';
-import apis from '../../../apis';
-import { useQuery } from '@tanstack/react-query';
-import BillWrap from '../../../components/common/BillWrap';
-import LinkBtn from '../../../components/common/LinkBtn';
+'use client';
 
+import React, { useEffect, useMemo } from 'react';
+import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import BreadCrumb from '../../../../components/common/BreadCrumb';
+import BillWrap from '../../../../components/common/BillWrap';
+import LinkBtn from '../../../../components/common/LinkBtn';
+import apis from '../../../../apis';
 const Main = styled.div`
   width: 960px;
   margin: 0 auto;
@@ -169,51 +168,11 @@ type TossPayment = {
   }
 }
 
-export const getServerSideProps:GetServerSideProps = async(context) => {
-  const { query: {
-    orderId,
-    paymentKey,
-    amount
-  } } = context;
-  
-  try {
-    const { data: tossPayment } = await axios.post<TossPayment>(
-      'https://api.tosspayments.com/v1/payments/confirm',
-      {
-        orderId: orderId,
-        paymentKey: paymentKey,
-        amount: amount
-        
-      },
-      {
-        headers: {
-          Authorization: `Basic ${Buffer.from(
-            `${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_SECRET_KEY}:`
-          ).toString('base64')}`,
-        },
-      }
-    );
-
-    return {
-      props: { tossPayment }
-    };
-  }
-  catch (error) {
-    console.error(error);
-
-    return {
-      props: {
-
-      }
-    };
-  }
-};
-
 interface IOrderSuccessPageProps{
   tossPayment: TossPayment;
 }
 
-const OrderSuccessPage = ({ tossPayment }: IOrderSuccessPageProps) => {
+const Result = ({ tossPayment }: IOrderSuccessPageProps) => {
   const router = useRouter();
   const { data: payments } = useQuery(['getPayments'], () => apis.Payment.getPayments(tossPayment.orderId));
 
@@ -223,7 +182,17 @@ const OrderSuccessPage = ({ tossPayment }: IOrderSuccessPageProps) => {
     }
   }, [tossPayment]);
   
+  console.log('tossPayment',tossPayment);
   console.log('payments',payments);
+
+  /** 가상계좌이면 true 아니면 false 리턴 */
+  const isVirtualPayment = useMemo(() => {
+    if (tossPayment?.virtualAccount) {
+      return true;
+    } else {
+      return false;
+    }
+  },[tossPayment.virtualAccount]);
 
   return (
     <div className="order-succss-page">
@@ -238,32 +207,34 @@ const OrderSuccessPage = ({ tossPayment }: IOrderSuccessPageProps) => {
           <p>
             주문하신 주문번호는 <strong>{tossPayment?.orderId}</strong> 입니다.
           </p>
-          <ul>
-            <li className="total-amount">
-              <span>
+          {isVirtualPayment && (
+            <ul>
+              <li className="total-amount">
+                <span>
                 입금금액
-              </span>
-              <strong>
-                {tossPayment?.totalAmount.toLocaleString('ko-KR')}원
-              </strong>
-            </li>
-            <li className="account-info">
-              <span>
+                </span>
+                <strong>
+                  {tossPayment?.totalAmount.toLocaleString('ko-KR')}원
+                </strong>
+              </li>
+              <li className="account-info">
+                <span>
                 계좌정보
-              </span>
-              <strong>
-                {tossPayment?.virtualAccount && BankCodeObj[tossPayment?.virtualAccount.bankCode]}{tossPayment?.virtualAccount?.accountNumber}{tossPayment?.virtualAccount?.customerName}
-              </strong>
-            </li>
-            <li className="due-date">
-              <span>
+                </span>
+                <strong>
+                  {tossPayment?.virtualAccount && BankCodeObj[tossPayment?.virtualAccount.bankCode]}{tossPayment?.virtualAccount?.accountNumber}{tossPayment?.virtualAccount?.customerName}
+                </strong>
+              </li>
+              <li className="due-date">
+                <span>
                 입금마감
-              </span>
-              <strong>
-                {tossPayment?.virtualAccount?.dueDate.split('T')[0]}까지
-              </strong>
-            </li>
-          </ul>
+                </span>
+                <strong>
+                  {tossPayment?.virtualAccount?.dueDate.split('T')[0]}까지
+                </strong>
+              </li>
+            </ul>
+          )}
 
         </OrderCheckWrap>
         <InfoRow id="address" className="info-row address">
@@ -308,4 +279,4 @@ const OrderSuccessPage = ({ tossPayment }: IOrderSuccessPageProps) => {
   );
 };
 
-export default OrderSuccessPage;
+export default Result;

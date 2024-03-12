@@ -1,12 +1,13 @@
+'use client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import Router from 'next/router';
 import Link from 'next/link';
-import { PostLoginReq } from '../apis/user/schema';
-import apis from '../apis';
 import { useSetRecoilState } from 'recoil';
-import { LoginState } from '../store';
+import { LoginState } from '../../../store';
+import { PostLoginReq } from '../../../apis/user/schema';
+import apis from '../../../apis';
+import { useRouter } from 'next/navigation';
 
 const SignInArea = styled.div`
 max-width: 1440px;
@@ -156,7 +157,7 @@ type User = {
   password: string;
 }
 
-const SignInPage = () => {
+const SignIn = () => {
   const [user, setUser] = useState<User>({
     email: '',
     password: ''
@@ -164,6 +165,7 @@ const SignInPage = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const setLoginState = useSetRecoilState(LoginState);
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { mutate: postLogin } = useMutation(async(data:PostLoginReq) => await apis.User.logIn(data),{
     onSuccess: (data) => {
       queryClient.invalidateQueries(['getUser']).then(() => {
@@ -171,7 +173,7 @@ const SignInPage = () => {
         setLoginState({
           id: data.id
         });
-        Router.back();
+        router.back();
       });
     },
     onError: () => {
@@ -244,10 +246,10 @@ const SignInPage = () => {
           </LoginBtn>
         </Form>
         <LinkWrap>
-          <Link href={'/signin'}>
+          <Link href={'/signIn'}>
             아이디 찾기
           </Link>
-          <Link href={'/signin'}>
+          <Link href={'/signIn'}>
             비밀번호 찾기
           </Link>
           <Link href={'/signup'}>
@@ -274,4 +276,4 @@ const SignInPage = () => {
   );
 };
 
-export default SignInPage;
+export default SignIn;

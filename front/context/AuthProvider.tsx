@@ -1,7 +1,9 @@
+'use client';
+
 import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react';
 import apis from '../apis';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import { GetUserRes } from '../apis/user/schema';
 import { useRecoilValue } from 'recoil';
 import { LoginState } from '../store';
@@ -11,9 +13,11 @@ const AuthContext = createContext<GetUserRes | null>(null);
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
+  const pathname = usePathname();
+  
   const getLoginState = useRecoilValue(LoginState);
   const { data: getUserData } = useQuery(
-    ['getUser',router.pathname], 
+    ['getUser',pathname], 
     () => apis.User.getUser());
   
   const userInfo = useMemo(() => {
@@ -22,11 +26,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   
   useEffect(() => {
     if (!getLoginState) {
-      if (noAccessPathList.indexOf(router.pathname) !== -1) {
-        router.push('/signin');
+      if (noAccessPathList.indexOf(pathname) !== -1) {
+        router.push('/signIn');
       }
     }
-  }, [router.pathname,getLoginState]);
+  }, [pathname,getLoginState]);
   
   console.log('userInfo',userInfo);
 

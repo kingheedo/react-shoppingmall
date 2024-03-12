@@ -1,25 +1,21 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-import React, { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/router';
-import { GetServerSideProps } from 'next';
+'use client';
+
+import React, { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { Button } from 'antd';
-import axios from 'axios';
-import useInput from '../../../hooks/useInput';
 import {
-  QueryClient,
-  dehydrate,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import apis from '../../../apis';
-import { SizeOption } from '../../../apis/product/schema';
-import { backUrl } from '../../../config/backUrl';
 import Link from 'next/link';
-import { useModal } from '../../../context/ModalProvider';
-import { getUser } from '../../../context/AuthProvider';
-import ReviewList from '../../../components/ReviewList';
+import { SizeOption } from '../../../../apis/product/schema';
+import { getUser } from '../../../../context/AuthProvider';
+import { useModal } from '../../../../context/ModalProvider';
+import apis from '../../../../apis';
+import { backUrl } from '../../../../config/backUrl';
+import ReviewList from '../../../../components/ReviewList';
 
 const Container = styled.div`
   max-width: 1440px;
@@ -310,28 +306,6 @@ const BuyBtn = styled.a`
   cursor: pointer;
 `;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const id = context.params?.id!;
-
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(['getSingleProduct', id], () =>
-    apis.Product.getSingleProduct(id),
-  );
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-};
-
 export type RevieListType = {
     id: number;
     content: string;
@@ -349,12 +323,16 @@ type BuyInfo = {
   quantity: number;
 };
 
-const ProductPage = () => {
+interface IProductDetailProps{ 
+  id: string;
+}
+
+const ProductDetail = ({ id }: IProductDetailProps) => {
   const me = getUser();
   const router = useRouter();
-  const id = router.query.id!;
   const modal = useModal();
   const queryClient = useQueryClient();
+  
   const { data: product } = useQuery(
     ['getSingleProduct', id],
     () => apis.Product.getSingleProduct(id),
@@ -368,8 +346,10 @@ const ProductPage = () => {
       modal?.confirm.addCart.handleConfirm(() => router.push('/cart'));
     },
     onSettled: () => {
-      queryClient.invalidateQueries(['getUser']);
-      queryClient.invalidateQueries(['getCartList']);
+      Promise.all([
+        queryClient.invalidateQueries(['getUser']),
+        queryClient.invalidateQueries(['getCartList'])
+      ]);
     },
   });
 
@@ -426,7 +406,7 @@ const ProductPage = () => {
       return;
     }
     if (!me) {
-      router.push('/signin');
+      router.push('/signIn');
     }
     if (!buyInfo.size) {
       modal?.confirm.sizeSlct.handleConfirm();
@@ -554,4 +534,4 @@ const ProductPage = () => {
     </Container>
   );
 };
-export default ProductPage;
+export default ProductDetail;

@@ -236,10 +236,10 @@ const SignIn = () => {
           </LoginBtn>
         </Form>
         <LinkWrap>
-          <Link href={'/signin'}>
+          <Link href={'/signIn'}>
             아이디 찾기
           </Link>
-          <Link href={'/signin'}>
+          <Link href={'/signIn'}>
             비밀번호 찾기
           </Link>
           <Link href={'/signup'}>

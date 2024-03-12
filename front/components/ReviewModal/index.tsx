@@ -3,8 +3,8 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import apis from '../../apis';
 import { PostReviewReq } from '../../apis/product/schema';
-import { TargetPaymentType } from '../../pages/mypage';
 import { backUrl } from '../../config/backUrl';
+import { TargetPaymentType } from '../../app/mypage/_components/MyPageMain';
 
 const Bg = styled.div`
   position: fixed;

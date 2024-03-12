@@ -1,13 +1,16 @@
+'use client';
 /* eslint-disable no-cond-assign */
 /* eslint-disable no-constant-condition */
-import React, { FC, useCallback, useState } from 'react';
-import Router, { useRouter } from 'next/router';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Modal } from 'antd';
 import { GetSingleProductRes } from '../../apis/product/schema';
 import { getUser } from '../../context/AuthProvider';
 import apis from '../../apis';
+import { backUrl } from '../../config/backUrl';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const CardItem = styled.li`
   position: relative;
@@ -124,9 +127,9 @@ interface IProductProps {
 const Product = ({ idx,product }:IProductProps) => {
   const [show, setShow] = useState(false);
   const queryClient = useQueryClient();
-  const router = useRouter();
   const [modal, contextHolder] = Modal.useModal();
   const me = getUser();
+  const router = useRouter();
   const { mutate: addLike } = useMutation((data: number) => apis.Product.addLike(data),
     {
       onMutate: async(variable) => {
@@ -146,7 +149,7 @@ const Product = ({ idx,product }:IProductProps) => {
               }
             })
           );
-
+            
           return {
             ...old,
             pages: newData
@@ -158,7 +161,7 @@ const Product = ({ idx,product }:IProductProps) => {
     
       onError: (err: any, param, context) => {
         if (err.response.status = 401) {
-          router.push('/signin');
+          router.push('/signIn');
         } else {
           queryClient.setQueryData(['getProducts'], context?.previous);
         }
@@ -198,7 +201,7 @@ const Product = ({ idx,product }:IProductProps) => {
     
       onError: (err: any, param, context) => {
         if (err.response.status = 401) {
-          router.push('/signin');
+          router.push('/signIn');
         } else {
           queryClient.setQueryData(['getProducts'], context?.previous);
         }
@@ -214,12 +217,12 @@ const Product = ({ idx,product }:IProductProps) => {
     },
     [show]
   );
-  const onClickCard = useCallback(
-    (id: number) => () => {
-      Router.push(`/product/${id}`);
-    },
-    []
-  );
+  // const onClickCard = useCallback(
+  //   (id: number) => () => {
+  //     router.push(`/product/${id}`);
+  //   },
+  //   []
+  // );
 
   const onClickLike = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -233,32 +236,34 @@ const Product = ({ idx,product }:IProductProps) => {
 
   return (
     <CardItem
-      onClick={onClickCard(product.id)}
+      // onClick={onClickCard(product.id)}
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
     >
-      <ProductImgWrapper>
-        <Rank>
-          {idx}
-        </Rank>
-        <Image alt={`${product?.Images[0]}`} src={`http://localhost:3065/${product?.Images[0]?.src}`}/>
-        <ImageHover alt={`${product?.Images[1]}`} src={`http://localhost:3065/${product?.Images[1]?.src}`}/>
-        <ProductLikeBtn style={{ background: product.Likers.find(value => value.id === me?.info.id) ? `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center` }} onClick={onClickLike}/>
-      </ProductImgWrapper>
-      <ProductInfoWrapper>
-        <ProductBrand>8 seconds</ProductBrand>
-        <ProductName>{product?.productName}</ProductName>
-        <ProductPrice>
-          {product.price?.toLocaleString('ko-KR')}
-        </ProductPrice>
-        <ProductScore>
-          <HeartWrapper>
-            <Heart src={'./like-fill-gray.svg'} alt="like-fill-gray" />
-            <HeartTxt>{product.Likers.length}</HeartTxt>
-          </HeartWrapper>
-        </ProductScore>
-      </ProductInfoWrapper>
-      {contextHolder}
+      <Link href={`/product/${product.id}`}>
+        <ProductImgWrapper>
+          <Rank>
+            {idx}
+          </Rank>
+          <Image alt={`${product?.Images[0]}`} src={`${backUrl}/${product?.Images[0]?.src}`}/>
+          <ImageHover alt={`${product?.Images[1]}`} src={`${backUrl}/${product?.Images[1]?.src}`}/>
+          <ProductLikeBtn style={{ background: product.Likers.find(value => value.id === me?.info.id) ? `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center` }} onClick={onClickLike}/>
+        </ProductImgWrapper>
+        <ProductInfoWrapper>
+          <ProductBrand>8 seconds</ProductBrand>
+          <ProductName>{product?.productName}</ProductName>
+          <ProductPrice>
+            {product.price?.toLocaleString('ko-KR')}
+          </ProductPrice>
+          <ProductScore>
+            <HeartWrapper>
+              <Heart src={'./like-fill-gray.svg'} alt="like-fill-gray" />
+              <HeartTxt>{product.Likers.length}</HeartTxt>
+            </HeartWrapper>
+          </ProductScore>
+        </ProductInfoWrapper>
+        {contextHolder}
+      </Link>
     </CardItem>
   );
 };

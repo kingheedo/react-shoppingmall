@@ -1,20 +1,20 @@
+'use client';
+
 import React, { FC, useMemo, useRef } from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
-import { GetServerSideProps } from 'next';
-import { QueryClient, dehydrate, useInfiniteQuery } from '@tanstack/react-query';
-import useInterSectionObserver from '../hooks/useInterSectionObserver';
-import Product from '../components/Product';
-import apis from '../apis';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import { Autoplay, Navigation } from 'swiper/modules';
+import useIntersectionObserver from '../../../hooks/useInterSectionObserver';
+import apis from '../../../apis';
+import Product from '../../../components/Product';
 
 const BgSlide = styled.div`
     min-width: 1280px;
 `;
 
-const ListContainer = styled.div`
+const ListContainer = styled.ul`
   display: flex;
   flex-wrap: wrap;
 
@@ -28,7 +28,7 @@ const ListContainer = styled.div`
   }
 `;
 
-const ProductsSection = styled.section`
+const ProductsArea = styled.section`
   max-width: 1440px;
   min-width: 1280px;
   width: auto;
@@ -41,41 +41,42 @@ const BgImg = styled.img`
   width: 100%;
 `;
 
-export const getServerSideProps:GetServerSideProps = async(context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
-  const queryClient = new QueryClient();
+// export const getServerSideProps:GetServerSideProps = async(context) => {
+//   const cookie = context.req ? context.req.headers.cookie : '';
+//   axios.defaults.headers.Cookie = '';
+//   if (context.req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//   }
+//   const queryClient = new QueryClient();
 
-  await queryClient.prefetchInfiniteQuery(['getProducts'], () => apis.Product.getProducts());
+//   await queryClient.prefetchInfiniteQuery(['getProducts'], () => apis.Product.getProducts());
 
-  return {
-    props: {
-      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient)))
-    }
-  };
-};
+//   return {
+//     props: {
+//       dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient)))
+//     }
+//   };
+// };
 
-const Home: FC = () => {
-  const loadRef = useRef<HTMLDivElement | null>(null);
+const Main: FC = () => {
+  const loadRef = useRef<HTMLUListElement | null>(null);
+  
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
     ['getProducts'],
     ({ pageParam = 0 }) => {
-      console.log('pageParam',pageParam);
+      // console.log('pageParam',pageParam);
       
       return apis.Product.getProducts(pageParam);
     },{
       getNextPageParam: (lastPage, allPages) => {
-        console.log('lastPage',lastPage);
+        // console.log('lastPage',lastPage);
         
         return lastPage[lastPage.length - 1]?.id;
       }
     }
   );
 
-  useInterSectionObserver({
+  useIntersectionObserver({
     root: null,
     target: loadRef,
     onInterSect: fetchNextPage,
@@ -87,7 +88,7 @@ const Home: FC = () => {
   }, [data?.pages]);
   
   const BgLists = ['slide1.webp'];
-
+  
   return (
     <>
       <BgSlide>
@@ -114,18 +115,18 @@ const Home: FC = () => {
           )}
         </Swiper>
       </BgSlide>
-      <ProductsSection>
+      <ProductsArea>
         <ListContainer ref={loadRef}>
           {list?.map((product,idx) => (
-            <Product 
+            <Product
               key={product.id} 
               idx={idx + 1}
               product={product} />
           ))}
         </ListContainer>
-      </ProductsSection>
+      </ProductsArea>
     </>
   );
 };
 
-export default Home;
+export default Main;

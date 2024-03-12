@@ -1,17 +1,16 @@
+'use client';
 import React, { FC, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { GetServerSideProps } from 'next';
 import moment from 'moment';
-import axios from 'axios';
-import { QueryClient, dehydrate, useQuery, useQueryClient } from '@tanstack/react-query';
-import apis from '../apis';
-import BreadCrumb from '../components/common/BreadCrumb';
-import { backUrl } from '../config/backUrl';
-import { GetAllPaymentsRes, GetTossPmntOrderRes, SettlementState } from '../apis/payment/schema';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import apis from '../../../../apis';
+import BreadCrumb from '../../../../components/common/BreadCrumb';
+import { backUrl } from '../../../../config/backUrl';
+import { GetAllPaymentsRes, GetTossPmntOrderRes, SettlementState } from '../../../../apis/payment/schema';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ko from 'date-fns/locale/ko';
-import ReviewModal from '../components/ReviewModal';
+import ReviewModal from '../../../../components/ReviewModal';
 
 registerLocale('ko', ko);
 const Main = styled.div`
@@ -59,14 +58,14 @@ const Table = styled.table`
       }
     }
     .row {
-      :nth-child(1){
+      &:nth-child(1){
         > th {
           > span{
             display: inline-block;
             margin-left: 15px;
             color: #444;
 
-            :first-child {
+            &:first-child {
               display: inline-block;
               width: 100px;
               margin-left: 0;
@@ -81,7 +80,7 @@ const Table = styled.table`
           }
         }
       }
-      :nth-child(2) {
+      &:nth-child(2) {
         > th {
           > span {
             color: #444;
@@ -98,7 +97,7 @@ const Table = styled.table`
   }
   > tbody{
     tr{
-      :first-child{
+      &:first-child{
         td{
           border-top: 1px solid #111;
         }
@@ -135,7 +134,7 @@ const Table = styled.table`
               background: #fff;
               border: 1px solid #e5e5e5;
 
-              :not(:last-child){
+              &:not(:last-child){
                 margin-bottom: 4px;
               }
             }
@@ -160,7 +159,7 @@ const DatePickContainer = styled.div`
       text-indent: 8px;
       border: 1px solid #e5e5e5;
 
-      :last-child{ 
+      &:last-child{ 
         margin-left: 7px;
       }
     }
@@ -204,26 +203,26 @@ const DatePickerHeader = styled.div`
 }
 `;
 
-export const getServerSideProps: GetServerSideProps = async(context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
-  }
+// export const getServerSideProps: GetServerSideProps = async(context) => {
+//   const cookie = context.req ? context.req.headers.cookie : '';
+//   axios.defaults.headers.Cookie = '';
+//   if (context.req && cookie) {
+//     axios.defaults.headers.Cookie = cookie;
+//   }
 
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(['getAllPayments'], () => apis.Payment.getAllPayments({
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
-    endDate: new Date(),
-    page: 0
-  }));
+//   const queryClient = new QueryClient();
+//   await queryClient.prefetchQuery(['getAllPayments'], () => apis.Payment.getAllPayments({
+//     startDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
+//     endDate: new Date(),
+//     page: 0
+//   }));
   
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient)
-    }
-  };
-};
+//   return {
+//     props: {
+//       dehydratedState: dehydrate(queryClient)
+//     }
+//   };
+// };
 
 export type TargetPaymentType = {
   productId: number;
@@ -235,7 +234,7 @@ type PayemntState = {
   tossPayment: GetTossPmntOrderRes;
 }
 
-const Mypage: FC = () => {
+const MyPageMain: FC = () => {
   
   const [paymentsState, setPaymentsState] = useState<Map<string, PayemntState>>(() => new Map());
   const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 3)));
@@ -486,112 +485,111 @@ const Mypage: FC = () => {
             <h3>주문 내용</h3>
             
             {Array.from(paymentsState.values()).map((val1,idx) => (
-              <Table key={idx}>
-                <colgroup>
-                  <col width={'124'}/>
-                  <col width={'*'}/>
-                  <col width={'160'}/>
-                  <col width={'160'}/>
-                  <col width={'160'}/>
-                </colgroup>
-                <thead>
-                  <tr className="row">
-                    <th colSpan={6}>
-                      <span>
-                        {`${new Date(val1.dbPayments[0].createdAt).getFullYear()}.${new Date(val1.dbPayments[0].createdAt).getMonth() + 1}.${new Date(val1.dbPayments[0].createdAt).getDate()}`}
-                      </span>
-                      {(val1.tossPayment.cancels && val1.tossPayment.cancels[0] || !val1.tossPayment.virtualAccount) 
-                        ? (
-                          null
-                        )
-                        : (
-                          <>
-                            <span>
-                              입금액&nbsp; 
-                              <strong>
-                                {val1.tossPayment.totalAmount.toLocaleString('ko-KR')}
-                              </strong>
+              <React.Fragment key={idx}>
+                <Table >
+                  <colgroup>
+                    <col width={'124'} />
+                    <col width={'*'} />
+                    <col width={'160'} />
+                    <col width={'160'} />
+                    <col width={'160'} />
+                  </colgroup>
+                  <thead>
+                    <tr className="row">
+                      <th colSpan={6}>
+                        <span>
+                          {`${new Date(val1.dbPayments[0].createdAt).getFullYear()}.${new Date(val1.dbPayments[0].createdAt).getMonth() + 1}.${new Date(val1.dbPayments[0].createdAt).getDate()}`}
+                        </span>
+                        {(val1.tossPayment.cancels && val1.tossPayment.cancels[0] || !val1.tossPayment.virtualAccount)
+                          ? (
+                            null
+                          )
+                          : (
+                            <>
+                              <span>
+                              입금액&nbsp;
+                                <strong>
+                                  {val1.tossPayment.totalAmount.toLocaleString('ko-KR')}
+                                </strong>
                               원
-                            </span>
-                            <span>
-                            입금기한&nbsp;
-                              <strong>
-                                {moment(val1.tossPayment.virtualAccount.dueDate).format('YYYY.MM.DD HH:MM:SS')}
-                              </strong>
-                            </span>
-                          </>
-                        )
-                      }
-                      {/* <Link href={'#'}>
+                              </span>
+                              <span>
+                              입금기한&nbsp;
+                                <strong>
+                                  {moment(val1.tossPayment.virtualAccount.dueDate).format('YYYY.MM.DD HH:MM:SS')}
+                                </strong>
+                              </span>
+                            </>
+                          )}
+                        {/* <Link href={'#'}>
                         주문상세
-                      </Link> */}
-                    </th>
-                  </tr>
-                  <tr className="row">
-                    <th colSpan={6}>
-                      <span>
-                      받으시는 분
-                      </span>
-                      <strong>
-                      왕희도
-                      </strong>
-                      {/* {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                      </Link> */} 
+                      </th>
+                    </tr>
+                    <tr className="row">
+                      <th colSpan={6}>
+                        <span>
+                        받으시는 분
+                        </span>
+                        <strong>
+                        왕희도
+                        </strong>
+                        {/* {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
                         <Link href={'#'}>
                         배송지 확인/변경
                         </Link>)} */}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <>
-                    {val1.dbPayments.map(val2 => (
-                      <tr key={val2.id}>
-                        <td>
-                          <img src={`${backUrl}/${val2.HistoryCart.Product.Images[0].src}`} alt={`${val2.HistoryCart.Product.productName}의 이미지`} />
-                        </td>
-                        <td>
-                          <div className="product-info-wrap">
-                            <span className="name">
-                              {val2.HistoryCart.Product.productName}
-                            </span>
-                            <em className="option">
-                              {val2.HistoryCart.size},{val2.HistoryCart.quantity} / {val2.HistoryCart.totalPrice.toLocaleString('ko-KR')}원
-                            </em>
-                          </div>
-                        </td>
-                        <td>
-                          <span className="status">{getSettlementStatus({ method: val1.tossPayment.method, status: val1.tossPayment.status })}</span>
-                        </td>
-                        <td/>
-                        <td>
-                          {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
-                            <div className="btn-group">
-                              {val1.tossPayment.status !== SettlementState.DONE && (
-                                <button onClick={() => onClickCancel(val1.tossPayment.paymentKey)}>
-                                전체취소
-                                </button>)
-                              }
-                              {val1.tossPayment.status === SettlementState.DONE && !val2.isReviewed && (
-                                <button onClick={() => onClickReview({
-                                  productId: val2.HistoryCart.Product.id,
-                                  paymentId: val2.id
-                                })}>
-                                  리뷰 작성
-                                </button>)
-                              }
-                              {/* <button>
-                              결제수단 변경
-                              </button> */}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <>
+                      {val1.dbPayments.map(val2 => (
+                        <tr key={val2.id}>
+                          <td>
+                            <img src={`${backUrl}/${val2.HistoryCart.Product.Images[0].src}`} alt={`${val2.HistoryCart.Product.productName}의 이미지`} />
+                          </td>
+                          <td>
+                            <div className="product-info-wrap">
+                              <span className="name">
+                                {val2.HistoryCart.Product.productName}
+                              </span>
+                              <em className="option">
+                                {val2.HistoryCart.size},{val2.HistoryCart.quantity} / {val2.HistoryCart.totalPrice.toLocaleString('ko-KR')}원
+                              </em>
                             </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                    <br/>
-                    <br/>
-                  </>
-                </tbody>
-              </Table>
+                          </td>
+                          <td>
+                            <span className="status">{getSettlementStatus({ method: val1.tossPayment.method, status: val1.tossPayment.status })}</span>
+                          </td>
+                          <td />
+                          <td>
+                            {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                              <div className="btn-group">
+                                {val1.tossPayment.status !== SettlementState.DONE && (
+                                  <button onClick={() => onClickCancel(val1.tossPayment.paymentKey)}>
+                                  전체취소
+                                  </button>)}
+                                {val1.tossPayment.status === SettlementState.DONE && !val2.isReviewed && (
+                                  <button onClick={() => onClickReview({
+                                    productId: val2.HistoryCart.Product.id,
+                                    paymentId: val2.id
+                                  })}>
+                                  리뷰 작성
+                                  </button>)}
+                                {/* <button>
+                    결제수단 변경
+                    </button> */}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  </tbody>
+                </Table>
+                <br />
+                <br />
+              </React.Fragment>
             ))
             }
           </TableWrap>
@@ -600,4 +598,4 @@ const Mypage: FC = () => {
     </div>
   );
 };
-export default Mypage;
+export default MyPageMain;

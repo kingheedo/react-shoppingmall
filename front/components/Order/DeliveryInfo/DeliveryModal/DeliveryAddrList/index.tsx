@@ -143,7 +143,7 @@ const DeliveryAddrList = ({
       </Title>
       <ul>
         {addressList?.map(info => (
-          <AddressItem key={AddressItem.id}>
+          <AddressItem key={info.id}>
             <div className="btn-wrap">
               <button onClick={() => {
                 handleSaveType(SaveType.EDIT);

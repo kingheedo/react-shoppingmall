@@ -1,14 +1,13 @@
+'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Form, Input, Checkbox, Button,
 } from 'antd';
-import Router from 'next/router';
 import styled from 'styled-components';
 
-import useInput from '../hooks/useInput';
+import useInput from '../../../hooks/useInput';
 import { useMutation } from '@tanstack/react-query';
-import apis from '../apis';
-import { PostSignUpRes } from '../apis/user/schema';
+import apis from '../../../apis';
 
 const Container = styled.div`
   width: 100vw;
@@ -30,7 +29,7 @@ const FormDiv = styled.div`
     width: 400px;
     padding: 20px;
 `;
-const Signup = () => {
+const SignUp = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const [confirmpassword, onChangeConfirmpassword] = useInput('');
@@ -188,4 +187,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default SignUp;

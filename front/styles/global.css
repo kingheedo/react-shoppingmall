@@ -135,6 +135,7 @@ select::-ms-expand {
   display: none;
 }
 
+/** react-datepicker */
 .react-datepicker{
     padding: 40px 30px;
     width: auto;
