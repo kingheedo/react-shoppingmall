@@ -6,7 +6,6 @@ import HydrateOnClient from '../../utils/hydrateOnClient';
 import MyPageMain from './_components/MyPageMain';
 import { NextResponse } from 'next/server';
 import { backUrl } from '../../config/backUrl';
-import Header from './_components/Header';
 
 const MyPage = async() => {
   const queryClient = getQueryClient();

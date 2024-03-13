@@ -2,13 +2,13 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { getUser } from '../../../../context/AuthProvider';
 import { useSetRecoilState } from 'recoil';
-import apis from '../../../../apis';
-import { LoginState } from '../../../../store';
 import Link from 'next/link';
+import { LoginState } from '../../../store';
+import { getUser } from '../../../context/AuthProvider';
+import apis from '../../../apis';
 
 interface ISearchActiveProps {
   active: 'false' | 'true';
@@ -199,9 +199,10 @@ const Header = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: cartList } = useQuery(['getCartList'], () => apis.Cart.getCartList(), {
-    enabled: !!me?.info.id 
-  });
+  // const { data: me, isFetched } = useQuery(
+  //   ['getUser'], 
+  //   () => apis.User.getUser());
+
   const { mutate: logout } = useMutation(() => apis.User.logout(),{
     onSuccess: () => {
       queryClient.invalidateQueries(['getUser']);
@@ -216,8 +217,6 @@ const Header = () => {
     queryFn: () => apis.Product.getKeywordProducts(keyword),
     enabled: !!keyword
   });
-  
-  // console.log('me',me);
   
   const onClickLogOut = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
@@ -262,7 +261,7 @@ const Header = () => {
           <div className="util">
             <Link aria-label="cart" href="/cart">
               <span>
-                {(me?.info.id && cartList?.length) || 0}
+                {(me?.info.id && me.cartLength) || 0}
               </span>
             </Link>
           </div>

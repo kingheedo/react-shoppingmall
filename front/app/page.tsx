@@ -7,7 +7,6 @@ import HydrateOnClient from '../utils/hydrateOnClient';
 
 const MainPage = async() => {
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(['getUser'], () => apis.User.getUser());
   await queryClient.prefetchInfiniteQuery(['getProducts'], () => apis.Product.getProducts());
   
   const dehydratedState = JSON.parse(JSON.stringify(dehydrate(queryClient)));
