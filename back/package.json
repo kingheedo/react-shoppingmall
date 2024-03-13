@@ -2,7 +2,7 @@
   "name": "react-shoppingmall",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "dev": "nodemon",
     "build": "tsc && cross-env NODE_ENV=production",
