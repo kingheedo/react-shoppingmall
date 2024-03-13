@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon",
+    "build": "tsc && cross-env NODE_ENV=production",
     "start": "tsc && cross-env NODE_ENV=production pm2 start app.js"
   },
   "author": "heedo",
