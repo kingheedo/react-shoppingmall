@@ -82,6 +82,6 @@ app.use((err: any, req:express.Request, res:express.Response, next:express.NextF
     console.error(err);
     res.status(500).send('서버 에러 발생')
 })
-app.listen(prod ? 80 : '3065', () => {
+app.listen(prod ? 80 : 3065, () => {
     console.log('서버 실행 중')
 })
