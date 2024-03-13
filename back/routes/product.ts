@@ -1,20 +1,13 @@
 import * as express from 'express';
-import * as multer from 'multer';
 import { isLoggedIn } from './middlewares';
 import * as path from 'path'
 import * as fs from 'fs';
 import * as AWS from 'aws-sdk'
+import * as multer from 'multer';
 import * as multerS3 from 'multer-s3'
 import { Product, Review, User, Image, Size, HistoryCart, Payment, ReviewImage } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
-
-try{
-    fs.accessSync('uploads');
-}catch(error){
-    console.log('uploads 폴더가 없으므로 생성합니다.');
-    fs.mkdirSync('uploads');
-}
 
 // AWS.config.update({
 //     accessKeyId: process.env.AWSAccessKeyId,
@@ -33,6 +26,7 @@ try{
 //     limits : {fileSize: 20 * 1024 * 1024, files: 2}
 // });
 
+
 const upload = multer({
     storage: multer.diskStorage({
         destination: (req,file,cb) => {
@@ -44,66 +38,6 @@ const upload = multer({
     }),
     limits: {
         fileSize : 20 * 1024 * 1024, files: 2
-    }
-})
-
-router.post('/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
-    console.log('req.files',req.files);
-    if(Array.isArray(req.files)){
-     return res.json((req.files as Express.Multer.File[]).map((v) => v.filename))
-    }
-})
-
-router.post('/', isLoggedIn, upload.none(), async(req, res, next)=>{
-    try{
-        const product = await Product.create({
-            productName : req.body.productName,
-            price : req.body.price,
-            stock : req.body.stock,
-            sex: req.body.sex,
-            UserId : req.user!.id,
-        })
-
-        console.log('req.body',req.body)
-        if(req.body.images){
-            const promises:Promise<Image>[] = req.body.images.map((image:string)=> Image.create({
-                    src: image
-                }));
-            const images = await Promise.all(promises)
-                
-            await product.addImages(images)
-            
-        }
-        if(req.body.sizes){
-            if(Array.isArray(req.body.sizes)){
-                const promises:Promise<Size>[] = req.body.sizes.map((size:string) => Size.create({
-                    option: size
-                }))
-                const sizes =  await Promise.all(
-                promises
-            );
-            await product.addSizes(sizes)
-            }else{
-                const size = await Size.create({
-                    option: req.body.sizes
-                })
-                await product.addSize(size)
-            }
-        }
-        const fullProduct = await Product.findOne({
-            where: {id : product.id},
-            include:[{
-            model : Image,
-            },
-            {
-            model: Size,
-            attributes: ['option'],
-            },]
-        })
-         return res.status(202).json(fullProduct);
-    }catch(error){
-        console.error(error);
-        next(error);
     }
 })
 

@@ -36,13 +36,13 @@ if(prod){
     app.use(hpp());
     app.use(helmet());
     app.use(cors({
-        origin: 'https://reactshoppingmall.com',
+        origin: 'https://react-shoppingmall-rho.vercel.app',
         credentials: true,
     }))
 }else{
     app.use(morgan('dev'));
     app.use(cors({
-        origin: ['http://localhost:3060', 'http://localhost:3070'],
+        origin: ['http://localhost:3060'],
         credentials: true,
     }))
     }
@@ -59,7 +59,7 @@ app.use(session({
     cookie:{
         httpOnly : true,
         secure: process.env.NODE_ENV === 'production' ? true : false,
-        domain: process.env.NODE_ENV === 'production' ? '.reactshoppingmall.com' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? '.react-shoppingmall-rho.vercel.app' : undefined,
     },
     name: 'rnbck',
 }))

@@ -42,6 +42,7 @@ router.post('/logout',isLoggedIn, (req, res, next) => {
             return next(err);
         }else{
             res.redirect('/')
+            return res.status(201).send('로그아웃 완료.')
         }
     });
     // req.session.destroy(() =>{
