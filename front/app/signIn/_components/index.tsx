@@ -8,6 +8,7 @@ import { LoginState } from '../../../store';
 import { PostLoginReq } from '../../../apis/user/schema';
 import apis from '../../../apis';
 import { useRouter } from 'next/navigation';
+import { backUrl } from '../../../config/backUrl';
 
 const SignInArea = styled.div`
 max-width: 1440px;
@@ -263,10 +264,10 @@ const SignIn = () => {
             </span>
           </dt>
           <dd>
-            <a className="kakao-link" href="http://localhost:3065/auth/kakao">
+            <a className="kakao-link" href={`${backUrl}/auth/kakao`}>
               카카오 로그인
             </a>
-            <a className="naver-link" href="http://localhost:3065/auth/naver">
+            <a className="naver-link" href={`${backUrl}/auth/naver`}>
               네이버 로그인
             </a>
           </dd>
