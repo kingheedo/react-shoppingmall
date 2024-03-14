@@ -166,11 +166,20 @@ router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
                     exclude: ['createdAt', 'updatedAt', 'UserId']
                 }
             });
-            const userInfo = {
-                info,
-                cartLength,
-                address
-            };
+            let userInfo = {};
+            if (address) {
+                userInfo = {
+                    info,
+                    cartLength,
+                    address
+                };
+            }
+            else {
+                userInfo = {
+                    info,
+                    cartLength,
+                };
+            }
             return res.status(200).json(userInfo);
         }
         else {

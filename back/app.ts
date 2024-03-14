@@ -61,7 +61,7 @@ app.use(session({
         // secure: process.env.NODE_ENV === 'production' ? true : false, //https면 true로 적용
         // domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
         secure: false, 
-        domain: process.env.NODE_ENV === 'production' ? 'http://next-react.shop' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? '.next-react.shop' : undefined,
     },
     name: 'rnbck',
 }))

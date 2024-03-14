@@ -166,12 +166,20 @@ router.get('/', async(req, res, next) =>{
                 }
             });
 
-            const userInfo = {
-                info,
-                cartLength,
-                address
-            };
-            
+            let userInfo = {};
+
+            if(address){
+                userInfo = {
+                   info,
+                   cartLength,
+                   address
+               };
+            }else{
+                userInfo = {
+                   info,
+                   cartLength,
+               };
+            }
 
             return res.status(200).json(userInfo);
         }else{
