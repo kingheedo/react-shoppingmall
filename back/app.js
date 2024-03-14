@@ -35,14 +35,14 @@ if (prod) {
     app.use(hpp());
     app.use((0, helmet_1.default)());
     app.use(cors({
-        origin: 'http://13.125.224.64',
+        origin: 'http://52.78.109.197',
         credentials: true,
     }));
 }
 else {
     app.use(morgan('dev'));
     app.use(cors({
-        origin: ['http://localhost:3060', 'http://13.125.224.64'],
+        origin: ['http://localhost:3060', 'http://52.78.109.197'],
         credentials: true,
     }));
 }
