@@ -16,9 +16,7 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const path = require("path");
-const helmet_1 = require("helmet");
 const morgan = require("morgan");
-const hpp = require("hpp");
 dotenv.config();
 const app = express();
 const prod = process.env.NODE_ENV === 'production';
@@ -30,22 +28,26 @@ models_1.sequelize.sync({ force: false })
     console.error(err);
 });
 (0, passport_1.default)();
-if (prod) {
-    app.use(morgan('combined'));
-    app.use(hpp());
-    app.use((0, helmet_1.default)());
-    app.use(cors({
-        origin: 'http://52.78.109.197',
-        credentials: true,
-    }));
-}
-else {
-    app.use(morgan('dev'));
-    app.use(cors({
-        origin: ['http://localhost:3060', 'http://52.78.109.197'],
-        credentials: true,
-    }));
-}
+// if(prod){
+//     app.use(morgan('combined'));
+//     app.use(hpp());
+//     app.use(helmet());
+//     app.use(cors({
+//         origin: 'http://52.78.109.197',
+//         credentials: true,
+//     }))
+// }else{
+//     app.use(morgan('dev'));
+//     app.use(cors({
+//         origin: ['http://localhost:3060', 'http://52.78.109.197'],
+//         credentials: true,
+//     }))
+//     }
+app.use(morgan('dev'));
+app.use(cors({
+    origin: ['http://localhost:3060', 'http://52.78.109.197'],
+    credentials: true,
+}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use('/', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
@@ -56,8 +58,10 @@ app.use(session({
     secret: process.env.COOKIE_SECRET,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' ? true : false,
-        domain: process.env.NODE_ENV === 'production' ? '.next-react-shop' : undefined,
+        // secure: process.env.NODE_ENV === 'production' ? true : false,
+        // domain: process.env.NODE_ENV === 'production' ? 'http://52.78.109.197' : undefined,
+        secure: false,
+        domain: process.env.NODE_ENV === 'production' ? 'http://52.78.109.197' : undefined,
     },
     name: 'rnbck',
 }));
