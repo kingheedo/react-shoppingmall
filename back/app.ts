@@ -49,7 +49,7 @@ passportConfig();
 
     app.use(morgan('dev'));
     app.use(cors({
-        origin: ['http://localhost:3060', 'http://localhost:3070', 'http://52.78.109.197'],
+        origin: ['http://localhost:3060', 'http://localhost:3070', 'http://3.37.228.220'],
         credentials: true,
     }))
     
@@ -65,9 +65,9 @@ app.use(session({
     cookie:{
         httpOnly : true,
         // secure: process.env.NODE_ENV === 'production' ? true : false,
-        // domain: process.env.NODE_ENV === 'production' ? 'http://52.78.109.197' : undefined,
+        // domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
         secure: false,
-        domain: process.env.NODE_ENV === 'production' ? 'http://52.78.109.197' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
     },
     name: 'rnbck',
 }))
