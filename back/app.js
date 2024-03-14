@@ -35,14 +35,14 @@ if (prod) {
     app.use(hpp());
     app.use((0, helmet_1.default)());
     app.use(cors({
-        origin: 'https://react-shoppingmall-rho.vercel.app',
+        origin: 'http://13.125.224.64',
         credentials: true,
     }));
 }
 else {
     app.use(morgan('dev'));
     app.use(cors({
-        origin: ['http://localhost:3060'],
+        origin: ['http://localhost:3060', 'http://13.125.224.64'],
         credentials: true,
     }));
 }
@@ -57,7 +57,7 @@ app.use(session({
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' ? true : false,
-        domain: process.env.NODE_ENV === 'production' ? '.react-shoppingmall-rho.vercel.app' : undefined,
+        domain: process.env.NODE_ENV === 'production' ? '.next-react-shop' : undefined,
     },
     name: 'rnbck',
 }));
