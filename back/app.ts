@@ -31,27 +31,21 @@ sequelize.sync({force: false})
     });
 passportConfig();
 
-// if(prod){
-//     app.use(morgan('combined'));
-//     app.use(hpp());
-//     app.use(helmet());
-//     app.use(cors({
-//         origin: 'http://52.78.109.197',
-//         credentials: true,
-//     }))
-// }else{
-//     app.use(morgan('dev'));
-//     app.use(cors({
-//         origin: ['http://localhost:3060', 'http://52.78.109.197'],
-//         credentials: true,
-//     }))
-//     }
-
-    app.use(morgan('dev'));
+if(prod){
+    app.use(morgan('combined'));
+    app.use(hpp());
+    app.use(helmet());
     app.use(cors({
-        origin: ['http://localhost:3060', 'http://localhost:3070', 'http://3.37.228.220'],
+        origin: 'http://next-react.shop',
         credentials: true,
     }))
+}else{
+    app.use(morgan('dev'));
+    app.use(cors({
+        origin: ['http://localhost:3060', 'http://3.37.228.220'],
+        credentials: true,
+    }))
+    }
     
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use('/', express.static(path.join(__dirname,'uploads')))
@@ -63,10 +57,10 @@ app.use(session({
     resave: false,
     secret: process.env.COOKIE_SECRET!,
     cookie:{
-        httpOnly : true,
-        // secure: process.env.NODE_ENV === 'production' ? true : false,
+        httpOnly : true, //true면 js로 접근 금지
+        // secure: process.env.NODE_ENV === 'production' ? true : false, //https면 true로 적용
         // domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
-        secure: false,
+        secure: false, 
         domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
     },
     name: 'rnbck',
