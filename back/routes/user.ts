@@ -147,6 +147,8 @@ router.patch('/address', isLoggedIn, async (req, res, next) => {
 router.get('/', async(req, res, next) =>{
     try{
         if(req.user){
+            let userInfo = {};
+            let address;
             const info = await User.findOne({
                 where : {id : req.user.id},
                 attributes: {
@@ -156,18 +158,17 @@ router.get('/', async(req, res, next) =>{
             const cartLength = await Cart.count({
                 where: {UserId: req.user.id}
             });
-            const address = await Address.findOne({
-                where: {
-                    id: info?.addressId,
-                    UserId: req.user.id
-                },
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt', 'UserId']
-                }
-            });
-
-            let userInfo = {};
-
+            if(info?.addressId){
+                address = await Address.findOne({
+                    where: {
+                        id: info?.addressId,
+                        UserId: req.user.id
+                    },
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'UserId']
+                    }
+                });
+            }
             if(address){
                 userInfo = {
                    info,
