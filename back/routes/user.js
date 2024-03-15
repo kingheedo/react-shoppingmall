@@ -148,6 +148,8 @@ router.patch('/address', middlewares_1.isLoggedIn, (req, res, next) => __awaiter
 router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (req.user) {
+            let userInfo = {};
+            let address;
             const info = yield models_1.User.findOne({
                 where: { id: req.user.id },
                 attributes: {
@@ -157,16 +159,17 @@ router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             const cartLength = yield models_1.Cart.count({
                 where: { UserId: req.user.id }
             });
-            const address = yield models_1.Address.findOne({
-                where: {
-                    id: info === null || info === void 0 ? void 0 : info.addressId,
-                    UserId: req.user.id
-                },
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt', 'UserId']
-                }
-            });
-            let userInfo = {};
+            if (info === null || info === void 0 ? void 0 : info.addressId) {
+                address = yield models_1.Address.findOne({
+                    where: {
+                        id: info === null || info === void 0 ? void 0 : info.addressId,
+                        UserId: req.user.id
+                    },
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt', 'UserId']
+                    }
+                });
+            }
             if (address) {
                 userInfo = {
                     info,
