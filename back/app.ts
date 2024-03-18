@@ -36,7 +36,7 @@ if(prod){
     app.use(hpp());
     app.use(helmet());
     app.use(cors({
-        origin: ['http://next-react.shop', 'https://admin.next-react.shop'],
+        origin: ['https://next-react.shop', 'https://admin.next-react.shop'],
         credentials: true,
     }))
 }else{
@@ -56,6 +56,7 @@ app.use(session({
     saveUninitialized : false,
     resave: false,
     secret: process.env.COOKIE_SECRET!,
+    proxy: true,
     cookie:{
         httpOnly : true, //true면 js로 접근 금지
         secure: process.env.NODE_ENV === 'production' ? true : false, //https면 true로 적용

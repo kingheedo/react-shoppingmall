@@ -35,7 +35,7 @@ if (prod) {
     app.use(hpp());
     app.use((0, helmet_1.default)());
     app.use(cors({
-        origin: ['http://next-react.shop', 'https://admin.next-react.shop'],
+        origin: ['https://next-react.shop', 'https://admin.next-react.shop'],
         credentials: true,
     }));
 }
@@ -54,6 +54,7 @@ app.use(session({
     saveUninitialized: false,
     resave: false,
     secret: process.env.COOKIE_SECRET,
+    proxy: true,
     cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' ? true : false,
