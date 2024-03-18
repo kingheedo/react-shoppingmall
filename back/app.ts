@@ -32,6 +32,7 @@ sequelize.sync({force: false})
 passportConfig();
 
 if(prod){
+    app.set('trust proxy',1);
     app.use(morgan('combined'));
     app.use(hpp());
     app.use(helmet());

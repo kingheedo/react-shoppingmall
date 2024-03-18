@@ -31,6 +31,7 @@ models_1.sequelize.sync({ force: false })
 });
 (0, passport_1.default)();
 if (prod) {
+    app.set('trust proxy', 1);
     app.use(morgan('combined'));
     app.use(hpp());
     app.use((0, helmet_1.default)());
