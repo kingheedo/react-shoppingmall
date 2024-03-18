@@ -68,23 +68,27 @@ router.post('/product/images', middlewares_1.isLoggedIn, upload.array('image'), 
 }));
 /** 상품 추가 */
 router.post('/product', middlewares_1.isLoggedIn, upload.none(), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const product = yield models_1.Product.create({
-            productName: req.body.productName,
-            price: req.body.price,
-            stock: req.body.stock,
-            sex: req.body.sex,
-            UserId: req.user.id,
-        });
+        let product;
+        if ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) {
+            product = yield models_1.Product.create({
+                productName: req.body.productName,
+                price: req.body.price,
+                stock: req.body.stock,
+                sex: req.body.sex,
+                UserId: req.user.id,
+            });
+        }
         console.log('req.body', req.body);
-        if (req.body.images) {
+        if (req.body.images && product) {
             const promises = req.body.images.map((image) => models_1.Image.create({
                 src: image
             }));
             const images = yield Promise.all(promises);
             yield product.addImages(images);
         }
-        if (req.body.sizes) {
+        if (req.body.sizes && product) {
             if (Array.isArray(req.body.sizes)) {
                 const promises = req.body.sizes.map((size) => models_1.Size.create({
                     option: size
@@ -99,16 +103,19 @@ router.post('/product', middlewares_1.isLoggedIn, upload.none(), (req, res, next
                 yield product.addSize(size);
             }
         }
-        const fullProduct = yield models_1.Product.findOne({
-            where: { id: product.id },
-            include: [{
-                    model: models_1.Image,
-                },
-                {
-                    model: models_1.Size,
-                    attributes: ['option'],
-                },]
-        });
+        let fullProduct;
+        if (product === null || product === void 0 ? void 0 : product.id) {
+            fullProduct = yield models_1.Product.findOne({
+                where: { id: product.id },
+                include: [{
+                        model: models_1.Image,
+                    },
+                    {
+                        model: models_1.Size,
+                        attributes: ['option'],
+                    },]
+            });
+        }
         return res.status(202).json(fullProduct);
     }
     catch (error) {
@@ -214,12 +221,12 @@ router.get('/products', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(
 }));
 /** 관리자 정보 가져오기*/
 router.get('/user', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _b;
     try {
         if (req.user) {
             const user = yield models_1.User.findOne({
                 where: {
-                    id: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id
+                    id: (_b = req.user) === null || _b === void 0 ? void 0 : _b.id
                 },
                 attributes: ['id', 'email', 'name', 'level',]
             });
