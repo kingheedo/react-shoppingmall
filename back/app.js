@@ -35,7 +35,7 @@ if (prod) {
     app.use(hpp());
     app.use((0, helmet_1.default)());
     app.use(cors({
-        origin: ['http://next-react.shop', 'http://admin.next-react.shop'],
+        origin: ['http://next-react.shop', 'https://admin.next-react.shop'],
         credentials: true,
     }));
 }
