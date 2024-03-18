@@ -1,10 +1,13 @@
 import * as express from 'express';
 import * as bcrypt from 'bcrypt';
 import * as passport from 'passport';
+import * as path from 'path'
 import * as fs from 'fs';
 import { isLoggedIn, isNotLoggedIn } from './middlewares';
 import {  Image, Product, Size, User } from '../models';
 import * as multer from 'multer';
+import * as multerS3 from 'multer-s3'
+import { S3Client } from '@aws-sdk/client-s3';
 
 const router = express.Router();
 
@@ -15,25 +18,47 @@ try{
     fs.mkdirSync('uploads');
 }
 
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req,file,cb) => {
-            cb(null, 'uploads')
-        },
-        filename: (req,file,cb) => {
-            cb(null, `${file.fieldname} - ${Date.now()}`)
-        },
-    }),
-    limits: {
-        fileSize : 20 * 1024 * 1024, files: 2
-    }
-})
+// 이미지 로컬 저장
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination: (req,file,cb) => {
+//             cb(null, 'uploads')
+//         },
+//         filename: (req,file,cb) => {
+//             cb(null, `${file.fieldname} - ${Date.now()}`)
+//         },
+//     }),
+//     limits: {
+//         fileSize : 20 * 1024 * 1024, files: 2
+//     }
+// })
 
-/** 이미지 로컬 추가 */
+/** multer에서 s3접근 */
+const s3 = new S3Client({
+    credentials:{
+        accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+    },
+    region: 'ap-northeast-2',
+});
+
+/** multer에서 s3업로드 설정 */
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.BUCKET_NAME!,
+        key: (req,file,cb) => {
+            cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`)
+        }
+    }),
+    limits: {fileSize: 20 * 1024 * 1024},
+});
+
+/** 이미지 s3 추가 */
 router.post('/product/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
-    console.log('req.files',req.files);
+    // console.log('req.files',req.files);
     if(Array.isArray(req.files)){
-     return res.json((req.files as Express.Multer.File[]).map((v) => v.filename))
+     return res.json((req.files as Express.MulterS3.File[]).map((v) => v.location))
     }
 })
 

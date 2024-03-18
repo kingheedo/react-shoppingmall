@@ -2,9 +2,7 @@ import * as express from 'express';
 import { isLoggedIn } from './middlewares';
 import * as path from 'path'
 import * as fs from 'fs';
-import * as AWS from 'aws-sdk'
 import * as multer from 'multer';
-import * as multerS3 from 'multer-s3'
 import { Product, Review, User, Image, Size, HistoryCart, Payment, ReviewImage } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
@@ -27,19 +25,19 @@ const router = express.Router();
 // });
 
 
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req,file,cb) => {
-            cb(null, 'uploads')
-        },
-        filename: (req,file,cb) => {
-            cb(null, `${file.fieldname} - ${Date.now()}`)
-        },
-    }),
-    limits: {
-        fileSize : 20 * 1024 * 1024, files: 2
-    }
-})
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination: (req,file,cb) => {
+//             cb(null, 'uploads')
+//         },
+//         filename: (req,file,cb) => {
+//             cb(null, `${file.fieldname} - ${Date.now()}`)
+//         },
+//     }),
+//     limits: {
+//         fileSize : 20 * 1024 * 1024, files: 2
+//     }
+// })
 
 router.get('/search', async(req, res, next) => {
     try{
@@ -121,12 +119,12 @@ router.get('/:productId', async(req, res, next ) => {
     }
 })
 
-router.post('/review/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
-    console.log('req.files', req.files);
-    if(Array.isArray(req.files)){
-        return res.json((req.files as Express.Multer.File[]).map(v => v.filename))
-    }
-})
+// router.post('/review/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
+//     console.log('req.files', req.files);
+//     if(Array.isArray(req.files)){
+//         return res.json((req.files as Express.Multer.File[]).map(v => v.filename))
+//     }
+// })
 
 router.post('/:productId/review', isLoggedIn, async(req, res,next) => {
     try{
