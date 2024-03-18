@@ -453,7 +453,7 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
               <ProductImage
                 className="image"
                 alt="product.Images[0]"
-                src={`${backUrl}/${product.Images[0].src}`}
+                src={`${product.Images[0].src}`}
               />
               <InfoArea className="info-area">
                 <Tags>무료배송</Tags>

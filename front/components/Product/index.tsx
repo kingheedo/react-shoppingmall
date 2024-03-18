@@ -245,8 +245,8 @@ const Product = ({ idx,product }:IProductProps) => {
           <Rank>
             {idx}
           </Rank>
-          <Image alt={`${product?.Images[0]}`} src={`${backUrl}/${product?.Images[0]?.src}`}/>
-          <ImageHover alt={`${product?.Images[1]}`} src={`${backUrl}/${product?.Images[1]?.src}`}/>
+          <Image alt={`${product?.Images[0]}`} src={`${product?.Images[0]?.src}`}/>
+          <ImageHover alt={`${product?.Images[1]}`} src={`${product?.Images[1]?.src}`}/>
           <ProductLikeBtn style={{ background: product.Likers.find(value => value.id === me?.info.id) ? `url(${'like-28-fill-red.svg'}) no-repeat center center` : `url('${'like-28-white.svg'}') no-repeat center center` }} onClick={onClickLike}/>
         </ProductImgWrapper>
         <ProductInfoWrapper>
