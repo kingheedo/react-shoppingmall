@@ -65,16 +65,19 @@ router.post('/product/images', isLoggedIn, upload.array('image'), async(req, res
 /** 상품 추가 */
 router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
-        const product = await Product.create({
+      let product;
+      if(req.user?.id){
+          product = await Product.create({
             productName : req.body.productName,
             price : req.body.price,
             stock : req.body.stock,
             sex: req.body.sex,
             UserId : req.user!.id,
         })
+      }
 
         console.log('req.body',req.body)
-        if(req.body.images){
+        if(req.body.images && product){
             const promises:Promise<Image>[] = req.body.images.map((image:string)=> Image.create({
                     src: image
                 }));
@@ -83,7 +86,7 @@ router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
             await product.addImages(images)
             
         }
-        if(req.body.sizes){
+        if(req.body.sizes && product){
             if(Array.isArray(req.body.sizes)){
                 const promises:Promise<Size>[] = req.body.sizes.map((size:string) => Size.create({
                     option: size
@@ -99,7 +102,9 @@ router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
                 await product.addSize(size)
             }
         }
-        const fullProduct = await Product.findOne({
+        let fullProduct;
+        if(product?.id){
+          fullProduct = await Product.findOne({
             where: {id : product.id},
             include:[{
             model : Image,
@@ -108,7 +113,9 @@ router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
             model: Size,
             attributes: ['option'],
             },]
-        })
+          })
+        }
+        
          return res.status(202).json(fullProduct);
     }catch(error){
         console.error(error);
