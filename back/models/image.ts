@@ -11,7 +11,7 @@ class Image extends Model{
 Image.init({
     src: {
         type : DataTypes.STRING(200),
-        allowNull : false,
+        allowNull : true,
     },
 },{
     modelName: 'Image',
