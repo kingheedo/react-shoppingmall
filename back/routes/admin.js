@@ -68,10 +68,11 @@ router.post('/product/images', middlewares_1.isLoggedIn, upload.array('image'), 
 }));
 /** 상품 추가 */
 router.post('/product', middlewares_1.isLoggedIn, upload.none(), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
+        console.log('req.user?.id', (_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
         let product;
-        if ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) {
+        if ((_b = req.user) === null || _b === void 0 ? void 0 : _b.id) {
             product = yield models_1.Product.create({
                 productName: req.body.productName,
                 price: req.body.price,
@@ -221,12 +222,12 @@ router.get('/products', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(
 }));
 /** 관리자 정보 가져오기*/
 router.get('/user', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
+    var _c;
     try {
         if (req.user) {
             const user = yield models_1.User.findOne({
                 where: {
-                    id: (_b = req.user) === null || _b === void 0 ? void 0 : _b.id
+                    id: (_c = req.user) === null || _c === void 0 ? void 0 : _c.id
                 },
                 attributes: ['id', 'email', 'name', 'level',]
             });

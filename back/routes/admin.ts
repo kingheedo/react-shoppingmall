@@ -65,6 +65,7 @@ router.post('/product/images', isLoggedIn, upload.array('image'), async(req, res
 /** 상품 추가 */
 router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
+      console.log('req.user?.id',req.user?.id);
       let product;
       if(req.user?.id){
           product = await Product.create({
