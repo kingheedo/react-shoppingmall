@@ -23,5 +23,4 @@ Image.init({
 export const associate = (db:dbTtype) =>{
     db.Image.belongsTo(db.Product);
 }
-Image.sync();
 export default Image;

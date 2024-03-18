@@ -24,7 +24,7 @@ const app = express();
 const prod = process.env.NODE_ENV === 'production';
 models_1.sequelize.sync({ force: false })
     .then(() => {
-    console.log('db 연결 성공');
+    console.log('데이터베이스 연결 성공');
 })
     .catch((err) => {
     console.error(err);

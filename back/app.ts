@@ -22,13 +22,13 @@ dotenv.config();
 const app = express();
 const prod = process.env.NODE_ENV === 'production';
 
-sequelize.sync({force: false})
-    .then(() =>{
-        console.log('db 연결 성공');
-    })
-    .catch((err:Error) => {
-        console.error(err)
-    });
+sequelize.sync({ force: false })
+  .then(() => {
+    console.log('데이터베이스 연결 성공');
+  })
+  .catch((err: Error) => {
+    console.error(err);
+  });
 passportConfig();
 
 if(prod){

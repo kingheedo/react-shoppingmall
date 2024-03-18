@@ -69,5 +69,4 @@ class User extends Model{
         db.User.belongsToMany(db.Product, {through: {model: db.Review, unique: true}})
         db.User.belongsToMany(db.HistoryCart,{through: {model: db.Payment,unique : false}});
     }
-    User.sync();
     export default User;

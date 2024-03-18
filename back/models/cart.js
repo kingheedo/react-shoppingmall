@@ -35,5 +35,4 @@ const associate = (db) => {
     db.Cart.belongsTo(db.User);
 };
 exports.associate = associate;
-Cart.sync();
 exports.default = Cart;

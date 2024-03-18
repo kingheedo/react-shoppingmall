@@ -39,5 +39,4 @@ const associate = (db) => {
     db.Product.belongsToMany(db.User, { through: { model: db.Review, unique: true } });
 };
 exports.associate = associate;
-Product.sync();
 exports.default = Product;

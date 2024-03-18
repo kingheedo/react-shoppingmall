@@ -39,5 +39,4 @@ class HistoryCart extends Model{
         db.HistoryCart.belongsTo(db.User)
         db.HistoryCart.belongsToMany(db.User,{through: {model: db.Payment, unique : false }})
     }
-HistoryCart.sync();
 export default HistoryCart

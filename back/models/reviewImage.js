@@ -21,5 +21,4 @@ const associate = (db) => {
     db.ReviewImage.belongsTo(db.Review);
 };
 exports.associate = associate;
-ReviewImage.sync();
 exports.default = ReviewImage;

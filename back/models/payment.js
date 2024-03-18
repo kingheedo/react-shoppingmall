@@ -60,5 +60,4 @@ const associate = (db) => {
     db.Payment.belongsTo(db.User);
 };
 exports.associate = associate;
-Payment.sync();
 exports.default = Payment;

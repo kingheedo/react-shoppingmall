@@ -56,5 +56,4 @@ class Product extends Model{
         db.Product.belongsToMany(db.User, {through: {model: db.HistoryCart,unique: false}})
         db.Product.belongsToMany(db.User, {through: {model: db.Review, unique: true}})
     }
-    Product.sync();
 export default Product

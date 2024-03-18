@@ -43,5 +43,4 @@ Address.init({
 export const associate = (db: dbTtype) => {
   db.Address.belongsTo(db.User);
 }
-Address.sync();
 export default Address;

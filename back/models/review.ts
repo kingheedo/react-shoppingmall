@@ -37,5 +37,4 @@ import {sequelize} from './sequelize'
          db.Review.belongsTo(db.User);
          db.Review.belongsTo(db.Product);
     }
-    Review.sync();
     export default Review

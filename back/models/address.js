@@ -37,5 +37,4 @@ const associate = (db) => {
     db.Address.belongsTo(db.User);
 };
 exports.associate = associate;
-Address.sync();
 exports.default = Address;

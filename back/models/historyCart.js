@@ -36,5 +36,4 @@ const associate = (db) => {
     db.HistoryCart.belongsToMany(db.User, { through: { model: db.Payment, unique: false } });
 };
 exports.associate = associate;
-HistoryCart.sync();
 exports.default = HistoryCart;
