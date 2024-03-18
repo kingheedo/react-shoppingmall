@@ -11,10 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const passport = require("passport");
+const path = require("path");
 const fs = require("fs");
 const middlewares_1 = require("./middlewares");
 const models_1 = require("../models");
 const multer = require("multer");
+const multerS3 = require("multer-s3");
+const client_s3_1 = require("@aws-sdk/client-s3");
 const router = express.Router();
 try {
     fs.accessSync('uploads');
@@ -23,24 +26,44 @@ catch (error) {
     console.log('uploads 폴더가 없으므로 생성합니다.');
     fs.mkdirSync('uploads');
 }
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, 'uploads');
-        },
-        filename: (req, file, cb) => {
-            cb(null, `${file.fieldname} - ${Date.now()}`);
-        },
-    }),
-    limits: {
-        fileSize: 20 * 1024 * 1024, files: 2
-    }
+// 이미지 로컬 저장
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination: (req,file,cb) => {
+//             cb(null, 'uploads')
+//         },
+//         filename: (req,file,cb) => {
+//             cb(null, `${file.fieldname} - ${Date.now()}`)
+//         },
+//     }),
+//     limits: {
+//         fileSize : 20 * 1024 * 1024, files: 2
+//     }
+// })
+/** multer에서 s3접근 */
+const s3 = new client_s3_1.S3Client({
+    credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+    region: 'ap-northeast-2',
 });
-/** 이미지 로컬 추가 */
+/** multer에서 s3업로드 설정 */
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.BUCKET_NAME,
+        key: (req, file, cb) => {
+            cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`);
+        }
+    }),
+    limits: { fileSize: 20 * 1024 * 1024 },
+});
+/** 이미지 s3 추가 */
 router.post('/product/images', middlewares_1.isLoggedIn, upload.array('image'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('req.files', req.files);
+    // console.log('req.files',req.files);
     if (Array.isArray(req.files)) {
-        return res.json(req.files.map((v) => v.filename));
+        return res.json(req.files.map((v) => v.location));
     }
 }));
 /** 상품 추가 */

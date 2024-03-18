@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const middlewares_1 = require("./middlewares");
-const multer = require("multer");
 const models_1 = require("../models");
 const sequelize_1 = require("sequelize");
 const router = express.Router();
@@ -30,19 +29,19 @@ const router = express.Router();
 //     }),
 //     limits : {fileSize: 20 * 1024 * 1024, files: 2}
 // });
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, 'uploads');
-        },
-        filename: (req, file, cb) => {
-            cb(null, `${file.fieldname} - ${Date.now()}`);
-        },
-    }),
-    limits: {
-        fileSize: 20 * 1024 * 1024, files: 2
-    }
-});
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination: (req,file,cb) => {
+//             cb(null, 'uploads')
+//         },
+//         filename: (req,file,cb) => {
+//             cb(null, `${file.fieldname} - ${Date.now()}`)
+//         },
+//     }),
+//     limits: {
+//         fileSize : 20 * 1024 * 1024, files: 2
+//     }
+// })
 router.get('/search', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const SearchProducts = yield models_1.Product.findAll({
@@ -117,12 +116,12 @@ router.get('/:productId', (req, res, next) => __awaiter(void 0, void 0, void 0, 
         next(error);
     }
 }));
-router.post('/review/images', middlewares_1.isLoggedIn, upload.array('image'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('req.files', req.files);
-    if (Array.isArray(req.files)) {
-        return res.json(req.files.map(v => v.filename));
-    }
-}));
+// router.post('/review/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
+//     console.log('req.files', req.files);
+//     if(Array.isArray(req.files)){
+//         return res.json((req.files as Express.Multer.File[]).map(v => v.filename))
+//     }
+// })
 router.post('/:productId/review', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
