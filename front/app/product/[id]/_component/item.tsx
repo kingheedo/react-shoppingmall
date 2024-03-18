@@ -458,7 +458,7 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
               <InfoArea className="info-area">
                 <Tags>무료배송</Tags>
                 <BrandName className="brand-name">
-                  <Link href="/">8 seconds</Link>
+                  <Link href="/" prefetch={false}>8 seconds</Link>
                 </BrandName>
                 <ProductName>{product.productName}</ProductName>
                 <PriceInfo>{product.price.toLocaleString('ko-KR')}</PriceInfo>
@@ -469,7 +469,9 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
                   </ScoreWrap>
                   <Review
                     onClick={e => onClickReviewLink(e)}
-                    href="#review-list">
+                    href="#review-list"
+                    prefetch={false}
+                  >
                     {product.Reviews.length}건
                   </Review>
                 </ReviewWrap>

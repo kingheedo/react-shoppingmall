@@ -240,7 +240,7 @@ const Product = ({ idx,product }:IProductProps) => {
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
     >
-      <Link href={`/product/${product.id}`}>
+      <Link href={`/product/${product.id}`} prefetch={false}>
         <ProductImgWrapper>
           <Rank>
             {idx}

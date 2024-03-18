@@ -259,19 +259,19 @@ const Header = () => {
       <TopArea>
         <TopAreaInner>
           <div className="util">
-            <Link aria-label="cart" href="/cart">
+            <Link aria-label="cart" href="/cart" prefetch={false}>
               <span>
                 {(me?.info.id && me.cartLength) || 0}
               </span>
             </Link>
           </div>
           <div className="user">
-            <Link aria-label="mypage" href="/mypage">
+            <Link aria-label="mypage" href="/mypage" prefetch={false}>
             마이페이지
             </Link>
             {!me?.info.id
-              ? <Link aria-label="login" href="/signIn">로그인</Link>
-              : <Link aria-label="logout" onClick={onClickLogOut} href="#">로그아웃</Link>}
+              ? <Link aria-label="login" href="/signIn" prefetch={false}>로그인</Link>
+              : <Link aria-label="logout" onClick={onClickLogOut} href="#" prefetch={false}>로그아웃</Link>}
           </div>
         </TopAreaInner>
       </TopArea>
@@ -301,7 +301,9 @@ const Header = () => {
                       setSearchActive(false);
                     }}
                     aria-label={product.productName} 
-                    href={`/product/${product.id}`}>
+                    href={`/product/${product.id}`}
+                    prefetch={false}
+                  >
                     {product.productName}
                   </Link>
                 </li>

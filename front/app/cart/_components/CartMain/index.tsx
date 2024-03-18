@@ -544,7 +544,7 @@ const CartMain = () => {
                       </label>
                     </Td>
                     <Td>
-                      <Link href={`/product/${info.Product.id}`}>
+                      <Link href={`/product/${info.Product.id}`} prefetch={false}>
                         <ProductImg
                           src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`}
                           alt={info.Product.Images[0].src}
@@ -555,7 +555,7 @@ const CartMain = () => {
                       <div className="info">
                         <BrandName>8 seconds</BrandName>
                         <ProductName>
-                          <Link href={`/product/${info.Product.id}`}>
+                          <Link href={`/product/${info.Product.id}`} prefetch={false}>
                             <span>{info.Product.productName}</span>
                           </Link>
                         </ProductName>
@@ -647,11 +647,12 @@ const CartMain = () => {
                 </CalcItem>
               </CalcWrap>
               <SubmitWrap>
-                <Link href={{
-                  pathname: '/order',
-                  query: { ids: ((JSON.stringify(checkedList))) },
-                  
-                }}
+                <Link 
+                  href={{
+                    pathname: '/order',
+                    query: { ids: ((JSON.stringify(checkedList))) },
+                  }}
+                  prefetch={false}
                 >
                   주문하기
                 </Link>

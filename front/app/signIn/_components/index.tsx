@@ -247,13 +247,13 @@ const SignIn = () => {
           </LoginBtn>
         </Form>
         <LinkWrap>
-          <Link href={'/signIn'}>
+          <Link href={'/signIn'} prefetch={false}>
             아이디 찾기
           </Link>
-          <Link href={'/signIn'}>
+          <Link href={'/signIn'} prefetch={false}>
             비밀번호 찾기
           </Link>
-          <Link href={'/signup'}>
+          <Link href={'/signup'} prefetch={false}>
             회원가입
           </Link>
         </LinkWrap>
