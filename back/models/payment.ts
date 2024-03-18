@@ -70,4 +70,5 @@ class Payment extends Model{
         db.Payment.belongsTo(db.HistoryCart);
         db.Payment.belongsTo(db.User);
     }
+    Payment.sync();
     export default Payment

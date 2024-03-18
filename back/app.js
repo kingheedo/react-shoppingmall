@@ -43,7 +43,7 @@ if (prod) {
 else {
     app.use(morgan('dev'));
     app.use(cors({
-        origin: ['http://localhost:3060', 'http://3.37.228.220'],
+        origin: ['http://localhost:3060', 'http://localhost:3070'],
         credentials: true,
     }));
 }

@@ -41,4 +41,5 @@ class Cart extends Model{
         db.Cart.belongsTo(db.Product)
         db.Cart.belongsTo(db.User)
     }
+Cart.sync();
 export default Cart

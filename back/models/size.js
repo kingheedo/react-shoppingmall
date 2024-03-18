@@ -21,4 +21,5 @@ const associate = (db) => {
     db.Size.belongsTo(db.Product);
 };
 exports.associate = associate;
+Size.sync();
 exports.default = Size;

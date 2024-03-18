@@ -32,4 +32,5 @@ const associate = (db) => {
     db.Review.belongsTo(db.Product);
 };
 exports.associate = associate;
+Review.sync();
 exports.default = Review;

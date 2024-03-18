@@ -21,4 +21,5 @@ const associate = (db) => {
     db.Image.belongsTo(db.Product);
 };
 exports.associate = associate;
+Image.sync();
 exports.default = Image;

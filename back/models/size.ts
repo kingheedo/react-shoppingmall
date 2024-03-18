@@ -24,5 +24,5 @@ class Size extends Model{
      export const associate = (db:dbTtype) =>{
         db.Size.belongsTo(db.Product)
     }
-
+    Size.sync();
     export default Size;

@@ -24,4 +24,5 @@ ReviewImage.init({
 export const associate = (db: dbTtype) => {
   db.ReviewImage.belongsTo(db.Review);
 }
+ReviewImage.sync();
 export default ReviewImage;
