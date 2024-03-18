@@ -58,9 +58,8 @@ app.use(session({
     secret: process.env.COOKIE_SECRET!,
     cookie:{
         httpOnly : true, //true면 js로 접근 금지
-        // secure: process.env.NODE_ENV === 'production' ? true : false, //https면 true로 적용
+        secure: process.env.NODE_ENV === 'production' ? true : false, //https면 true로 적용
         // domain: process.env.NODE_ENV === 'production' ? 'http://3.37.228.220' : undefined,
-        secure: false, 
         domain: process.env.NODE_ENV === 'production' ? '.next-react.shop' : undefined,
     },
     name: 'rnbck',
@@ -84,6 +83,6 @@ app.use((err: any, req:express.Request, res:express.Response, next:express.NextF
     console.error(err);
     res.status(500).send('서버 에러 발생')
 })
-app.listen(prod ? 80 : 3065, () => {
+app.listen(3065, () => {
     console.log('서버 실행 중')
 })
