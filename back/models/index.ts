@@ -8,6 +8,7 @@ import Review, {associate as associateReview} from './review';
 import Size, {associate as associateSize} from './size';
 import Address, {associate as associateAddress} from './address';
 import ReviewImage , {associate as associateReviewImage} from './reviewImage';
+import sequelize from './sequelize';
 
 
 export * from './sequelize';
@@ -39,10 +40,11 @@ export type dbTtype = typeof db;
 associateUser(db);
 associateCart(db);
 associateHistoryCart(db);
-associatePayment(db);
 associateImage(db);
 associateProduct(db);
 associateReview(db);
 associateSize(db);
 associateAddress(db);
 associateReviewImage(db);
+associatePayment(db);
+

@@ -22,6 +22,23 @@ const hpp = require("hpp");
 dotenv.config();
 const app = express();
 const prod = process.env.NODE_ENV === 'production';
+// (async () => {
+//   try{
+//     await User.sync();
+//   await Product.sync();
+//   await Cart.sync();
+//   await HistoryCart.sync();
+//   await Size.sync();
+//   await Image.sync();
+//   await Review.sync();
+//   await Address.sync();
+//   await ReviewImage.sync();
+//   await Payment.sync();
+//   }
+//   catch(error){
+//     console.log('error',error);
+//   }
+// })();
 models_1.sequelize.sync({ force: false })
     .then(() => {
     console.log('데이터베이스 연결 성공');

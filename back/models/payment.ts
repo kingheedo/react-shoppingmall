@@ -33,7 +33,7 @@ class Payment extends Model{
             paymentType: {
                 type: DataTypes.ENUM('NORMAL','BRANDPAY','KEYIN'),
                 allowNull: false,
-                defaultValue: ''
+                defaultValue: 'NORMAL'
             },
             rcName: {
                 type: DataTypes.STRING(20),

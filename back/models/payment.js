@@ -22,7 +22,7 @@ Payment.init({
     paymentType: {
         type: sequelize_1.DataTypes.ENUM('NORMAL', 'BRANDPAY', 'KEYIN'),
         allowNull: false,
-        defaultValue: ''
+        defaultValue: 'NORMAL'
     },
     rcName: {
         type: sequelize_1.DataTypes.STRING(20),

@@ -14,11 +14,11 @@ Image.init({
         allowNull : true,
     },
 },{
+    sequelize,   
     modelName: 'Image',
     tableName: 'images',
     charset: 'utf8',
     collate: 'utf8_general_ci', 
-    sequelize,   
 })
 export const associate = (db:dbTtype) =>{
     db.Image.belongsTo(db.Product);

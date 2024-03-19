@@ -37,6 +37,6 @@ class HistoryCart extends Model{
     export const associate =  (db:dbTtype) =>{
         db.HistoryCart.belongsTo(db.Product)
         db.HistoryCart.belongsTo(db.User)
-        db.HistoryCart.belongsToMany(db.User,{through: {model: db.Payment, unique : false }})
+        db.HistoryCart.belongsToMany(db.User,{through: {model: db.Payment}})
     }
 export default HistoryCart

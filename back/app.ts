@@ -1,5 +1,5 @@
 import * as express from 'express'
-import {sequelize} from './models'
+import {Address, Cart, HistoryCart, Image, Payment, Product, Review, ReviewImage, Size, User, sequelize} from './models'
 import authRouter from './routes/auth';
 import cartRouter from './routes/cart'
 import productRouter from './routes/product'
@@ -21,6 +21,25 @@ import * as hpp from 'hpp'
 dotenv.config();
 const app = express();
 const prod = process.env.NODE_ENV === 'production';
+
+// (async () => {
+//   try{
+//     await User.sync();
+//   await Product.sync();
+//   await Cart.sync();
+//   await HistoryCart.sync();
+//   await Size.sync();
+//   await Image.sync();
+//   await Review.sync();
+//   await Address.sync();
+//   await ReviewImage.sync();
+//   await Payment.sync();
+//   }
+//   catch(error){
+//     console.log('error',error);
+    
+//   }
+// })();
 
 sequelize.sync({ force: false })
   .then(() => {

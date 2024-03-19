@@ -47,10 +47,10 @@ const db = {
 (0, user_1.associate)(db);
 (0, cart_1.associate)(db);
 (0, historyCart_1.associate)(db);
-(0, payment_1.associate)(db);
 (0, image_1.associate)(db);
 (0, product_1.associate)(db);
 (0, review_1.associate)(db);
 (0, size_1.associate)(db);
 (0, address_1.associate)(db);
 (0, reviewImage_1.associate)(db);
+(0, payment_1.associate)(db);
