@@ -15,11 +15,11 @@ export default() => {
     passport.deserializeUser<number>(async(id, done) => {
         try{
             const user = await User.findOne({where: {id}});
-            done(null,user)
+            return done(null,user)
             
         }catch(error){
             console.error(error);
-             done(error);
+             return done(error);
         }
     })
     local();

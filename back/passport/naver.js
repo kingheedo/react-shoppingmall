@@ -28,7 +28,7 @@ exports.default = () => {
                 }
             });
             if (exUser) {
-                done(null, exUser);
+                return done(null, exUser);
             }
             else {
                 const newUser = yield models_1.User.create({
@@ -37,7 +37,7 @@ exports.default = () => {
                     naverId: profile.id,
                     provider: 'naver'
                 });
-                done(null, newUser);
+                return done(null, newUser);
             }
         }
         catch (error) {

@@ -17,7 +17,7 @@ export default() => {
         }
       });
       if(exUser){
-        done(null, exUser);
+        return done(null, exUser);
       }else{
         
         
@@ -28,7 +28,7 @@ export default() => {
           provider: 'naver'
         })
 
-        done(null, newUser)
+        return done(null, newUser)
       }
     }
     catch(error){

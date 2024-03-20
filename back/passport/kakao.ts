@@ -21,7 +21,7 @@ export default () => {
       if(exUser){
         console.log('exUser',exUser);
         
-         done(null, exUser);
+         return done(null, exUser);
       } else {
 
       const newUser = await User.create({
@@ -32,7 +32,7 @@ export default () => {
       });
         console.log('newUser',newUser);
 
-       done(null, newUser);
+       return done(null, newUser);
     }
     } catch(error){
       console.log('error');

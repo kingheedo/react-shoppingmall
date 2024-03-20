@@ -163,7 +163,7 @@ router.post('/like/:productId', middlewares_1.isLoggedIn, (req, res, next) => __
             }
         });
         product === null || product === void 0 ? void 0 : product.addLikers((_b = req.user) === null || _b === void 0 ? void 0 : _b.id);
-        res.status(201).json('좋아요를 눌렀습니다.');
+        return res.status(201).json('좋아요를 눌렀습니다.');
     }
     catch (error) {
         console.error(error);
@@ -180,7 +180,7 @@ router.post('/unlike/:productId', middlewares_1.isLoggedIn, (req, res, next) => 
         });
         if (product) {
             yield product.removeLikers(req.user.id);
-            res.status(201).json('좋아요 취소');
+            return res.status(201).json('좋아요 취소');
         }
     }
     catch (error) {

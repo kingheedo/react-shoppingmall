@@ -6,6 +6,52 @@ import * as passport from 'passport';
 import {isLoggedIn, isNotLoggedIn} from './middlewares';
 import { Op } from 'sequelize';
 
+
+router.post('/login',isNotLoggedIn, (req, res, next) =>{
+   try{
+     passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{
+    if(err){
+        console.error(err);
+        return next(err)
+    }
+    if(info){
+        return res.status(401).send(info.message);
+    }
+    return req.logIn(user, async (loginErr:Error) => {
+        if(loginErr){
+            console.error(loginErr)
+            return next(loginErr)
+        }
+        const withOutPasswordUser = await User.findOne({
+            where: {id: user.id},
+            attributes: {
+                exclude : ['password']
+            }
+        })
+        return res.status(201).json(withOutPasswordUser);
+    })
+    })(req, res, next)
+   }
+   catch(error){
+    next(error);
+    console.error(error);
+   }
+});
+
+router.post('/logout',isLoggedIn, (req, res, next) => {
+    req.logout((err) => {
+		if (err) {
+			return res.redirect("/");
+		} else {
+			return res.status(200).send("server ok: 로그아웃 완료");
+		}
+	});
+    // req.session.destroy(() =>{
+    //     return res.status(201).send('로그아웃 완료.')
+    // });
+    
+})
+
 router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
     try{
             const paymentLists = await Payment.findAll({
@@ -35,21 +81,6 @@ router.get('/paymentsList', isLoggedIn,  async(req, res, next) => {
         next(error);
     }
 })
-router.post('/logout',isLoggedIn, (req, res, next) => {
-    req.logOut((err) => {
-        if(err){
-            console.error(err);
-            return next(err);
-        }else{
-            res.redirect('/')
-            return res.status(201).send('로그아웃 완료.')
-        }
-    });
-    // req.session.destroy(() =>{
-    //     return res.status(201).send('로그아웃 완료.')
-    // });
-    
-})
 
 router.get('/address', isLoggedIn, async(req, res, next) => {
     try{
@@ -59,7 +90,7 @@ router.get('/address', isLoggedIn, async(req, res, next) => {
             }
         })
         
-        res.status(200).json(getAddresses);
+        return res.status(200).json(getAddresses);
     }
     catch(error){
         console.error(error);
@@ -193,36 +224,6 @@ router.get('/', async(req, res, next) =>{
     }
 });
 
-router.post('/login',isNotLoggedIn, (req, res, next) =>{
-   try{
-     passport.authenticate('local', (err:Error, user:User, info:{message: string}) =>{
-    if(err){
-        console.error(err);
-        return next(err)
-    }
-    if(info){
-        return res.status(401).send(info.message);
-    }
-    return req.logIn(user, async (loginErr:Error) => {
-        if(loginErr){
-            console.error(loginErr)
-            return next(loginErr)
-        }
-        const withOutPasswordUser = await User.findOne({
-            where: {id: user.id},
-            attributes: {
-                exclude : ['password']
-            }
-        })
-        return res.status(201).json(withOutPasswordUser);
-    })
-    })(req, res, next)
-   }
-   catch(error){
-    next(error);
-    console.error(error);
-   }
-});
 
 router.post('/', isNotLoggedIn,  async(req, res, next) => {
     try{
@@ -244,7 +245,7 @@ router.post('/', isNotLoggedIn,  async(req, res, next) => {
             name : req.body.name,
             password : hashedPassword,
         })
-        res.status(201).send('회원가입 성공');
+        return res.status(201).send('회원가입 성공');
     } catch (error) {
         console.error(error);
         next(error);

@@ -175,7 +175,7 @@ router.post('/like/:productId', isLoggedIn, async(req,res,next) => {
 
         product?.addLikers(req.user?.id)
 
-        res.status(201).json('좋아요를 눌렀습니다.')
+        return res.status(201).json('좋아요를 눌렀습니다.')
     }
 
     catch(error){
@@ -194,7 +194,7 @@ router.post('/unlike/:productId', isLoggedIn, async(req, res, next) => {
         })
         if(product){
             await product.removeLikers(req.user!.id);
-            res.status(201).json('좋아요 취소')
+            return res.status(201).json('좋아요 취소')
         }
     }
     catch(error){

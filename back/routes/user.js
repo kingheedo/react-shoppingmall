@@ -16,6 +16,49 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const middlewares_1 = require("./middlewares");
 const sequelize_1 = require("sequelize");
+router.post('/login', middlewares_1.isNotLoggedIn, (req, res, next) => {
+    try {
+        passport.authenticate('local', (err, user, info) => {
+            if (err) {
+                console.error(err);
+                return next(err);
+            }
+            if (info) {
+                return res.status(401).send(info.message);
+            }
+            return req.logIn(user, (loginErr) => __awaiter(void 0, void 0, void 0, function* () {
+                if (loginErr) {
+                    console.error(loginErr);
+                    return next(loginErr);
+                }
+                const withOutPasswordUser = yield models_1.User.findOne({
+                    where: { id: user.id },
+                    attributes: {
+                        exclude: ['password']
+                    }
+                });
+                return res.status(201).json(withOutPasswordUser);
+            }));
+        })(req, res, next);
+    }
+    catch (error) {
+        next(error);
+        console.error(error);
+    }
+});
+router.post('/logout', middlewares_1.isLoggedIn, (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return res.redirect("/");
+        }
+        else {
+            return res.status(200).send("server ok: 로그아웃 완료");
+        }
+    });
+    // req.session.destroy(() =>{
+    //     return res.status(201).send('로그아웃 완료.')
+    // });
+});
 router.get('/paymentsList', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const paymentLists = yield models_1.Payment.findAll({
@@ -44,21 +87,6 @@ router.get('/paymentsList', middlewares_1.isLoggedIn, (req, res, next) => __awai
         next(error);
     }
 }));
-router.post('/logout', middlewares_1.isLoggedIn, (req, res, next) => {
-    req.logOut((err) => {
-        if (err) {
-            console.error(err);
-            return next(err);
-        }
-        else {
-            res.redirect('/');
-            return res.status(201).send('로그아웃 완료.');
-        }
-    });
-    // req.session.destroy(() =>{
-    //     return res.status(201).send('로그아웃 완료.')
-    // });
-});
 router.get('/address', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -67,7 +95,7 @@ router.get('/address', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(v
                 UserId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id
             }
         });
-        res.status(200).json(getAddresses);
+        return res.status(200).json(getAddresses);
     }
     catch (error) {
         console.error(error);
@@ -194,36 +222,6 @@ router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         next(error);
     }
 }));
-router.post('/login', middlewares_1.isNotLoggedIn, (req, res, next) => {
-    try {
-        passport.authenticate('local', (err, user, info) => {
-            if (err) {
-                console.error(err);
-                return next(err);
-            }
-            if (info) {
-                return res.status(401).send(info.message);
-            }
-            return req.logIn(user, (loginErr) => __awaiter(void 0, void 0, void 0, function* () {
-                if (loginErr) {
-                    console.error(loginErr);
-                    return next(loginErr);
-                }
-                const withOutPasswordUser = yield models_1.User.findOne({
-                    where: { id: user.id },
-                    attributes: {
-                        exclude: ['password']
-                    }
-                });
-                return res.status(201).json(withOutPasswordUser);
-            }));
-        })(req, res, next);
-    }
-    catch (error) {
-        next(error);
-        console.error(error);
-    }
-});
 router.post('/', middlewares_1.isNotLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const exUser = yield models_1.User.findOne({
@@ -244,7 +242,7 @@ router.post('/', middlewares_1.isNotLoggedIn, (req, res, next) => __awaiter(void
             name: req.body.name,
             password: hashedPassword,
         });
-        res.status(201).send('회원가입 성공');
+        return res.status(201).send('회원가입 성공');
     }
     catch (error) {
         console.error(error);

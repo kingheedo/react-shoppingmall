@@ -28,7 +28,7 @@ router.get('/', async (req: Request<any,any,any,{id : string}>, res, next) =>{
             as: 'Likers'
         }]
     })
-    res.status(202).json(products);
+    return res.status(202).json(products);
     }catch(error){
         console.error(error);
         next(error)

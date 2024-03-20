@@ -21,11 +21,11 @@ exports.default = () => {
     passport.deserializeUser((id, done) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const user = yield user_1.default.findOne({ where: { id } });
-            done(null, user);
+            return done(null, user);
         }
         catch (error) {
             console.error(error);
-            done(error);
+            return done(error);
         }
     }));
     (0, local_1.default)();

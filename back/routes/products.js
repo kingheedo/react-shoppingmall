@@ -37,7 +37,7 @@ router.get('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
                     as: 'Likers'
                 }]
         });
-        res.status(202).json(products);
+        return res.status(202).json(products);
     }
     catch (error) {
         console.error(error);

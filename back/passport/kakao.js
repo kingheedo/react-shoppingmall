@@ -29,7 +29,7 @@ exports.default = () => {
             });
             if (exUser) {
                 console.log('exUser', exUser);
-                done(null, exUser);
+                return done(null, exUser);
             }
             else {
                 const newUser = yield user_1.default.create({
@@ -39,7 +39,7 @@ exports.default = () => {
                     provider: 'kakao'
                 });
                 console.log('newUser', newUser);
-                done(null, newUser);
+                return done(null, newUser);
             }
         }
         catch (error) {
