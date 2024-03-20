@@ -174,7 +174,7 @@ const SignIn = () => {
         setLoginState({
           id: data.id
         });
-        router.back();
+        router.push('/');
       });
     },
     onError: () => {
@@ -253,7 +253,7 @@ const SignIn = () => {
           <Link href={'/signIn'} prefetch={false}>
             비밀번호 찾기
           </Link>
-          <Link href={'/signup'} prefetch={false}>
+          <Link href={'/signUp'} prefetch={false}>
             회원가입
           </Link>
         </LinkWrap>

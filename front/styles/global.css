@@ -119,7 +119,6 @@ input[type=tel]:focus,
 input[type=text]:focus, 
 input[type=url]:focus,
  textarea:focus{
-  border: 1px solid #111 !important;
   outline: 0;
 }
 

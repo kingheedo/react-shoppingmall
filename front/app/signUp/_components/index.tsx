@@ -1,189 +1,239 @@
 'use client';
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  Form, Input, Checkbox, Button,
-} from 'antd';
-import styled from 'styled-components';
-
-import useInput from '../../../hooks/useInput';
 import { useMutation } from '@tanstack/react-query';
+import React, { useEffect, useMemo, useRef } from 'react';
 import apis from '../../../apis';
+import styled from 'styled-components';
+import { useInput } from '../../../hooks/useInput';
+import { usePathname, useRouter } from 'next/navigation';
+import { LoginState } from '../../../store';
+import { useRecoilValue } from 'recoil';
 
-const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items:center;
-  justify-content: center;
-  background: linear-gradient(
-    rgba(255,255,255,0.3),
-    rgba(255,255,255,0.3)
-  ), url("http://app-storage-edge-003.cafe24.com/bannermanage2/insilence1/2021/11/04/59b551c37c5dcbf7548f4bc8b3386b1d.jpg");
-  background-size: cover;
-                
+const Main = styled.div`
+  min-width: 1280px;
+  max-width: 1440px;
+  padding: 80px var(--gap) 120px;
 `;
-const Wrapper = styled.div`
-    background-color: white;
+const Title = styled.h1`
+  margin-bottom: 40px;
+  font-size: var(--fontI);
+  line-height: var(--fontIL);
+  color: var(--gray900);
+  text-align: center;
 `;
-const FormDiv = styled.div`
-    width: 400px;
-    padding: 20px;
+const Section = styled.section`
+  width: 520px;
+  margin: 0 auto;
 `;
+
+const InputRow = styled.div`
+    position: relative;
+    margin-top: 30px;
+    padding-left: 102px;
+    > label {
+      position: absolute;
+      left: 0;
+      top: 9px;
+      line-height: 22px;
+      font-size: 15px;
+      &::after{
+        position: absolute;
+        top: 4px;
+        margin: 0 0 0 4px;
+        content: '';
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        background: #8e1fff;
+        border-radius: 50%;
+      }
+  }
+  input{
+      width: 100%;          
+      height: 40px;
+      line-height: 38px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      border: 1px solid #e5e5e5;
+       + .eye-icon{
+          position: absolute;
+          top: 50%;
+          right: 5px;
+          transform: translateY(-50%);
+          display: inline-block;
+          width: 22px;
+          height: 28px;
+          cursor: pointer;
+       }
+      &[type=password]{
+        + .eye-icon {
+          background: url(/bg_base.png) no-repeat #fff center -400px;
+        }
+      }
+      &[type=text]{
+        + .eye-icon {
+          background: url(/bg_base.png) no-repeat #fff center -450px;
+        }
+      }
+    }
+    .invalid-text{
+      margin-top: 5px;
+      color: #f0394d;
+    }
+`;
+interface IInputWrapProps {
+  valid: boolean
+}
+
+const InputWrap = styled.div<IInputWrapProps>`
+    position: relative;
+    input{
+      border: ${(props) => !props.valid && '1px solid #f0394d'}
+    }
+`;
+
+const Submit = styled.div`
+    margin-top: 50px;
+    text-align: center;
+    > button{
+      color: #fff;
+      background: #111;
+      border: 1px solid #111;
+      width: 256px;
+      height: 60px;
+      line-height: 58px;
+      font-size: 17px;
+      padding: 0 69px;
+    }    
+`;
+
 const SignUp = () => {
-  const [email, onChangeEmail] = useInput('');
-  const [password, onChangePassword] = useInput('');
-  const [confirmpassword, onChangeConfirmpassword] = useInput('');
-  const [name, onChangeName] = useInput('');
-  const [checkpassword, setCheckPassword] = useState(false);
-  const [check, setCheck] = useState(false);
-  const [checkerror, setCheckError] = useState(false);
-
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const passwordCheckRef = useRef<HTMLInputElement | null>(null);
+  const getLoginState = useRecoilValue(LoginState);
+  const { value: email, handler: handleEmail } = useInput({ initialValue: '' });
+  const { value: password, handler: handlePassword } = useInput({ initialValue: '' });
+  const { value: passwordCheck, handler: handlePasswordCheck } = useInput({ initialValue: '' });
+  const { value: name, handler: handleName } = useInput({ initialValue: '' });
+  const { value: phone, handler: handlePhone } = useInput({ initialValue: '', regex: /[^0-9]/g });
+  const router = useRouter();
   const { mutate: postSignUp } = useMutation({
     mutationFn: () => apis.User.signUp({ email, name, password }),
-    onSuccess: (data) => alert(data)
-  });
-  // useEffect(() => {
-  //   if (signUpDone) {
-  //     dispatch(
-  //       logIn({ email, password }),
-  //     );
-  //     dispatch(signUpReset());
-  //     alert('회원가입이 완료되었습니다.');
-  //     Router.push('/');
-  //   }
-  // }, [signUpDone]);
-  // useEffect(() => {
-  //   if (signUpError) {
-  //     alert(signUpError);
-  //   }
-  // }, [signUpError]);
-
-  useEffect(() => {
-    if (password && confirmpassword && password !== confirmpassword) {
-      return setCheckPassword(true);
+    onSuccess: () => {
+      alert('회원가입이 완료되었습니다.');
+      router.push('/signIn');
     }
-    setCheckPassword(false);
-  }, [password, confirmpassword]);
+  });
+  /** 비밀번호와 비밀번호 확인란이 일치하는 지 여부 리턴 */
+  const isCorrectPassword = useMemo(() => {
+    if (password.length > 0 && passwordCheck.length > 0) {
+      return password === passwordCheck;
+    } else {
+      return true;
+    }
 
-  const onChangeCheck = useCallback(
-    () => {
-      setCheck((prev) => !prev);
-    },
-    [],
-  );
+  },[password, passwordCheck]);
 
-  const onSubmitForm = useCallback(
-    () => {
-      if (checkpassword) {
-        return alert('비밀번호를 확인해주세요');
-      }
-      if (!check) {
-        return setCheckError(true);
-      }
-      if (!(email && password && name && confirmpassword && check)) {
-        return alert('빈칸이 존재합니다.');
-      }
+  /** 폼 제출 시 */
+  const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('isCorrectPassword',isCorrectPassword);
+    
+    if (isCorrectPassword) {
       postSignUp();
-      // dispatch(signUp({ email, name, password }));
-    },
-    [email, password, name, confirmpassword, check, checkpassword],
-  );
+    }
+  };
+
+  /** 패스워드 눈 모양 클릭 시
+   * 
+   * 1. input type이 password이면 text로 text이면 password로 변경 
+   */
+  const onClickEye = (payloadRef: React.MutableRefObject<HTMLInputElement | null>) => {
+    if (payloadRef.current) {
+      payloadRef.current.type = payloadRef.current.type === 'password' ? 'text' : 'password';
+    }
+  };
   
   return (
-    <Container>
-      <Wrapper>
-        <FormDiv>
-          <Form onFinish={onSubmitForm}>
-            <h1>CREATE AN ACCOUNT</h1>
-            <Form.Item
-              name="email"
-              label="이메일"
-              rules={[
-                {
-                  type: 'email',
-                  message: '이메일 형식이 아닙니다.',
-                },
-                {
-                  required: true,
-                  message: '이메일을 입력해 주세요.',
-                },
-              ]}
-            >
-              <Input placeholder="이메일" value={email} onChange={onChangeEmail} />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label="이름"
-              rules={[
-                {
-                  required: true,
-                  message: '이름을 입력해주세요.',
-                  whitespace: true,
-                },
-              ]}
-            >
-              <Input placeholder="이름" value={name} onChange={onChangeName} />
-            </Form.Item>
-            <Form.Item
-              style={{ marginRight: '10px' }}
-              name="password"
-              label="비밀번호"
-              rules={[
-                {
-                  required: true,
-                  message: '비밀번호를 입력해주세요.',
-                },
-              ]}
-            >
-              <Input.Password placeholder="비밀번호" value={password} onChange={onChangePassword} />
-            </Form.Item>
+    !getLoginState!.id ? (
+      <Main>
+        <Title>회원가입</Title>
+        <Section className="form-wrap">
+          <form onSubmit={onSubmitForm}>
+            <InputRow>
+              <label htmlFor="email">
+            이메일
+              </label>
+              <input 
+                id="email"
+                type="email"
+                maxLength={30}
+                value={email}
+                onChange={handleEmail}
+              />
+            </InputRow>
+            <InputRow>
+              <label htmlFor="password">
+            비밀번호
+              </label>
+              <input 
+                ref={passwordRef}
+                id="password" 
+                type="password"
+                maxLength={100}
+                value={password}
+                onChange={handlePassword}
+              />
+              <i onClick={() => onClickEye(passwordRef)} className="eye-icon"/>
 
-            <Form.Item
-              name="confirm"
-              label="비밀번호 확인"
-              rules={[
-                {
-                  required: true,
-                  message: '입력하신 비밀번호가 다릅니다.',
-                },
-              ]}
-            >
-              <Input.Password placeholder="비밀번호 확인" value={confirmpassword} onChange={onChangeConfirmpassword} />
+            </InputRow>
+            <InputRow>
+              <InputWrap valid={isCorrectPassword}>
+                <input 
+                  ref={passwordCheckRef}
+                  id="password-check" 
+                  type="password"
+                  maxLength={30}
+                  value={passwordCheck}
+                  onChange={handlePasswordCheck}
+                />
+                <i onClick={() => onClickEye(passwordCheckRef)} className="eye-icon"/>
+              </InputWrap>
+              {!isCorrectPassword && <p className="invalid-text">비밀번호를 다시 확인해주세요.</p>}
+            </InputRow>
+            <InputRow>
+              <label htmlFor="name">
+            이름
+              </label>
+              <input 
+                id="name" 
+                type="text" 
+                maxLength={30}
+                value={name}
+                onChange={handleName}
+              />
+            </InputRow>
+            {/* <InputRow>
+          <label htmlFor="phone">
+            휴대폰 번호
+          </label>
+          <input
+            id="phone" 
+            type="tel"
+            maxLength={11}
+            value={phone}
+            onChange={(e) => handlePhone(e)}
+          />
+        </InputRow> */}
+            <Submit>
+              <button type="submit">
+            가입하기
+              </button>
+            </Submit>
 
-            </Form.Item>
-
-            <Form.Item
-              name="agreement"
-              valuePropName="checked"
-            >
-              <Checkbox checked={check} onChange={onChangeCheck}>
-                I have read the
-                {' '}
-                <a href="">agreement</a>
-              </Checkbox>
-              {checkerror && <div>약관에 동의하세요!</div>}
-            </Form.Item>
-
-            <Form.Item>
-              <Button onClick={(e) => onSubmitForm} type="primary" htmlType="submit">
-                    CREATE
-              </Button>
-              {/* {signUpLoading ? (
-                <Button type="primary" loading>
-                  Loading
-                </Button>
-              )
-                : (
-                  <Button onClick={(e) => onSubmitForm} type="primary" htmlType="submit">
-                    CREATE
-                  </Button>
-                )} */}
-            </Form.Item>
-          </Form>
-        </FormDiv>
-      </Wrapper>
-
-    </Container>
+          </form>
+        </Section>
+      </Main>
+    ) : null
   );
 };
 

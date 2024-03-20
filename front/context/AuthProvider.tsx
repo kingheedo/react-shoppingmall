@@ -5,7 +5,7 @@ import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from
 import apis from '../apis';
 import { usePathname, useRouter } from 'next/navigation';
 import { GetUserRes } from '../apis/user/schema';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { LoginState } from '../store';
 
 const noAccessPathList = ['/cart', '/mypage', '/order'];
@@ -15,10 +15,24 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const pathname = usePathname();
   
-  const getLoginState = useRecoilValue(LoginState);
-  const { data: getUserData } = useQuery(
-    ['getUser',pathname], 
-    () => apis.User.getUser());
+  const [getLoginState, setLoginState] = useRecoilState(LoginState);
+  const { data: getUserData } = useQuery({
+    queryKey: ['getUser',pathname], 
+    queryFn: () => apis.User.getUser(),
+    onError: () => setLoginState(null),
+    onSuccess: (data) => {
+      console.log('data',data);
+      if (data) {
+        if (data.info) {
+          setLoginState({
+            id: data.info.id
+          });
+        }
+      } else {
+        setLoginState(null);
+      }
+    }
+  });
   
   const userInfo = useMemo(() => {
     return getUserData || null;
@@ -28,6 +42,10 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     if (!getLoginState) {
       if (noAccessPathList.indexOf(pathname) !== -1) {
         router.push('/signIn');
+      }
+    } else {
+      if (pathname === '/signUp' || pathname === '/signIn') {
+        router.push('/');
       }
     }
   }, [pathname,getLoginState]);
