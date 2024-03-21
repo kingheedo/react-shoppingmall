@@ -20,9 +20,7 @@ const getConfirm = async(searchParams: SearchParamsType) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Basic ${Buffer.from(
-        `${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_ENCODED_SECRET_KEY}:`
-      ).toString('base64')}`,
+      'Authorization': `Basic ${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_ENCODED_SECRET_KEY}`,
     },
     body: JSON.stringify({
       orderId: searchParams.orderId,
