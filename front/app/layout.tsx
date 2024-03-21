@@ -21,7 +21,6 @@ const Layout = async({ children }: PropsWithChildren) => {
   const queryClient = getQueryClient();
   const header = headers();
   const cookie = header.get('Cookie');
-  console.log('cookie',cookie);
   
   await queryClient.prefetchQuery(['getUser'], () => apis.User.getUser({
     headers: cookie ? { cookie } : undefined
@@ -38,10 +37,8 @@ const Layout = async({ children }: PropsWithChildren) => {
             <RecoilRootWrapper>
               <Hydrate state={dehydratedState}>
                 <ModalProvider>
-                  <AuthProvider>
-                    <Header/>
-                    {children}
-                  </AuthProvider>
+                  <Header/>
+                  {children}
                 </ModalProvider>
               </Hydrate>
             </RecoilRootWrapper>

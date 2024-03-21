@@ -3,10 +3,8 @@
 /* eslint-disable no-constant-condition */
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Modal } from 'antd';
+import { InfiniteData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { GetSingleProductRes } from '../../apis/product/schema';
-import { getUser } from '../../context/AuthProvider';
 import apis from '../../apis';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -126,9 +124,12 @@ interface IProductProps {
 const Product = ({ idx,product }:IProductProps) => {
   const [show, setShow] = useState(false);
   const queryClient = useQueryClient();
-  const [modal, contextHolder] = Modal.useModal();
-  const me = getUser();
   const router = useRouter();
+
+  const { data: me } = useQuery(
+    ['getUser'], 
+    () => apis.User.getUser());
+
   const { mutate: addLike } = useMutation((data: number) => apis.Product.addLike(data),
     {
       onMutate: async(variable) => {
@@ -216,12 +217,6 @@ const Product = ({ idx,product }:IProductProps) => {
     },
     [show]
   );
-  // const onClickCard = useCallback(
-  //   (id: number) => () => {
-  //     router.push(`/product/${id}`);
-  //   },
-  //   []
-  // );
 
   const onClickLike = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -235,7 +230,6 @@ const Product = ({ idx,product }:IProductProps) => {
 
   return (
     <CardItem
-      // onClick={onClickCard(product.id)}
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
     >
@@ -261,7 +255,6 @@ const Product = ({ idx,product }:IProductProps) => {
             </HeartWrapper>
           </ProductScore>
         </ProductInfoWrapper>
-        {contextHolder}
       </Link>
     </CardItem>
   );
