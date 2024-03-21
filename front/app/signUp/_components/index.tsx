@@ -109,7 +109,6 @@ const Submit = styled.div`
 const SignUp = () => {
   const passwordRef = useRef<HTMLInputElement | null>(null);
   const passwordCheckRef = useRef<HTMLInputElement | null>(null);
-  const getLoginState = useRecoilValue(LoginState);
   const { value: email, handler: handleEmail } = useInput({ initialValue: '' });
   const { value: password, handler: handlePassword } = useInput({ initialValue: '' });
   const { value: passwordCheck, handler: handlePasswordCheck } = useInput({ initialValue: '' });
@@ -154,65 +153,64 @@ const SignUp = () => {
   };
   
   return (
-    !getLoginState!.id ? (
-      <Main>
-        <Title>회원가입</Title>
-        <Section className="form-wrap">
-          <form onSubmit={onSubmitForm}>
-            <InputRow>
-              <label htmlFor="email">
+    <Main>
+      <Title>회원가입</Title>
+      <Section className="form-wrap">
+        <form onSubmit={onSubmitForm}>
+          <InputRow>
+            <label htmlFor="email">
             이메일
-              </label>
-              <input 
-                id="email"
-                type="email"
-                maxLength={30}
-                value={email}
-                onChange={handleEmail}
-              />
-            </InputRow>
-            <InputRow>
-              <label htmlFor="password">
+            </label>
+            <input 
+              id="email"
+              type="email"
+              maxLength={30}
+              value={email}
+              onChange={handleEmail}
+            />
+          </InputRow>
+          <InputRow>
+            <label htmlFor="password">
             비밀번호
-              </label>
-              <input 
-                ref={passwordRef}
-                id="password" 
-                type="password"
-                maxLength={100}
-                value={password}
-                onChange={handlePassword}
-              />
-              <i onClick={() => onClickEye(passwordRef)} className="eye-icon"/>
+            </label>
+            <input 
+              ref={passwordRef}
+              id="password" 
+              type="password"
+              maxLength={100}
+              value={password}
+              onChange={handlePassword}
+            />
+            <i onClick={() => onClickEye(passwordRef)} className="eye-icon"/>
 
-            </InputRow>
-            <InputRow>
-              <InputWrap valid={isCorrectPassword}>
-                <input 
-                  ref={passwordCheckRef}
-                  id="password-check" 
-                  type="password"
-                  maxLength={30}
-                  value={passwordCheck}
-                  onChange={handlePasswordCheck}
-                />
-                <i onClick={() => onClickEye(passwordCheckRef)} className="eye-icon"/>
-              </InputWrap>
-              {!isCorrectPassword && <p className="invalid-text">비밀번호를 다시 확인해주세요.</p>}
-            </InputRow>
-            <InputRow>
-              <label htmlFor="name">
-            이름
-              </label>
+          </InputRow>
+          <InputRow>
+            <InputWrap valid={isCorrectPassword}>
               <input 
-                id="name" 
-                type="text" 
+                ref={passwordCheckRef}
+                id="password-check" 
+                type="password"
                 maxLength={30}
-                value={name}
-                onChange={handleName}
+                value={passwordCheck}
+                onChange={handlePasswordCheck}
               />
-            </InputRow>
-            {/* <InputRow>
+              <i onClick={() => onClickEye(passwordCheckRef)} className="eye-icon"/>
+            </InputWrap>
+            {!isCorrectPassword && <p className="invalid-text">비밀번호를 다시 확인해주세요.</p>}
+          </InputRow>
+          <InputRow>
+            <label htmlFor="name">
+            이름
+            </label>
+            <input 
+              id="name" 
+              type="text" 
+              maxLength={30}
+              value={name}
+              onChange={handleName}
+            />
+          </InputRow>
+          {/* <InputRow>
           <label htmlFor="phone">
             휴대폰 번호
           </label>
@@ -224,16 +222,15 @@ const SignUp = () => {
             onChange={(e) => handlePhone(e)}
           />
         </InputRow> */}
-            <Submit>
-              <button type="submit">
+          <Submit>
+            <button type="submit">
             가입하기
-              </button>
-            </Submit>
+            </button>
+          </Submit>
 
-          </form>
-        </Section>
-      </Main>
-    ) : null
+        </form>
+      </Section>
+    </Main>
   );
 };
 
