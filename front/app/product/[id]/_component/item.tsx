@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { Button } from 'antd';
 import {
@@ -11,11 +10,10 @@ import {
 } from '@tanstack/react-query';
 import Link from 'next/link';
 import { SizeOption } from '../../../../apis/product/schema';
-import { getUser } from '../../../../context/AuthProvider';
 import { useModal } from '../../../../context/ModalProvider';
 import apis from '../../../../apis';
-import { backUrl } from '../../../../config/backUrl';
 import ReviewList from '../../../../components/ReviewList';
+import { useRouter } from 'next/navigation';
 
 const Container = styled.div`
   max-width: 1440px;
@@ -328,14 +326,16 @@ interface IProductDetailProps{
 }
 
 const ProductDetail = ({ id }: IProductDetailProps) => {
-  const me = getUser();
   const router = useRouter();
   const modal = useModal();
   const queryClient = useQueryClient();
-  
+  const { data: me } = useQuery(
+    ['getUser'], 
+    () => apis.User.getUser());
+    
   const { data: product } = useQuery(
-    ['getSingleProduct', id],
-    () => apis.Product.getSingleProduct(id),
+    ['getSingleProduct'],
+    () => apis.Product.getSingleProduct(id as string),
     {
       enabled: !!id,
     },

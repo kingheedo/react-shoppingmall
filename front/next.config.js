@@ -8,7 +8,6 @@ module.exports = withBundleAnalyzer({
   compiler: {
     styledComponents: true
   },
-  assetPrefix: '.',
   webpack(config, { webpack }) {
     const prod = process.env.NODE_ENV === 'production';
     

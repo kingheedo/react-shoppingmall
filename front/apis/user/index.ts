@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from 'axios';
 import request from '../request';
 import { GetAddressesRes, GetUserRes, PatchAddressReq, PatchAddressRes, PostAddAddressReq, PostAddAddressRes, PostLoginReq, PostLoginRes, PostSignUpReq, PostSignUpRes } from './schema';
 
@@ -13,8 +14,8 @@ const getAddresses = async() => {
   return await request.get<GetAddressesRes>('/user/address').then(res => res.data);
 };
 
-const getUser = async() => {
-  return await request.get<GetUserRes>('/user').then(res => res.data);
+const getUser = async(options?: AxiosRequestConfig) => {
+  return await request.get<GetUserRes>('/user', options).then(res => res.data);
 };
 
 const signUp = (data: PostSignUpReq) => {

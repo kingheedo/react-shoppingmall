@@ -11,13 +11,10 @@ const ReactQueryProvider = ({ children }: React.PropsWithChildren) => {
       }
     }
   });
-  const dehydratedState = dehydrate(queryClient);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={dehydratedState}>
         {children}
-      </Hydrate>
     </QueryClientProvider>
   );
 };

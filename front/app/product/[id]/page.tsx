@@ -15,7 +15,7 @@ const ProductHomePage = async({ params }: IProductHomePageProps) => {
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery(['getSingleProduct', params.id], () => apis.Product.getSingleProduct(params.id));
   const dehydratedState = dehydrate(queryClient);
-
+  
   return (
     <HydrateOnClient state={dehydratedState}>
       <ProductDetail

@@ -1,9 +1,9 @@
 import React from 'react';
 import getQueryClient from '../../utils/getQueryClient';
 import apis from '../../apis';
-import { dehydrate } from '@tanstack/react-query';
-import HydrateOnClient from '../../utils/hydrateOnClient';
+import { Hydrate, dehydrate } from '@tanstack/react-query';
 import CartMain from './_components/CartMain';
+import { notFound } from 'next/navigation';
 import { NextResponse } from 'next/server';
 import { backUrl } from '../../config/backUrl';
 
@@ -13,18 +13,17 @@ const CartPage = async() => {
     try {
       await apis.Cart.getCartList();
     } catch (error) {
-      console.error(error);
+      console.log(error);
       NextResponse.redirect(`${backUrl}/signIn`);
-
-      return null;
+      notFound();
     }
   });
   const dehydratedState = dehydrate(queryClient);
 
   return (
-    <HydrateOnClient state={dehydratedState}>
-      <CartMain/>
-    </HydrateOnClient>
+    <Hydrate state={dehydratedState}>
+      <CartMain />
+    </Hydrate>
   );
 };
 

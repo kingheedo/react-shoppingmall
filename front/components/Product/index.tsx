@@ -8,7 +8,6 @@ import { Modal } from 'antd';
 import { GetSingleProductRes } from '../../apis/product/schema';
 import { getUser } from '../../context/AuthProvider';
 import apis from '../../apis';
-import { backUrl } from '../../config/backUrl';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -240,7 +239,7 @@ const Product = ({ idx,product }:IProductProps) => {
       onMouseEnter={onMouseHover}
       onMouseLeave={onMouseHover}
     >
-      <Link href={`/product/${product.id}`} prefetch={false}>
+      <Link href={`/product/${product.id}`}>
         <ProductImgWrapper>
           <Rank>
             {idx}

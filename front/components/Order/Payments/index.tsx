@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import { PaymentInfo } from '..';
-import { getUser } from '../../../context/AuthProvider';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { PostPaymentReq } from '../../../apis/payment/schema';
 import apis from '../../../apis';
 import BillWrap from '../../common/BillWrap';
@@ -58,10 +57,13 @@ const Payments = ({
   const paymentMethodsWidgetRef = useRef<ReturnType<
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
-  const userInfo = getUser();
   const router = useRouter();
   const { mutate: addPayment } = useMutation((data: PostPaymentReq) => apis.Payment.addPayment(data));
   const searchParams = useSearchParams();
+
+  const { data: userInfo } = useQuery(
+    ['getUser'], 
+    () => apis.User.getUser());
 
   const createQueryString = useCallback(
     (query:{

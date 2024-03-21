@@ -195,13 +195,12 @@ const Header = () => {
   const [keyword, setKeyword] = useState<string>('');
   const setLoginState = useSetRecoilState(LoginState);
   const [searchActive, setSearchActive] = useState(false);
-  const me = getUser();
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  // const { data: me, isFetched } = useQuery(
-  //   ['getUser'], 
-  //   () => apis.User.getUser());
+  const { data: me } = useQuery(
+    ['getUser'], 
+    () => apis.User.getUser());
 
   const { mutate: logout } = useMutation(() => apis.User.logout(),{
     onSuccess: () => {

@@ -4,9 +4,10 @@ import styled from 'styled-components';
 import PostBtn from './PostBtn';
 import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
-import { getUser } from '../../../context/AuthProvider';
 import { Address } from '../../../apis/user/schema';
 import { DeliveryType } from '..';
+import { useQuery } from '@tanstack/react-query';
+import apis from '../../../apis';
 
 interface IMessageContainerProps{
   showMsgList: boolean;
@@ -194,7 +195,6 @@ const DeliveryInfo = ({
   handleAddress
   
 }: IDeliveryInfoProps) => {
-  const me = getUser();
   const [info, setInfo] = useState<DeliveryType>({
     rcName: '',
     rcPhone: '',
@@ -211,6 +211,10 @@ const DeliveryInfo = ({
     detail: false
   });
   const [showMsgList, setShowMsgList] = useState(false);
+  
+  const { data: me } = useQuery(
+    ['getUser'], 
+    () => apis.User.getUser());
 
   /** 배송지 목록에서 하나의 배송지 선택 시 info 업데이트 핸들러 */
   const handleUpdateInfo = (payload: Omit<Address, 'id'> & { base?: boolean }) => {
