@@ -1,6 +1,6 @@
 'use client';
 
-import { Hydrate, QueryClient, QueryClientProvider, dehydrate } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const ReactQueryProvider = ({ children }: React.PropsWithChildren) => {
   const queryClient = new QueryClient({
@@ -14,7 +14,7 @@ const ReactQueryProvider = ({ children }: React.PropsWithChildren) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-        {children}
+      {children}
     </QueryClientProvider>
   );
 };
