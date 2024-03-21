@@ -345,12 +345,12 @@ const DeliveryInfo = ({
   /** 유저 정보에 따라 info 값 업데이트 */
   useEffect(() => {
     setInfo({
-      rcName: me?.address.rcName || '',
-      rcPhone: me?.address.rcPhone || '',
+      rcName: me?.address?.rcName || '',
+      rcPhone: me?.address?.rcPhone || '',
       address: {
-        rcPostNum: me?.address.rcPostNum || '',
-        rcPostBase: me?.address.rcPostBase || '',
-        rcPostDetail: me?.address.rcPostDetail || '',
+        rcPostNum: me?.address?.rcPostNum || '',
+        rcPostBase: me?.address?.rcPostBase || '',
+        rcPostDetail: me?.address?.rcPostDetail || '',
         base: false,
       },
       message: '',

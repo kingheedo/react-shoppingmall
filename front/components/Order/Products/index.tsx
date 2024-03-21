@@ -108,7 +108,7 @@ const Products = ({
         {list?.map((info, idx) => (
           <tr key={info.id}>
             <Td>
-              <ProductImg src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`}/>
+              <ProductImg src={info.Product.Images[0].src}/>
             </Td>
             <Td>
               <BrandName>

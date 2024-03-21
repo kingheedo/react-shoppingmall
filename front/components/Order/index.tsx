@@ -21,14 +21,6 @@ const Main = styled.div`
   padding: 80px var(--gap) 120px;
 `;
 
-const BrandName = styled.span`
-    display: block;
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    color: #8e8e8e;
-`;
 export type DeliveryType = {
     rcName: string,
     rcPhone: string,

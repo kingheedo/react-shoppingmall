@@ -5,7 +5,6 @@ import moment from 'moment';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../../../apis';
 import BreadCrumb from '../../../../components/common/BreadCrumb';
-import { backUrl } from '../../../../config/backUrl';
 import { GetAllPaymentsRes, GetTossPmntOrderRes, SettlementState } from '../../../../apis/payment/schema';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -300,9 +299,6 @@ const MyPageMain: FC = () => {
       enabled: !!startDate && !!endDate && isInquired
     }
   );
-
-  console.log('payments',payments);
-  console.log('isPlaceholderData',isPlaceholderData);
   
   useEffect(() => {
     if (!isPlaceholderData) {
@@ -546,7 +542,7 @@ const MyPageMain: FC = () => {
                       {val1.dbPayments.map(val2 => (
                         <tr key={val2.id}>
                           <td>
-                            <img src={`${backUrl}/${val2.HistoryCart.Product.Images[0].src}`} alt={`${val2.HistoryCart.Product.productName}의 이미지`} />
+                            <img src={val2.HistoryCart.Product.Images[0].src} alt={`${val2.HistoryCart.Product.productName}의 이미지`} />
                           </td>
                           <td>
                             <div className="product-info-wrap">
