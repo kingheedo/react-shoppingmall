@@ -33,7 +33,7 @@ HistoryCart.init({
 const associate = (db) => {
     db.HistoryCart.belongsTo(db.Product);
     db.HistoryCart.belongsTo(db.User);
-    db.HistoryCart.belongsToMany(db.User, { through: { model: db.Payment } });
+    db.HistoryCart.belongsToMany(db.User, { through: { model: db.Payment, unique: false } });
 };
 exports.associate = associate;
 exports.default = HistoryCart;

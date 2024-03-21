@@ -58,7 +58,7 @@ const associate = (db) => {
     db.User.belongsToMany(db.Product, { through: { model: db.Cart, unique: false } });
     db.User.belongsToMany(db.Product, { through: { model: db.HistoryCart, unique: false } });
     db.User.belongsToMany(db.Product, { through: { model: db.Review, unique: true } });
-    db.User.belongsToMany(db.HistoryCart, { through: { model: db.Payment } });
+    db.User.belongsToMany(db.HistoryCart, { through: { model: db.Payment, unique: false } });
 };
 exports.associate = associate;
 exports.default = User;
