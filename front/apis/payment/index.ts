@@ -24,7 +24,7 @@ const getAllPayments = async(data: GetAllPaymentsReq) => {
 const getTossPmntOrder = (orderId: GetTossPmntOrderReq) => {
   return axios.get<GetTossPmntOrderRes>(`https://api.tosspayments.com/v1/payments/orders/${orderId}`, {
     headers: {
-      Authorization: 'Basic dGVzdF9za192Wm5qRUplUVZ4S2tOUjZMNGJlRDNQbU9vQk4wOg=='
+      Authorization: `Basic ${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_ENCODED_SECRET_KEY}`
     }
   }).then(res => res.data);
 };
@@ -40,7 +40,7 @@ const cancelTossPmntOrder = (paymentKey:CancelTossPmntOrderReq) => {
     },
     {
       headers: {
-        Authorization: 'Basic dGVzdF9za192Wm5qRUplUVZ4S2tOUjZMNGJlRDNQbU9vQk4wOg==',
+        Authorization: `Basic ${process.env.NEXT_PUBLIC_TOSS_PAYMENTS_ENCODED_SECRET_KEY}`
       }  
     }).then(res => res.data);
 };
