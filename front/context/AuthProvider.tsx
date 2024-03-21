@@ -5,7 +5,7 @@ import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from
 import apis from '../apis';
 import { usePathname, useRouter } from 'next/navigation';
 import { GetUserRes } from '../apis/user/schema';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { LoginState } from '../store';
 
 const noAccessPathList = ['/cart', '/mypage', '/order'];

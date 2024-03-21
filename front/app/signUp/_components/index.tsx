@@ -1,12 +1,10 @@
 'use client';
 import { useMutation } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import apis from '../../../apis';
 import styled from 'styled-components';
 import { useInput } from '../../../hooks/useInput';
-import { usePathname, useRouter } from 'next/navigation';
-import { LoginState } from '../../../store';
-import { useRecoilValue } from 'recoil';
+import { useRouter } from 'next/navigation';
 
 const Main = styled.div`
   min-width: 1280px;
@@ -113,7 +111,7 @@ const SignUp = () => {
   const { value: password, handler: handlePassword } = useInput({ initialValue: '' });
   const { value: passwordCheck, handler: handlePasswordCheck } = useInput({ initialValue: '' });
   const { value: name, handler: handleName } = useInput({ initialValue: '' });
-  const { value: phone, handler: handlePhone } = useInput({ initialValue: '', regex: /[^0-9]/g });
+  // const { value: phone, handler: handlePhone } = useInput({ initialValue: '', regex: /[^0-9]/g });
   const router = useRouter();
   const { mutate: postSignUp } = useMutation({
     mutationFn: () => apis.User.signUp({ email, name, password }),

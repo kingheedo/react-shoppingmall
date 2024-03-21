@@ -546,7 +546,7 @@ const CartMain = () => {
                     <Td>
                       <Link href={`/product/${info.Product.id}`} prefetch={false}>
                         <ProductImg
-                          src={`${process.env.NEXT_PUBLIC_SERVER_URL}/${info.Product.Images[0].src}`}
+                          src={info.Product.Images[0].src}
                           alt={info.Product.Images[0].src}
                         />
                       </Link>
