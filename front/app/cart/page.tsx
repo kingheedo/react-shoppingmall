@@ -13,6 +13,7 @@ const CartPage = async() => {
     try {
       await apis.Cart.getCartList();
     } catch (error) {
+      console.error(error);
       NextResponse.redirect(`${backUrl}/signIn`);
 
       return null;

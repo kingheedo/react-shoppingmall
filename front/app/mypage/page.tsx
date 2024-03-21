@@ -16,7 +16,8 @@ const MyPage = async() => {
         endDate: new Date(),
         page: 0
       });
-    } catch {
+    } catch (error) {
+      console.error(error);
       NextResponse.redirect(`${backUrl}/signIn`);
 
       return null;
