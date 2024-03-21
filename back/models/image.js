@@ -7,8 +7,8 @@ class Image extends sequelize_1.Model {
 }
 Image.init({
     src: {
-        type: sequelize_1.DataTypes.STRING(200),
-        allowNull: true,
+        type: sequelize_1.DataTypes.STRING(1000),
+        allowNull: false,
     },
 }, {
     sequelize: sequelize_2.sequelize,

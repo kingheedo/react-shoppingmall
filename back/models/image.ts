@@ -10,8 +10,8 @@ class Image extends Model{
 }
 Image.init({
     src: {
-        type : DataTypes.STRING(200),
-        allowNull : true,
+        type : DataTypes.STRING(1000),
+        allowNull : false,
     },
 },{
     sequelize,   
