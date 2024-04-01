@@ -2,12 +2,11 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useSetRecoilState } from 'recoil';
 import Link from 'next/link';
 import { LoginState } from '../../../store';
-import { getUser } from '../../../context/AuthProvider';
 import apis from '../../../apis';
 
 interface ISearchActiveProps {
