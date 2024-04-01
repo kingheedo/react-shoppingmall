@@ -188,4 +188,18 @@ router.post('/unlike/:productId', middlewares_1.isLoggedIn, (req, res, next) => 
         next(error);
     }
 }));
+router.delete('/product/:productId', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield models_1.Product.destroy({
+            where: {
+                id: parseInt(req.params.productId, 10)
+            }
+        });
+        return res.status(200).send('상품이 삭제되었습니다.');
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+}));
 exports.default = router;
