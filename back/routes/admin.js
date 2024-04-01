@@ -26,6 +26,21 @@ catch (error) {
     console.log('uploads 폴더가 없으므로 생성합니다.');
     fs.mkdirSync('uploads');
 }
+/** 상품 삭제 */
+router.delete('/product/:productId', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield models_1.Product.destroy({
+            where: {
+                id: req.params.productId
+            }
+        });
+        return res.status(200).send('상품이 삭제되었습니다.');
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+}));
 // 이미지 로컬 저장
 // const upload = multer({
 //     storage: multer.diskStorage({
@@ -68,11 +83,10 @@ router.post('/product/images', middlewares_1.isLoggedIn, upload.array('image'), 
 }));
 /** 상품 추가 */
 router.post('/product', middlewares_1.isLoggedIn, upload.none(), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     try {
-        console.log('req.user?.id', (_a = req.user) === null || _a === void 0 ? void 0 : _a.id);
         let product;
-        if ((_b = req.user) === null || _b === void 0 ? void 0 : _b.id) {
+        if ((_a = req.user) === null || _a === void 0 ? void 0 : _a.id) {
             product = yield models_1.Product.create({
                 productName: req.body.productName,
                 price: req.body.price,
@@ -81,7 +95,6 @@ router.post('/product', middlewares_1.isLoggedIn, upload.none(), (req, res, next
                 UserId: req.user.id,
             });
         }
-        console.log('req.body', req.body);
         if (req.body.images && product) {
             const promises = req.body.images.map((image) => models_1.Image.create({
                 src: image
@@ -222,12 +235,12 @@ router.get('/products', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(
 }));
 /** 관리자 정보 가져오기*/
 router.get('/user', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _b;
     try {
         if (req.user) {
             const user = yield models_1.User.findOne({
                 where: {
-                    id: (_c = req.user) === null || _c === void 0 ? void 0 : _c.id
+                    id: (_b = req.user) === null || _b === void 0 ? void 0 : _b.id
                 },
                 attributes: ['id', 'email', 'name', 'level',]
             });

@@ -18,6 +18,23 @@ try{
     fs.mkdirSync('uploads');
 }
 
+
+/** 상품 삭제 */
+router.delete('/product/:productId', isLoggedIn, async(req, res, next) => {
+    try{
+        await Product.destroy({
+            where: {
+                id: req.params.productId
+            }
+        })
+        return res.status(200).send('상품이 삭제되었습니다.');
+    }
+    catch(error){
+        console.error(error);
+        next(error);
+    }
+})
+
 // 이미지 로컬 저장
 // const upload = multer({
 //     storage: multer.diskStorage({
@@ -65,7 +82,6 @@ router.post('/product/images', isLoggedIn, upload.array('image'), async(req, res
 /** 상품 추가 */
 router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
     try{
-      console.log('req.user?.id',req.user?.id);
       let product;
       if(req.user?.id){
           product = await Product.create({
@@ -77,7 +93,6 @@ router.post('/product', isLoggedIn, upload.none(), async(req, res, next)=>{
         })
       }
 
-        console.log('req.body',req.body)
         if(req.body.images && product){
             const promises:Promise<Image>[] = req.body.images.map((image:string)=> Image.create({
                     src: image

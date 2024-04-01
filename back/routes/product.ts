@@ -203,20 +203,4 @@ router.post('/unlike/:productId', isLoggedIn, async(req, res, next) => {
     }
 })
 
-router.delete('/product/:productId', isLoggedIn, async(req, res, next) => {
-    try{
-        await Product.destroy({
-            where: {
-                id: parseInt(req.params.productId, 10)
-            }
-        })
-
-        return res.status(200).send('상품이 삭제되었습니다.');
-    }
-    catch(error){
-        console.error(error);
-        next(error);
-    }
-})
-
 export default router;
