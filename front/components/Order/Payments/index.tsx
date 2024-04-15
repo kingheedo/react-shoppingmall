@@ -81,11 +81,42 @@ const Payments = ({
     [searchParams]
   );
 
+  /** 주소 정보 폼 유효성 확인 */
+  const checkDelivery = () => {
+    const phoneRegex = /^\d{3}\d{4}\d{4}$/;
+    if (!info.delivery.rcName) {
+      alert('이름을 입력해주세요');
+      
+      return false;
+    }
+    if (!info.delivery.rcPhone) {
+      alert('휴대폰번호를 입력해주세요');
+
+      return false;
+    }
+    if (!phoneRegex.test(info.delivery.rcPhone)) {
+      alert('휴대폰 형식이 올바르지 않습니다.');
+      
+      return false;
+    }
+    if (!info.delivery.address.rcPostNum) {
+      alert('우편번호를 입력해주세요');
+
+      return false;
+    }
+
+    return true;
+  };
+
   /** 결제하기 버튼 클릭 시
    * 1. db에 주문 정보 및 배송지 정보 저장 필요
    * 2. 결제하기 api 요청 이후 orderId, paymnetKey, amount 존재 시 주문성공페이지로 라우팅
     */
   const onClickPaymentBtn = async() => {
+    const validForm = checkDelivery();
+    if (!validForm) {
+      return; 
+    }
     const paymentWidget = paymentWidgetRef.current;
     try {
       const data = await paymentWidget?.requestPayment({
@@ -98,6 +129,7 @@ const Payments = ({
       });
       const { orderId, paymentKey, amount , paymentType } = data;
 
+      console.log('data',data);
       if (orderId && paymentKey && amount) {
         // 주소 추가
         await apis.User.addAddress({
@@ -120,29 +152,6 @@ const Payments = ({
           rcPostBase: info.delivery.address.rcPostBase,
           rcPostDetail: info.delivery.address.rcPostDetail,
         });
-
-        // router.replace({
-        //   pathname: '/order/success',
-        //   query: {
-        //     orderId: data.orderId,
-        //     paymentKey: data.paymentKey,
-        //     amount: data.amount
-        //   },
-        // },
-        // '/order/success'
-        // );
-        // router.replace(
-        //   '/order/success',
-        //   undefined,
-        //   {
-        //     orderId: data.orderId,
-        //     paymentKey: data.paymentKey,
-        //     amount: data.amount
-        //   }
-        // );
-        console.log('data',data);
-        
-        // router.push(`/order/success?orderId=${data.orderId}?paymentKey=${data.paymentKey}?amount=${data.amount}`);
         router.replace(`order/success/?${createQueryString(data)}`);
       }
       

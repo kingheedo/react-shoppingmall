@@ -2,7 +2,6 @@
 
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Button } from 'antd';
 import {
   useMutation,
   useQuery,
@@ -22,14 +21,7 @@ const Container = styled.div`
   margin: 6rem auto 0;
   padding: 0 20px;
 `;
-const ProductInfo = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding-left: 30px;
-`;
-const Btn = styled(Button)`
-  width: 160px;
-`;
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -374,7 +366,13 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
   
   /** 사이즈 옵션 선택 시 */
   const onClickSize = (option: SizeOption) => {
-    setBuyInfo((prev: BuyInfo) => ({ ...prev, size: option }));
+    if (!product) {
+      return;
+    }
+    if (buyInfo.totalPrice === 0) {
+      setBuyInfo((prev: BuyInfo) => ({ ...prev, totalPrice: product.price * buyInfo.quantity }));
+    }
+    setBuyInfo((prev: BuyInfo) => ({ ...prev, productId: product.id, size: option }));
   };
 
   /** 수량 조절 */
@@ -402,6 +400,8 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
 
   /** 장바구니 클릭 시 */
   const onClickAddCart = () => {
+    console.log('buyInfo',buyInfo);
+    
     if (!product) {
       return;
     }

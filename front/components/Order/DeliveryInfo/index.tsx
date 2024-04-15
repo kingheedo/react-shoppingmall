@@ -14,7 +14,7 @@ interface IMessageContainerProps{
 }
 
 const DeliveryInfoArea = styled.div`
-    margin-top: 70px;
+    margin: 70px 0;
     border-top: 1px solid #444;
 `;
 

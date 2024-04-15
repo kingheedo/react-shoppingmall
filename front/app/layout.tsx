@@ -1,5 +1,4 @@
 import React, { PropsWithChildren } from 'react';
-import AuthProvider from '../context/AuthProvider';
 import ModalProvider from '../context/ModalProvider';
 import StyledComponentsRegistry from '../lib/styled-components';
 import ReactQueryProvider from '../context/ReactQueryProvider';
