@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from 'react';
 
 export default function useIntersectionObserver({
   root,
@@ -10,7 +10,7 @@ export default function useIntersectionObserver({
 }: any) {
   React.useEffect(() => {
     if (!enabled) {
-      return
+      return;
     }
 
     const observer = new IntersectionObserver(
@@ -21,18 +21,18 @@ export default function useIntersectionObserver({
         rootMargin,
         threshold,
       }
-    )
+    );
 
-    const el = target && target.current
+    const el = target && target.current;
 
     if (!el) {
-      return
+      return;
     }
 
-    observer.observe(el)
+    observer.observe(el);
 
     return () => {
-      observer.unobserve(el)
-    }
-  }, [target, enabled, root, threshold, rootMargin, onInterSect])
+      observer.unobserve(el);
+    };
+  }, [target, enabled, root, threshold, rootMargin, onInterSect]);
 }
