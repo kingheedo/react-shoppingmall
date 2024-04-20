@@ -1,12 +1,11 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react';
-import apis from '../apis';
 import { usePathname, useRouter } from 'next/navigation';
 import { GetUserRes } from '../apis/user/schema';
 import { useRecoilState } from 'recoil';
 import { LoginState } from '../store';
+import useGetUser from '../hooks/queries/useGetUser';
 
 const noAccessPathList = ['/cart', '/mypage', '/order'];
 const AuthContext = createContext<GetUserRes | null>(null);
@@ -14,18 +13,15 @@ const AuthContext = createContext<GetUserRes | null>(null);
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const pathname = usePathname();
-  
+
   const [getLoginState, setLoginState] = useRecoilState(LoginState);
-  const { data: getUserData } = useQuery({
-    queryKey: ['getUser',pathname], 
-    queryFn: () => apis.User.getUser(),
-    onError: () => setLoginState(null),
-    onSuccess: (data) => {
-      console.log('data',data);
-      if (data) {
-        if (data.info) {
+  const { user } = useGetUser({
+    onErrorCb: () => setLoginState(null),
+    onSuccessCb: () => {
+      if (user) {
+        if (user.info) {
           setLoginState({
-            id: data.info.id
+            id: user.info.id
           });
         }
       } else {
@@ -33,11 +29,11 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       }
     }
   });
-  
+
   const userInfo = useMemo(() => {
-    return getUserData || null;
-  }, [getUserData]);
-  
+    return user || null;
+  }, [user]);
+
   useEffect(() => {
     if (!getLoginState) {
       if (noAccessPathList.indexOf(pathname) !== -1) {
@@ -48,9 +44,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         router.push('/');
       }
     }
-  }, [pathname,getLoginState]);
-  
-  console.log('userInfo',userInfo);
+  }, [pathname, getLoginState]);
+
+  console.log('userInfo', userInfo);
 
   return (
     <AuthContext.Provider value={userInfo}>

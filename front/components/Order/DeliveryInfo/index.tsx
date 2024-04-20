@@ -6,11 +6,10 @@ import DeliveryModal from './DeliveryModal';
 import hypenPhoneNum from '../../../utils/hypenPhoneNum';
 import { Address } from '../../../apis/user/schema';
 import { DeliveryType } from '..';
-import { useQuery } from '@tanstack/react-query';
-import apis from '../../../apis';
+import useGetUser from '../../../hooks/queries/useGetUser';
 
-interface IMessageContainerProps{
-  showMsgList: boolean;
+interface IMessageContainerProps {
+	showMsgList: boolean;
 }
 
 const DeliveryInfoArea = styled.div`
@@ -183,363 +182,361 @@ const MessageItem = styled.li`
       }
 `;
 
-interface IDeliveryInfoProps{
-  modalStep: number;
-  handleModalStep: (step: number) => void;
-  handleAddress: (payload: DeliveryType) => void;
+interface IDeliveryInfoProps {
+	modalStep: number;
+	handleModalStep: (step: number) => void;
+	handleAddress: (payload: DeliveryType) => void;
 }
 
 const DeliveryInfo = ({
-  modalStep,
-  handleModalStep,
-  handleAddress
-  
+	modalStep,
+	handleModalStep,
+	handleAddress
+
 }: IDeliveryInfoProps) => {
-  const [info, setInfo] = useState<DeliveryType>({
-    rcName: '',
-    rcPhone: '',
-    address: {
-      rcPostNum: '',
-      rcPostBase: '',
-      rcPostDetail: '',
-      base: false,
-    },
-    message: '',
-  });
-  const [showResetBtn, setShowResetBtn] = useState({
-    base: false,
-    detail: false
-  });
-  const [showMsgList, setShowMsgList] = useState(false);
-  
-  const { data: me } = useQuery(
-    ['getUser'], 
-    () => apis.User.getUser());
+	const [info, setInfo] = useState<DeliveryType>({
+		rcName: '',
+		rcPhone: '',
+		address: {
+			rcPostNum: '',
+			rcPostBase: '',
+			rcPostDetail: '',
+			base: false,
+		},
+		message: '',
+	});
+	const [showResetBtn, setShowResetBtn] = useState({
+		base: false,
+		detail: false
+	});
+	const [showMsgList, setShowMsgList] = useState(false);
 
-  /** 배송지 목록에서 하나의 배송지 선택 시 info 업데이트 핸들러 */
-  const handleUpdateInfo = (payload: Omit<Address, 'id'> & { base?: boolean }) => {
-    setInfo({
-      rcName: payload.rcName,
-      rcPhone: payload.rcPhone,
-      address: {
-        rcPostNum: payload.rcPostNum,
-        rcPostBase: payload.rcPostBase,
-        rcPostDetail: payload.rcPostDetail,
-        base: payload.base ? payload. base : { ...info }.address.base
-      },
-      message: { ...info }.message,
-    });
-  };
+	const { user } = useGetUser();
 
-  /** 새로입력 클릭 시 */
-  const onClickResetForm = () => {
-    setInfo({
-      rcName: '',
-      rcPhone: '',
-      address: {
-        rcPostNum: '',
-        rcPostBase: '',
-        rcPostDetail: '',
-        base: false
-      },
-      message: '',
-    });
-  };
-  
-  /** 우편번호 및 기본 배송지 핸들러 */
-  const handlePost = (payload:{ postNum: string, baseAddress: string }) => {
-    const tempInfo = { ...info };
-    setInfo({
-      ...tempInfo,
-      address: {
-        rcPostNum: payload.postNum,
-        rcPostBase: payload.baseAddress,
-        rcPostDetail: tempInfo.address.rcPostDetail,
-        base: tempInfo.address.base
-      }
-    });
-  };
+	/** 배송지 목록에서 하나의 배송지 선택 시 info 업데이트 핸들러 */
+	const handleUpdateInfo = (payload: Omit<Address, 'id'> & { base?: boolean }) => {
+		setInfo({
+			rcName: payload.rcName,
+			rcPhone: payload.rcPhone,
+			address: {
+				rcPostNum: payload.rcPostNum,
+				rcPostBase: payload.rcPostBase,
+				rcPostDetail: payload.rcPostDetail,
+				base: payload.base ? payload.base : { ...info }.address.base
+			},
+			message: { ...info }.message,
+		});
+	};
 
-  /** input 핸들러
-   * 
-   * 1. target의 id에 따라서 value값을 수정
-   * 2. target id가 address 이면 target의 name의 값을 변경하도록
-   */
-  const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.id === 'base-address-checkbox') {
-      setInfo({
-        ...info,
-        address: {
-          ...info.address,
-          base: e.target.checked
-        }
-      });
+	/** 새로입력 클릭 시 */
+	const onClickResetForm = () => {
+		setInfo({
+			rcName: '',
+			rcPhone: '',
+			address: {
+				rcPostNum: '',
+				rcPostBase: '',
+				rcPostDetail: '',
+				base: false
+			},
+			message: '',
+		});
+	};
 
-      return;
-    }
-    if (e.target.id === 'address' ) {
-      setInfo({
-        ...info,
-        address: {
-          ...info.address,
-          [e.target.name]: e.target.value
-        }
-      });
+	/** 우편번호 및 기본 배송지 핸들러 */
+	const handlePost = (payload: { postNum: string, baseAddress: string }) => {
+		const tempInfo = { ...info };
+		setInfo({
+			...tempInfo,
+			address: {
+				rcPostNum: payload.postNum,
+				rcPostBase: payload.baseAddress,
+				rcPostDetail: tempInfo.address.rcPostDetail,
+				base: tempInfo.address.base
+			}
+		});
+	};
 
-      return;
-    }
-    setInfo({
-      ...info,
-      [e.target.id]: e.target.value
-    });
+	/** input 핸들러
+	 * 
+	 * 1. target의 id에 따라서 value값을 수정
+	 * 2. target id가 address 이면 target의 name의 값을 변경하도록
+	 */
+	const onChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (e.target.id === 'base-address-checkbox') {
+			setInfo({
+				...info,
+				address: {
+					...info.address,
+					base: e.target.checked
+				}
+			});
 
-    return;
-  };
+			return;
+		}
+		if (e.target.id === 'address') {
+			setInfo({
+				...info,
+				address: {
+					...info.address,
+					[e.target.name]: e.target.value
+				}
+			});
 
-  /** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
-  const handleShowResetBtn = (payload: 'base' | 'detail') => {
-    const tempShowResetBtn = { ...showResetBtn };
-    setShowResetBtn({
-      ...showResetBtn,
-      [payload]: !tempShowResetBtn[payload]
-    });
-  };
+			return;
+		}
+		setInfo({
+			...info,
+			[e.target.id]: e.target.value
+		});
 
-  /** input의 x버튼 클릭 시 값 초기화 */
-  const onClickResetInput = (payload: 'base' | 'detail') => {
-    const tempInfo = info;
+		return;
+	};
 
-    switch (payload) {
-    case 'base':
-      setInfo({
-        ...tempInfo,
-        address: {
-          ...tempInfo.address,
-          rcPostBase: ''
-        }
-      });
+	/** 배송 주소 input 삭제 버튼 보여주기 유무 핸들러 */
+	const handleShowResetBtn = (payload: 'base' | 'detail') => {
+		const tempShowResetBtn = { ...showResetBtn };
+		setShowResetBtn({
+			...showResetBtn,
+			[payload]: !tempShowResetBtn[payload]
+		});
+	};
 
-      break;
-    
-    case 'detail': 
-      setInfo({
-        ...tempInfo,
-        address: {
-          ...tempInfo.address,
-          rcPostDetail: ''
-        }
-      });
-    default:
-      break;
-    }
-  };
+	/** input의 x버튼 클릭 시 값 초기화 */
+	const onClickResetInput = (payload: 'base' | 'detail') => {
+		const tempInfo = info;
 
-  const onFocusMessage = () => {
-    setShowMsgList(true);
-  };
+		switch (payload) {
+			case 'base':
+				setInfo({
+					...tempInfo,
+					address: {
+						...tempInfo.address,
+						rcPostBase: ''
+					}
+				});
 
-  const onClickMsg = (e: React.MouseEvent<HTMLLIElement>) => {
-    setInfo({
-      ...info,
-      message: e.currentTarget.innerText
-    });
-    setShowMsgList(false);
-  };
+				break;
 
-  /** 유저 정보에 따라 info 값 업데이트 */
-  useEffect(() => {
-    setInfo({
-      rcName: me?.address?.rcName || '',
-      rcPhone: me?.address?.rcPhone || '',
-      address: {
-        rcPostNum: me?.address?.rcPostNum || '',
-        rcPostBase: me?.address?.rcPostBase || '',
-        rcPostDetail: me?.address?.rcPostDetail || '',
-        base: false,
-      },
-      message: '',
-    });
-  }, [me]);
+			case 'detail':
+				setInfo({
+					...tempInfo,
+					address: {
+						...tempInfo.address,
+						rcPostDetail: ''
+					}
+				});
+			default:
+				break;
+		}
+	};
 
-  /** info가 변경될 때마다 Order 컴포넌트의 address 값 업데이트
-   * 
-   * 결제 성공시 배송지 확인을 위해
-   */
-  useEffect(() => {
-    handleAddress(info);
-  }, [info]);
+	const onFocusMessage = () => {
+		setShowMsgList(true);
+	};
 
-  return (
-    <DeliveryInfoArea>
-      {modalStep >= 0 && (
-        <DeliveryModal
-          step={modalStep}
-          handleModalStep={handleModalStep}
-          handleUpdateInfo={handleUpdateInfo}
-        />
-      )}
-      <DeliveryInfoHeader>
-        <h4>
-          배송지 정보
-        </h4>
-        <div className="btn-wrap">
-          <BtnGray onClick={onClickResetForm}>
-            새로입력
-          </BtnGray>
-          <BtnGray onClick={() => handleModalStep(0)}>
-            배송지 목록
-          </BtnGray>
-        </div>
-      </DeliveryInfoHeader>
-      <DeliveryInfoMain>
-        <DeliveryInfoRow>
-          <label htmlFor="rcName">
-            이름
-          </label>
-          <InputWrap>
-            <input 
-              id="rcName" 
-              name="rcName" 
-              onChange={onChangeValue} 
-              value={info.rcName} 
-              type="text" />
+	const onClickMsg = (e: React.MouseEvent<HTMLLIElement>) => {
+		setInfo({
+			...info,
+			message: e.currentTarget.innerText
+		});
+		setShowMsgList(false);
+	};
 
-          </InputWrap>
-        </DeliveryInfoRow>
-        <DeliveryInfoRow>
-          <label htmlFor="rcPhone">
-            휴대폰
-          </label>
-          <InputWrap>
-            <input 
-              id="rcPhone"
-              name="rcPhone"
-              onChange={onChangeValue} 
-              value={hypenPhoneNum(info.rcPhone)}
-              maxLength={11}
-              type="text" />
+	/** 유저 정보에 따라 info 값 업데이트 */
+	useEffect(() => {
+		setInfo({
+			rcName: user?.address?.rcName || '',
+			rcPhone: user?.address?.rcPhone || '',
+			address: {
+				rcPostNum: user?.address?.rcPostNum || '',
+				rcPostBase: user?.address?.rcPostBase || '',
+				rcPostDetail: user?.address?.rcPostDetail || '',
+				base: false,
+			},
+			message: '',
+		});
+	}, [user]);
 
-          </InputWrap>
-        </DeliveryInfoRow>
-        <DeliveryInfoRow className="address-row">
-          <label htmlFor="address">
-            배송주소
-          </label>
-          <div className="address-container">
-            <InputWrap 
-              className="address-input-wrap">
-              <input 
-                id="address" 
-                className="post-num-input"
-                title="배송주소"
-                name="rcPostNum" 
-                onChange={onChangeValue}
-                value={info.address.rcPostNum} 
-                type="text" 
-                readOnly
-              />
-              <PostBtn
-                handlePost={handlePost}
-              >
-                우편번호
-              </PostBtn>
-            </InputWrap>
-            <InputWrap 
-              className="address-input-wrap">
-              <input 
-                id="address" 
-                className="post-base-input"
-                title="배송주소"
-                name="rcPostBase" 
-                onChange={onChangeValue}
-                onFocus={() => handleShowResetBtn('base')}
-                onBlur={() => handleShowResetBtn('base')}
-                value={info.address.rcPostBase} 
-                type="text" 
-                readOnly
-              />
-              <ResetBtn 
-                onMouseDown={() => onClickResetInput('base')}
-                className={`reset-btn ${showResetBtn.base ? 'active' : ''}`}/>
-            </InputWrap>
-            <InputWrap 
-              className="address-input-wrap">
-              <input 
-                id="address" 
-                className="post-detail-input"
-                title="상세주소"
-                name="rcPostDetail" 
-                onChange={onChangeValue}
-                onFocus={() => handleShowResetBtn('detail')}
-                onBlur={() => handleShowResetBtn('detail')}
-                value={info.address.rcPostDetail} 
-                maxLength={100}
-                type="text" />
-              <ResetBtn 
-                onMouseDown={() => onClickResetInput('detail')}
-                className={`reset-btn ${showResetBtn.detail ? 'active' : ''}`}/>
-            </InputWrap>
-            <SaveCheckBox>
-              <input id="base-address-checkbox" onChange={onChangeValue} type="checkbox" />
-              <i/>
-              기본 배송지로 저장
-            </SaveCheckBox>
-          </div>
-        </DeliveryInfoRow>
-        <DeliveryInfoRow>
-          <label htmlFor="message">
-            배송메시지
-          </label>
-          <InputWrap 
-            className="message-input-wrap">
-            <MessageContent>
-              <input 
-                id="message" 
-                name="message"
-                className="message-input"
-                onChange={onChangeValue} 
-                onFocus={onFocusMessage}
-                onBlur={() => setShowMsgList(false)}
-                value={info.message} 
-                type="text" />
-              <MessageContainer showMsgList={showMsgList}>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                  부재 시 경비실에 맡겨주세요.
-                  </span>
-                </MessageItem>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                  부재 시 문 앞에 놓아주세요.
-                  </span>              
-                </MessageItem>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                  배송 전에 연락주세요.
-                  </span>
-                </MessageItem>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                  빠른 배송 부탁드려요.
-                  </span>
-                </MessageItem>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                    배관함에 넣어주세요.
-                  </span>
-                </MessageItem>
-                <MessageItem onMouseDown={onClickMsg}>
-                  <span>
-                    무인 택배함에 보관해주세요.
-                  </span>
-                </MessageItem>
-              </MessageContainer>
-            </MessageContent>
-          </InputWrap>
-        </DeliveryInfoRow>
-      </DeliveryInfoMain>
-    </DeliveryInfoArea>
-  );  
+	/** info가 변경될 때마다 Order 컴포넌트의 address 값 업데이트
+	 * 
+	 * 결제 성공시 배송지 확인을 위해
+	 */
+	useEffect(() => {
+		handleAddress(info);
+	}, [info]);
+
+	return (
+		<DeliveryInfoArea>
+			{modalStep >= 0 && (
+				<DeliveryModal
+					step={modalStep}
+					handleModalStep={handleModalStep}
+					handleUpdateInfo={handleUpdateInfo}
+				/>
+			)}
+			<DeliveryInfoHeader>
+				<h4>
+					배송지 정보
+				</h4>
+				<div className="btn-wrap">
+					<BtnGray onClick={onClickResetForm}>
+						새로입력
+					</BtnGray>
+					<BtnGray onClick={() => handleModalStep(0)}>
+						배송지 목록
+					</BtnGray>
+				</div>
+			</DeliveryInfoHeader>
+			<DeliveryInfoMain>
+				<DeliveryInfoRow>
+					<label htmlFor="rcName">
+						이름
+					</label>
+					<InputWrap>
+						<input
+							id="rcName"
+							name="rcName"
+							onChange={onChangeValue}
+							value={info.rcName}
+							type="text" />
+
+					</InputWrap>
+				</DeliveryInfoRow>
+				<DeliveryInfoRow>
+					<label htmlFor="rcPhone">
+						휴대폰
+					</label>
+					<InputWrap>
+						<input
+							id="rcPhone"
+							name="rcPhone"
+							onChange={onChangeValue}
+							value={hypenPhoneNum(info.rcPhone)}
+							maxLength={11}
+							type="text" />
+
+					</InputWrap>
+				</DeliveryInfoRow>
+				<DeliveryInfoRow className="address-row">
+					<label htmlFor="address">
+						배송주소
+					</label>
+					<div className="address-container">
+						<InputWrap
+							className="address-input-wrap">
+							<input
+								id="address"
+								className="post-num-input"
+								title="배송주소"
+								name="rcPostNum"
+								onChange={onChangeValue}
+								value={info.address.rcPostNum}
+								type="text"
+								readOnly
+							/>
+							<PostBtn
+								handlePost={handlePost}
+							>
+								우편번호
+							</PostBtn>
+						</InputWrap>
+						<InputWrap
+							className="address-input-wrap">
+							<input
+								id="address"
+								className="post-base-input"
+								title="배송주소"
+								name="rcPostBase"
+								onChange={onChangeValue}
+								onFocus={() => handleShowResetBtn('base')}
+								onBlur={() => handleShowResetBtn('base')}
+								value={info.address.rcPostBase}
+								type="text"
+								readOnly
+							/>
+							<ResetBtn
+								onMouseDown={() => onClickResetInput('base')}
+								className={`reset-btn ${showResetBtn.base ? 'active' : ''}`} />
+						</InputWrap>
+						<InputWrap
+							className="address-input-wrap">
+							<input
+								id="address"
+								className="post-detail-input"
+								title="상세주소"
+								name="rcPostDetail"
+								onChange={onChangeValue}
+								onFocus={() => handleShowResetBtn('detail')}
+								onBlur={() => handleShowResetBtn('detail')}
+								value={info.address.rcPostDetail}
+								maxLength={100}
+								type="text" />
+							<ResetBtn
+								onMouseDown={() => onClickResetInput('detail')}
+								className={`reset-btn ${showResetBtn.detail ? 'active' : ''}`} />
+						</InputWrap>
+						<SaveCheckBox>
+							<input id="base-address-checkbox" onChange={onChangeValue} type="checkbox" />
+							<i />
+							기본 배송지로 저장
+						</SaveCheckBox>
+					</div>
+				</DeliveryInfoRow>
+				<DeliveryInfoRow>
+					<label htmlFor="message">
+						배송메시지
+					</label>
+					<InputWrap
+						className="message-input-wrap">
+						<MessageContent>
+							<input
+								id="message"
+								name="message"
+								className="message-input"
+								onChange={onChangeValue}
+								onFocus={onFocusMessage}
+								onBlur={() => setShowMsgList(false)}
+								value={info.message}
+								type="text" />
+							<MessageContainer showMsgList={showMsgList}>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										부재 시 경비실에 맡겨주세요.
+									</span>
+								</MessageItem>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										부재 시 문 앞에 놓아주세요.
+									</span>
+								</MessageItem>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										배송 전에 연락주세요.
+									</span>
+								</MessageItem>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										빠른 배송 부탁드려요.
+									</span>
+								</MessageItem>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										배관함에 넣어주세요.
+									</span>
+								</MessageItem>
+								<MessageItem onMouseDown={onClickMsg}>
+									<span>
+										무인 택배함에 보관해주세요.
+									</span>
+								</MessageItem>
+							</MessageContainer>
+						</MessageContent>
+					</InputWrap>
+				</DeliveryInfoRow>
+			</DeliveryInfoMain>
+		</DeliveryInfoArea>
+	);
 };
 
 export default DeliveryInfo;

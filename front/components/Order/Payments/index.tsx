@@ -3,11 +3,11 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import { PaymentInfo } from '..';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { PostPaymentReq } from '../../../apis/payment/schema';
-import apis from '../../../apis';
 import BillWrap from '../../common/BillWrap';
 import { useRouter, useSearchParams } from 'next/navigation';
+import useAddPayment from '../../../hooks/mutations/useAddPayment';
+import useGetUser from '../../../hooks/queries/useGetUser';
+import useAddAddress from '../../../hooks/mutations/useAddAddress';
 
 const PaymentWrapper = styled.div``;
 
@@ -58,29 +58,22 @@ const Payments = ({
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const { mutate: addPayment } = useMutation((data: PostPaymentReq) => apis.Payment.addPayment(data), {
-    onSettled: () => {
-      queryClient.invalidateQueries(['getUser']);
-    }
-  });
+  const { addPayment } = useAddPayment();
   const searchParams = useSearchParams();
 
-  const { data: userInfo } = useQuery(
-    ['getUser'], 
-    () => apis.User.getUser());
+  const { user } = useGetUser();
 
   const createQueryString = useCallback(
-    (query:{
+    (query: {
       [key: string]: string;
     }) => {
       const params = new URLSearchParams(searchParams.toString());
       for (const [name, value] of Object.entries(query)) {
         if (name && value) {
-          params.set(name,value);
+          params.set(name, value);
         }
       }
- 
+
       return params.toString();
     },
     [searchParams]
@@ -91,7 +84,7 @@ const Payments = ({
     const phoneRegex = /^\d{3}\d{4}\d{4}$/;
     if (!info.delivery.rcName) {
       alert('이름을 입력해주세요');
-      
+
       return false;
     }
     if (!info.delivery.rcPhone) {
@@ -101,7 +94,7 @@ const Payments = ({
     }
     if (!phoneRegex.test(info.delivery.rcPhone)) {
       alert('휴대폰 형식이 올바르지 않습니다.');
-      
+
       return false;
     }
     if (!info.delivery.address.rcPostNum) {
@@ -117,28 +110,28 @@ const Payments = ({
    * 1. db에 주문 정보 및 배송지 정보 저장 필요
    * 2. 결제하기 api 요청 이후 orderId, paymnetKey, amount 존재 시 주문성공페이지로 라우팅
     */
-  const onClickPaymentBtn = async() => {
+  const onClickPaymentBtn = async () => {
     const validForm = checkDelivery();
     if (!validForm) {
-      return; 
+      return;
     }
     const paymentWidget = paymentWidgetRef.current;
     try {
       const data = await paymentWidget?.requestPayment({
         orderId: nanoid(),
         orderName: info.orderName,
-        customerName: userInfo?.info.name,
-        customerEmail: userInfo?.info.email,
+        customerName: user?.info.name,
+        customerEmail: user?.info.email,
         // successUrl: `${window.location.origin}/order/success`,
         // failUrl: `${window.location.origin}`
       });
-      const { orderId, paymentKey, amount , paymentType } = data;
+      const { orderId, paymentKey, amount, paymentType } = data;
 
-      console.log('data',data);
-      console.log('info',info);
+      console.log('data', data);
+      console.log('info', info);
       if (orderId && paymentKey && amount) {
         // 주소 추가
-        await apis.User.addAddress({
+        await useAddAddress({
           rcName: info.delivery.rcName,
           rcPhone: info.delivery.rcPhone,
           rcPostNum: info.delivery.address.rcPostNum,
@@ -160,7 +153,7 @@ const Payments = ({
         });
         router.replace(`order/success/?${createQueryString(data)}`);
       }
-      
+
     }
     catch (error) {
       console.error(error);
@@ -193,8 +186,8 @@ const Payments = ({
 
   return (
     <PaymentWrapper>
-      <PaymentWidget id="payment-widget"/>
-      <Agreement id="agreement"/>
+      <PaymentWidget id="payment-widget" />
+      <Agreement id="agreement" />
       <BillWrap
         totalPrice={info.totalPrice}
       />

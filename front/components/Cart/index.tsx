@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apis from '../../apis';
 import OptionModal from './OptionModal';
 import { ChangeOption, GetCartListRes, Size } from '../../apis/cart/schema';
@@ -9,6 +9,7 @@ import { useModal } from '../../context/ModalProvider';
 import BreadCrumb from '../common/BreadCrumb';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
+import useGetCartList from '../../hooks/queries/useGetCartList';
 
 const Cart = styled.div``;
 
@@ -344,7 +345,8 @@ const SubmitWrap = styled.div`
 export type Optionitem = {
   cartId: number | null;
   name: string | null;
-  sizes:{ option: Size
+  sizes: {
+    option: Size
   }[] | null;
 };
 
@@ -370,11 +372,9 @@ const CartComponent = () => {
     };
   }, [selectd]);
   const modal = useModal();
-  
+
   const queryClient = useQueryClient();
-  const { data: list } = useQuery(['getCartList'], () =>
-    apis.Cart.getCartList(),
-  );
+  const { list } = useGetCartList();
 
   const totalPrice = useMemo(() => {
     let price = 0;
@@ -383,9 +383,9 @@ const CartComponent = () => {
       const id = checkedList[i];
       price += list?.find(val => val.id === id)?.totalPrice || 0;
     }
-    
+
     return price;
-  },[list,checkedList]);
+  }, [list, checkedList]);
 
   /** 장바구니 아이템 삭제 */
   const { mutate: deleteItem } = useMutation((ids: number[]) => apis.Cart.deleteItem(ids), {
@@ -395,7 +395,7 @@ const CartComponent = () => {
   });
 
   /** 장바구니 아이템 옵션변경 */
-  const { mutate: changeOption } = useMutation((data: ChangeOption) => apis.Cart.changeOption(data),{
+  const { mutate: changeOption } = useMutation((data: ChangeOption) => apis.Cart.changeOption(data), {
     onSettled: () => {
       queryClient.invalidateQueries(['getCartList']);
     }
@@ -424,7 +424,7 @@ const CartComponent = () => {
   };
 
   /** 삭제 클릭 시 */
-  const onClickDelete = (payload: { type : Delete, id?: number }) => {
+  const onClickDelete = (payload: { type: Delete, id?: number }) => {
     if (payload.type === Delete.MULTIPLE) {
       if (checkedList.length < 1) {
         return modal?.confirm.noSelectCartItem.handleConfirm();
@@ -433,7 +433,7 @@ const CartComponent = () => {
     } else if (payload.type === Delete.EACH) {
       modal?.confirm.deleteCart.handleConfirm(() => payload.id && deleteItem([payload.id]));
     }
-    
+
   };
 
   /** 옵션 및 수량 변경 클릭 시 */
@@ -495,7 +495,7 @@ const CartComponent = () => {
         </ModalBg>
       )}
       <Cart>
-        <BreadCrumb 
+        <BreadCrumb
           list={[{ content: '장바구니' }]}
         />
         <Main className="contents">
@@ -503,10 +503,10 @@ const CartComponent = () => {
             <Title>장바구니</Title>
             <OrderHead>
               <label>
-                <input 
+                <input
                   checked={checkedList.length === list?.length && checkedList.length > 0}
-                  onChange={() => onCheck('ALL')} 
-                  type="checkbox" 
+                  onChange={() => onCheck('ALL')}
+                  type="checkbox"
                   className="check-all" />
                 <i />
                 <span>전체선택</span>
@@ -535,7 +535,7 @@ const CartComponent = () => {
                   <tr key={info.id}>
                     <Td>
                       <label>
-                        <input 
+                        <input
                           checked={checkedList.includes(info.id)}
                           onChange={() => onCheck('EACH', info.id)}
                           type="checkbox" />
@@ -582,7 +582,7 @@ const CartComponent = () => {
                       <BuyNowLink href={{
                         pathname: '/order',
                         query: { ids: ((JSON.stringify([info.id]))) },
-                        
+
                       }}
                       >
                         바로구매
@@ -601,7 +601,7 @@ const CartComponent = () => {
                 </DetailAmt>
                 <Amount>
                   <h4>{totalPrice.toLocaleString('ko-KR')}</h4>
-                  <em>원</em><br/>
+                  <em>원</em><br />
                   <span>39,900원 이상 무료배송</span>
                 </Amount>
               </AmountWrap>
@@ -646,7 +646,7 @@ const CartComponent = () => {
                 </CalcItem>
               </CalcWrap>
               <SubmitWrap>
-                <Link 
+                <Link
                   href={{
                     pathname: '/order',
                     query: { ids: ((JSON.stringify(checkedList))) },
@@ -664,7 +664,7 @@ const CartComponent = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async(context) => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
 

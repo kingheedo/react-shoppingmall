@@ -1,8 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useRef, useState } from 'react';
-import apis from '../../../apis';
 import styled from 'styled-components';
 import Link from 'next/link';
+import useGetSearchedProducts from '../../../hooks/queries/useGetSearchedProducts';
 
 interface ISearchActiveProps {
   active: 'false' | 'true';
@@ -98,24 +97,19 @@ const SearchArea = () => {
   const searchArea = useRef<HTMLDivElement | null>(null);
   const [keyword, setKeyword] = useState<string>('');
   const [searchActive, setSearchActive] = useState(false);
+  const { searchedProducts } = useGetSearchedProducts(keyword);
 
-  const { data: searchedProducts } = useQuery({
-    queryKey: ['getSearchedProducts', keyword],
-    queryFn: () => apis.Product.getKeywordProducts(keyword),
-    enabled: !!keyword
-  });
-  
   /** 검색 value 핸들러 */
   const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   };
-  
+
   /** 검색창 활성화 유무   */
   const handleSearchActive = (e: MouseEvent) => {
     const el = e.target as HTMLElement;
     if (!searchArea.current?.contains(el)) {
       setSearchActive(false);
-      setKeyword('');  
+      setKeyword('');
     }
   };
   useEffect(() => {
@@ -125,7 +119,7 @@ const SearchArea = () => {
 
     return () => document.body.removeEventListener('click', handleSearchActive);
   }, [searchActive]);
-  
+
   return (
     <SearchWrap ref={searchArea} active={searchActive ? 'true' : 'false'}>
       <SearchInput>
@@ -137,7 +131,7 @@ const SearchArea = () => {
           value={keyword} />
         <SearchBtn onClick={() => {
           searchActive ? setSearchActive(false) : setSearchActive(true);
-        } } role="search-btn" />
+        }} role="search-btn" />
       </SearchInput>
       <SearchLayer active={searchActive ? 'true' : 'false'}>
         <ul>
@@ -148,7 +142,7 @@ const SearchArea = () => {
                   setKeyword('');
                   setSearchActive(false);
                 }}
-                aria-label={product.productName} 
+                aria-label={product.productName}
                 href={`/product/${product.id}`}
                 prefetch={false}
               >

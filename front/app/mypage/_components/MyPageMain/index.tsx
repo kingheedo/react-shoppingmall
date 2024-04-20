@@ -1,15 +1,15 @@
 'use client';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import styled from 'styled-components';
 import moment from 'moment';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apis from '../../../../apis';
 import BreadCrumb from '../../../../components/common/BreadCrumb';
-import { GetAllPaymentsRes, GetTossPmntOrderRes, SettlementState } from '../../../../apis/payment/schema';
+import { SettlementState } from '../../../../apis/payment/schema';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ko from 'date-fns/locale/ko';
 import ReviewModal from '../../../../components/ReviewModal';
+import useGetAllPayments from '../../../../hooks/queries/useGetAllPayments';
 
 registerLocale('ko', ko);
 const Main = styled.div`
@@ -202,223 +202,94 @@ const DatePickerHeader = styled.div`
 }
 `;
 
-// export const getServerSideProps: GetServerSideProps = async(context) => {
-//   const cookie = context.req ? context.req.headers.cookie : '';
-//   axios.defaults.headers.Cookie = '';
-//   if (context.req && cookie) {
-//     axios.defaults.headers.Cookie = cookie;
-//   }
-
-//   const queryClient = new QueryClient();
-//   await queryClient.prefetchQuery(['getAllPayments'], () => apis.Payment.getAllPayments({
-//     startDate: new Date(new Date().setMonth(new Date().getMonth() - 3)),
-//     endDate: new Date(),
-//     page: 0
-//   }));
-  
-//   return {
-//     props: {
-//       dehydratedState: dehydrate(queryClient)
-//     }
-//   };
-// };
-
 export type TargetPaymentType = {
   productId: number;
   paymentId: number;
 }
 
-type PayemntState = {
-  dbPayments: GetAllPaymentsRes;
-  tossPayment: GetTossPmntOrderRes;
-}
-
 const MyPageMain: FC = () => {
-  
-  const [paymentsState, setPaymentsState] = useState<Map<string, PayemntState>>(() => new Map());
+
   const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 3)));
   const [endDate, setEndDate] = useState(new Date());
-  const [isInquired, setIsInquired] = useState(true); //조회하기 버튼 클릭 여부
-  const [isCanceled, setIsCanceled] = useState(false); //결제 취소 여부
   const [reviewModal, setReviewModal] = useState(false); //리뷰 모달 오픈 여부
   const [targetPayment, setTargetPayment] = useState<TargetPaymentType>({ //리뷰 대상
     productId: -1,
     paymentId: -1
   });
-  
-  // const { data: payments } = useQuery(
-  //   ['getAllPayments',
-  //     startDate || endDate || isInquired, isCanceled],
-  //   () => apis.Payment.getAllPayments({
-  //     startDate: new Date(
-  //       startDate.getUTCFullYear(),
-  //       startDate.getUTCMonth(),
-  //       startDate.getUTCDate(),
-  //       startDate.getUTCHours(),
-  //       startDate.getUTCMinutes(),
-  //       startDate.getUTCSeconds(),
-  //     ),
-  //     endDate: new Date(
-  //       endDate.getUTCFullYear(),
-  //       endDate.getUTCMonth(),
-  //       endDate.getUTCDate(),
-  //       endDate.getUTCHours(),
-  //       endDate.getUTCMinutes(),
-  //       endDate.getUTCSeconds(),
-  //     ),
-  //   }),{
-  //     enabled: !!startDate && !!endDate && isInquired
-  //   });
-
   const [page, setPage] = useState(0);
-  const queryClient = useQueryClient();
 
-  const { data: payments, isPlaceholderData } = useQuery(
-    ['getAllPayments',
-      startDate || endDate || isInquired || isCanceled || page
-    ],
-    () => apis.Payment.getAllPayments({
-      startDate: new Date(
-        startDate.getUTCFullYear(),
-        startDate.getUTCMonth(),
-        startDate.getUTCDate(),
-        startDate.getUTCHours(),
-        startDate.getUTCMinutes(),
-        startDate.getUTCSeconds(),
-      ),
-      endDate: new Date(
-        endDate.getUTCFullYear(),
-        endDate.getUTCMonth(),
-        endDate.getUTCDate(),
-        endDate.getUTCHours(),
-        endDate.getUTCMinutes(),
-        endDate.getUTCSeconds(),
-      ),
-      page
-    }),{
-      enabled: !!startDate && !!endDate && isInquired
-    }
-  );
-  
-  useEffect(() => {
-    if (!isPlaceholderData) {
-      // console.log('hasmore', payments!.hasMore);
-      
-      queryClient.prefetchQuery({
-        queryKey: ['getAllPayments', startDate, endDate, page + 1],
-        queryFn: () => () => apis.Payment.getAllPayments({
-          startDate: new Date(
-            startDate.getUTCFullYear(),
-            startDate.getUTCMonth(),
-            startDate.getUTCDate(),
-            startDate.getUTCHours(),
-            startDate.getUTCMinutes(),
-            startDate.getUTCSeconds(),
-          ),
-          endDate: new Date(
-            endDate.getUTCFullYear(),
-            endDate.getUTCMonth(),
-            endDate.getUTCDate(),
-            endDate.getUTCHours(),
-            endDate.getUTCMinutes(),
-            endDate.getUTCSeconds(),
-          ),
-          page: page + 1
-        })
-      });
-    }
-  }, [payments, isPlaceholderData, page, queryClient, startDate, endDate]);
-  
+  const {
+    paymentsState,
+    handleInquired,
+    handleCancel
+
+  } = useGetAllPayments({
+    startDate,
+    endDate,
+    page
+  });
+
   /** 결제 진행 상황 텍스트 */
   const getSettlementStatus = (payload: { method: '카드' | '가상계좌' | '간편결제' | '휴대폰' | '계좌이체' | '문화상품권' | '도서문화상품권' | '게임문화상품권', status: SettlementState }) => {
     switch (payload.status) {
-    case SettlementState.DONE:{
-      if (payload.method === '가상계좌') {
-        // return '입금 완료';
-        return '구매 완료';
-      } else {
-        return '구매 완료';
+      case SettlementState.DONE: {
+        if (payload.method === '가상계좌') {
+          // return '입금 완료';
+          return '구매 완료';
+        } else {
+          return '구매 완료';
+        }
       }
-    }
 
-    case SettlementState.EXPIRED:
-        
-      return '유효기간 만료';
+      case SettlementState.EXPIRED:
 
-    case SettlementState.CANCELED:
+        return '유효기간 만료';
 
-      return '전체 취소';
-    case SettlementState.WAITING_FOR_DEPOSIT:
+      case SettlementState.CANCELED:
 
-      return '입금 대기';
-    default:
-      return '';
+        return '전체 취소';
+      case SettlementState.WAITING_FOR_DEPOSIT:
+
+        return '입금 대기';
+      default:
+        return '';
     }
   };
 
   /** 조회하기 버튼 클릭 시 */
   const onClickInquiry = () => {
-    setIsInquired(true);
+    handleInquired(true);
   };
 
   /** 결제 취소 버튼 클릭 시 */
   const onClickCancel = (paymentKey: string) => {
     apis.Payment.cancelTossPmntOrder(paymentKey)
       .then(() => {
-        setIsCanceled(true);
+        handleCancel(true);
       })
       .catch((error) => {
         console.error(error);
       })
-    ;
+      ;
   };
 
   /** 리뷰 버튼 클릭 시 */
   const onClickReview = (payload: {
-    productId:number,
+    productId: number,
     paymentId: number
   }) => {
     setTargetPayment(payload);
     setReviewModal(true);
   };
 
-  useEffect(() => {
-    (async () => {
-      setPaymentsState(() => new Map());
-      const orderIds = [...new Set(payments?.map(payment => payment.orderId))];
-      const fethArr = orderIds.map(orderId => (
-        apis.Payment.getTossPmntOrder(orderId)
-      ));
-
-      const tossPmntOrderList = await Promise.all(fethArr);
-    
-      for (let i = 0; i < tossPmntOrderList.length; i++) {
-        const dbPayments = payments?.filter(payment => payment.orderId === tossPmntOrderList[i].orderId);
-        if (!dbPayments) {
-          return;
-        }
-        
-        setPaymentsState(prev => new Map(prev).set(
-          tossPmntOrderList[i].orderId, 
-          {
-            dbPayments, 
-            tossPayment: tossPmntOrderList[i]
-          }));
-      }
-      setIsInquired(false);
-      setIsCanceled(false);
-    })();
-    
-  },[payments, isCanceled]);
-
   return (
     <div className="my-page">
       {reviewModal && (
-        <ReviewModal 
+        <ReviewModal
           target={targetPayment}
-          onClose={() => setReviewModal(false)}/>
+          onClose={() => setReviewModal(false)} />
       )}
-      <BreadCrumb 
+      <BreadCrumb
         list={[
           { content: '마이페이지', href: '/mypage' },
           { content: '주문내역' }
@@ -444,9 +315,9 @@ const MyPageMain: FC = () => {
                   increaseMonth
                 }) => (
                   <DatePickerHeader>
-                    <button className="prev-btn" onClick={decreaseMonth}/>
+                    <button className="prev-btn" onClick={decreaseMonth} />
                     {`${date.getFullYear()} ${date.getMonth() + 1}`}
-                    <button className="next-btn" onClick={increaseMonth}/>
+                    <button className="next-btn" onClick={increaseMonth} />
                   </DatePickerHeader>
                 )}
               />
@@ -464,9 +335,9 @@ const MyPageMain: FC = () => {
                   increaseMonth
                 }) => (
                   <DatePickerHeader>
-                    <button className="prev-btn" onClick={decreaseMonth}/>
+                    <button className="prev-btn" onClick={decreaseMonth} />
                     {`${date.getFullYear()} ${date.getMonth() + 1}`}
-                    <button className="next-btn" onClick={increaseMonth}/>
+                    <button className="next-btn" onClick={increaseMonth} />
                   </DatePickerHeader>
                 )}
               />
@@ -479,8 +350,8 @@ const MyPageMain: FC = () => {
           </DateWrap>
           <TableWrap>
             <h3>주문 내용</h3>
-            
-            {Array.from(paymentsState.values()).map((val1,idx) => (
+
+            {Array.from(paymentsState.values()).map((val1, idx) => (
               <React.Fragment key={idx}>
                 <Table >
                   <colgroup>
@@ -503,14 +374,14 @@ const MyPageMain: FC = () => {
                           : (
                             <>
                               <span>
-                              입금액&nbsp;
+                                입금액&nbsp;
                                 <strong>
                                   {val1.tossPayment.totalAmount.toLocaleString('ko-KR')}
                                 </strong>
-                              원
+                                원
                               </span>
                               <span>
-                              입금기한&nbsp;
+                                입금기한&nbsp;
                                 <strong>
                                   {moment(val1.tossPayment.virtualAccount.dueDate).format('YYYY.MM.DD HH:MM:SS')}
                                 </strong>
@@ -519,16 +390,16 @@ const MyPageMain: FC = () => {
                           )}
                         {/* <Link href={'#'}>
                         주문상세
-                      </Link> */} 
+                      </Link> */}
                       </th>
                     </tr>
                     <tr className="row">
                       <th colSpan={6}>
                         <span>
-                        받으시는 분
+                          받으시는 분
                         </span>
                         <strong>
-                        왕희도
+                          왕희도
                         </strong>
                         {/* {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
                         <Link href={'#'}>
@@ -563,14 +434,14 @@ const MyPageMain: FC = () => {
                               <div className="btn-group">
                                 {val1.tossPayment.status !== SettlementState.DONE && (
                                   <button onClick={() => onClickCancel(val1.tossPayment.paymentKey)}>
-                                  전체취소
+                                    전체취소
                                   </button>)}
                                 {val1.tossPayment.status === SettlementState.DONE && !val2.isReviewed && (
                                   <button onClick={() => onClickReview({
                                     productId: val2.HistoryCart.Product.id,
                                     paymentId: val2.id
                                   })}>
-                                  리뷰 작성
+                                    리뷰 작성
                                   </button>)}
                                 {/* <button>
                     결제수단 변경

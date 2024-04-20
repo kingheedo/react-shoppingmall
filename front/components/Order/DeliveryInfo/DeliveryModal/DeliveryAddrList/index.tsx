@@ -1,10 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import styled from 'styled-components';
-import apis from '../../../../../apis';
 import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
 import { SaveType } from '..';
 import { Address } from '../../../../../apis/user/schema';
+import useGetAddresses from '../../../../../hooks/queries/useGetAddresses';
 
 const Title = styled.h1`
   line-height: 50px;
@@ -107,8 +106,8 @@ const DeliveryAddrList = ({
   handleSaveType,
   handleUpdateInfo
 }: IDeliveryAddrListProps) => {
-  const { data: addressList } = useQuery(['getAddresses'], () => apis.User.getAddresses());
-  
+  const { addressList } = useGetAddresses();
+
   /** 수정 버튼 클릭 시 */
   const onClickRevise = (info: Address & { base: boolean }) => {
     handleModalStep(1);
@@ -161,7 +160,7 @@ const DeliveryAddrList = ({
             <p className="address">
               &#91;{info.rcPostNum}&#93; {info.rcPostBase}&nbsp;{info.rcPostDetail}
             </p>
-            
+
           </AddressItem>
         ))}
       </ul>
