@@ -31,7 +31,13 @@ router.post('/', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0,
             UserId: req.user.id,
             isReviewed: false
         }));
+        const removeCarts = cartIds.map((cartId) => models_1.Cart.destroy({
+            where: {
+                id: cartId
+            }
+        }));
         yield Promise.all(addPayments);
+        yield Promise.all(removeCarts);
         return res.status(201).send('결제 완료');
     }
     catch (error) {

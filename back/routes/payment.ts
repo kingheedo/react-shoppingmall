@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { isLoggedIn } from './middlewares';
-import { Address, HistoryCart, Image, Payment, Product } from '../models';
+import { Address, Cart, HistoryCart, Image, Payment, Product } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
 
@@ -33,8 +33,17 @@ router.post('/', isLoggedIn, async(req, res, next) => {
           UserId: req.user!.id,
           isReviewed: false
         })
-      )
+      );
+
+      const removeCarts = cartIds.map((cartId:number) => 
+        Cart.destroy({
+          where: {
+            id: cartId
+          }
+        })
+      );
       await Promise.all(addPayments);
+      await Promise.all(removeCarts);
 
       return res.status(201).send('결제 완료');
       
