@@ -26,7 +26,7 @@ const Layout = async({ children }: PropsWithChildren) => {
   }));
 
   const dehydratedState = dehydrate(queryClient);
-  queryClient.clear();
+  // queryClient.clear();
 
   return (
     <html lang="kr">

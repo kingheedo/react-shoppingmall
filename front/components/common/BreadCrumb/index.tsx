@@ -5,9 +5,9 @@ import { UrlObject } from 'url';
 
 const Breadcrumb = styled.div`
   max-width: 1440px;
-    min-width: 1280px;
-    margin: 0 auto;
-    padding: 0 var(--gap);
+  min-width: 1280px;
+  margin: 0 auto;
+  padding: 20px var(--gap) 0px;
 `;
 
 const BreadcrumbOl = styled.ol`

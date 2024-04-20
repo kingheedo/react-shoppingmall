@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductDetail from './_component/item';
+import Products from './_component/Products';
 import getQueryClient from '../../../utils/getQueryClient';
 import apis from '../../../apis';
 import { dehydrate } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ const ProductHomePage = async({ params }: IProductHomePageProps) => {
   
   return (
     <HydrateOnClient state={dehydratedState}>
-      <ProductDetail
+      <Products
         id ={params.id}
       />
     </HydrateOnClient>

@@ -3,7 +3,7 @@ import { ko } from 'date-fns/locale';
 import { format } from 'date-fns';
 import { backUrl } from '../../config/backUrl';
 import { useRef, useState } from 'react';
-import { RevieListType } from '../../app/product/[id]/_component/item';
+import { RevieListType } from '../../app/product/[id]/_component/Products';
 
 interface IContentProps{
   isOpened: boolean;
@@ -122,6 +122,9 @@ const ReviewList = ({ list }: IReviewListProps) => {
 
   /** 이메일을 앞 세자리 표기 및 이후 @ 까지 * 표기처리 */
   const secretEmail = (payload: string) => {
+    if (!payload) {
+      return '';
+    }
     let str = '';
     for (let i = 0; i < 3; i++) {
       str += payload[i];

@@ -38,6 +38,7 @@ const SuccessPage = async({
   const queryClient = getQueryClient();
   const dehydratedState = dehydrate(queryClient);
   const data = await getConfirm(searchParams);
+  
   console.log('data',data);
   
   return (

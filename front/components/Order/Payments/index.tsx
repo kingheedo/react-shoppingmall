@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import { PaymentInfo } from '..';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PostPaymentReq } from '../../../apis/payment/schema';
 import apis from '../../../apis';
 import BillWrap from '../../common/BillWrap';
@@ -58,7 +58,12 @@ const Payments = ({
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
   const router = useRouter();
-  const { mutate: addPayment } = useMutation((data: PostPaymentReq) => apis.Payment.addPayment(data));
+  const queryClient = useQueryClient();
+  const { mutate: addPayment } = useMutation((data: PostPaymentReq) => apis.Payment.addPayment(data), {
+    onSettled: () => {
+      queryClient.invalidateQueries(['getUser']);
+    }
+  });
   const searchParams = useSearchParams();
 
   const { data: userInfo } = useQuery(
@@ -130,6 +135,7 @@ const Payments = ({
       const { orderId, paymentKey, amount , paymentType } = data;
 
       console.log('data',data);
+      console.log('info',info);
       if (orderId && paymentKey && amount) {
         // 주소 추가
         await apis.User.addAddress({

@@ -3,8 +3,6 @@
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import {
-  useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -13,6 +11,9 @@ import { useModal } from '../../../../context/ModalProvider';
 import apis from '../../../../apis';
 import ReviewList from '../../../../components/ReviewList';
 import { useRouter } from 'next/navigation';
+import useGetUser from '../../../../hooks/queries/useGetUser';
+import useGetSingleProduct from '../../../../hooks/queries/useGetSingleProduct';
+import useAddItemToCart from '../../../../hooks/mutations/useAddItemToCart';
 
 const Container = styled.div`
   max-width: 1440px;
@@ -27,7 +28,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   width: 100%;
 `;
-const ItemInfoWrap = styled.div`
+const ProductInfo = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 120px;
@@ -317,33 +318,12 @@ interface IProductDetailProps{
   id: string;
 }
 
-const ProductDetail = ({ id }: IProductDetailProps) => {
+const Products = ({ id }: IProductDetailProps) => {
   const router = useRouter();
   const modal = useModal();
-  const queryClient = useQueryClient();
-  const { data: me } = useQuery(
-    ['getUser'], 
-    () => apis.User.getUser());
-    
-  const { data: product } = useQuery(
-    ['getSingleProduct'],
-    () => apis.Product.getSingleProduct(id as string),
-    {
-      enabled: !!id,
-    },
-  );
-
-  const { mutate } = useMutation(apis.Cart.addItmtoCart, {
-    onSuccess: () => {
-      modal?.confirm.addCart.handleConfirm(() => router.push('/cart'));
-    },
-    onSettled: () => {
-      Promise.all([
-        queryClient.invalidateQueries(['getUser']),
-        queryClient.invalidateQueries(['getCartList'])
-      ]);
-    },
-  });
+  const { user } = useGetUser();
+  const { product } = useGetSingleProduct(id);
+  const { addItemToCart } = useAddItemToCart();
 
   const [buyInfo, setBuyInfo] = useState<BuyInfo>({
     productId: product?.id || -1,
@@ -357,11 +337,19 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
       id: review.id,
       content: review.content,
       rate: review.rate,
-      userEmail: review.User.email,
+      userEmail: review.User?.email,
       date: review.createdAt,
       reviewImage: review.ReviewImages[0]?.src
-      //size 및 quantity 추가
     })) || [];
+  },[product]);
+
+  /** 평균 리뷰 점수 */
+  const averageRate = useMemo(() => {
+    let rate = 0;
+    const reviewLength = product?.Reviews.length;
+    product?.Reviews.forEach(review => rate += review.rate);
+
+    return reviewLength ? (rate / reviewLength).toFixed(1) : 0;
   },[product]);
   
   /** 사이즈 옵션 선택 시 */
@@ -405,7 +393,7 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
     if (!product) {
       return;
     }
-    if (!me) {
+    if (!user) {
       router.push('/signIn');
     }
     if (!buyInfo.size) {
@@ -418,7 +406,7 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
       buyInfo.totalPrice &&
       buyInfo.quantity
     ) {
-      mutate({
+      addItemToCart({
         productId: buyInfo.productId,
         size: buyInfo.size,
         totalPrice: buyInfo.totalPrice,
@@ -435,21 +423,12 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
     });
   };
 
-  /** 평균 리뷰 점수 */
-  const averageRate = useMemo(() => {
-    let rate = 0;
-    const reviewLength = product?.Reviews.length;
-    product?.Reviews.forEach(review => rate += review.rate);
-
-    return reviewLength ? (rate / reviewLength).toFixed(1) : 0;
-  },[product]);
-
   return (
     <Container>
       <Wrapper>
         {product && (
           <>
-            <ItemInfoWrap>
+            <ProductInfo>
               <ProductImage
                 className="image"
                 alt="product.Images[0]"
@@ -525,7 +504,7 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
                   <BuyBtn>바로구매</BuyBtn>
                 </DecisionWrap>
               </InfoArea>
-            </ItemInfoWrap>
+            </ProductInfo>
 
             <ReviewList
               list={reviewList}
@@ -536,4 +515,4 @@ const ProductDetail = ({ id }: IProductDetailProps) => {
     </Container>
   );
 };
-export default ProductDetail;
+export default Products;

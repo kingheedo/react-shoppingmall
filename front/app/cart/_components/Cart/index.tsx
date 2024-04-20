@@ -9,8 +9,11 @@ import OptionModal from '../../../../components/Cart/OptionModal';
 import BreadCrumb from '../../../../components/common/BreadCrumb';
 import { useModal } from '../../../../context/ModalProvider';
 import apis from '../../../../apis';
+import useGetCartList from '../../../../hooks/queries/useGetCartList';
+import useDeleteItem from '../../../../hooks/mutations/useDeleteItem';
+import useChangeOption from '../../../../hooks/mutations/useChangeOption';
 
-const Cart = styled.div``;
+const CartWrap = styled.div``;
 
 const Main = styled.main`
   width: 960px;
@@ -40,10 +43,26 @@ const Main = styled.main`
       }
     }
   }
+
+
 `;
 
 const OrderWrap = styled.div`
   padding: 41px 0 120px;
+
+    .empty{
+      display: block;
+      clear: both;
+      width: 100%;
+      line-height: 22px;
+      text-align: center;
+      color: #767676;
+      font-size: 15px;
+      padding: 196px 0 100px;
+      height: 17px;
+      background: url(/basket.png) no-repeat center 90px;
+      border-bottom: 1px solid #e5e5e5;
+    }
 `;
 const Title = styled.h1`
   margin-bottom: 40px;
@@ -353,11 +372,13 @@ export enum Delete {
   EACH = 'EACH'
 }
 
-const CartMain = () => {
+const Cart = () => {
   const [checkedList, setCheckedList] = useState<number[]>([]);
   const [selectd, setSelectd] = useState<GetCartListRes | null>(null);
   const [opSize, setOpSize] = useState(Size.SM);
   const [opQty, setOpQty] = useState(1);
+  const { deleteItem } = useDeleteItem();
+  const { changeOption } = useChangeOption();
   const optionItem = useMemo(() => {
     return {
       cartId: selectd?.id || null,
@@ -372,10 +393,7 @@ const CartMain = () => {
   const modal = useModal();
   console.log('checkedList',checkedList);
   
-  const queryClient = useQueryClient();
-  const { data: list } = useQuery(['getCartList'], () =>
-    apis.Cart.getCartList(),
-  );
+  const { list } = useGetCartList();
 
   const totalPrice = useMemo(() => {
     let price = 0;
@@ -387,20 +405,6 @@ const CartMain = () => {
     
     return price;
   },[list,checkedList]);
-
-  /** 장바구니 아이템 삭제 */
-  const { mutate: deleteItem } = useMutation((ids: number[]) => apis.Cart.deleteItem(ids), {
-    onSettled: () => {
-      queryClient.invalidateQueries(['getCartList']);
-    },
-  });
-
-  /** 장바구니 아이템 옵션변경 */
-  const { mutate: changeOption } = useMutation((data: ChangeOption) => apis.Cart.changeOption(data),{
-    onSettled: () => {
-      queryClient.invalidateQueries(['getCartList']);
-    }
-  });
 
   /** 모달 닫기 시 */
   const onCloseModal = () => {
@@ -495,7 +499,7 @@ const CartMain = () => {
           </div>
         </ModalBg>
       )}
-      <Cart>
+      <CartWrap>
         <BreadCrumb
           list={[{ content: '장바구니' }]}
         />
@@ -591,78 +595,89 @@ const CartMain = () => {
                       <DeleteBtn onClick={() => onClickDelete({ type: Delete.EACH, id: info.id })} />
                     </Td>
                   </tr>
-                ))}
+                ))
+                }
               </tbody>
             </Table>
-            <GrayArea>
-              <h5>스토어 주문금액 합계</h5>
-              <AmountWrap>
-                <DetailAmt>
+            {list && list.length <= 0 && (
+              <div className="empty">
+              장바구니에 담긴 상품이 없습니다.
+              </div>
+            )}
+            {list && list.length > 0 ? (
+              <>
+                <GrayArea>
+                  <h5>스토어 주문금액 합계</h5>
+                  <AmountWrap>
+                    <DetailAmt>
                   상품금액 {totalPrice.toLocaleString('ko-KR')}원 &nbsp;&nbsp;+ &nbsp;&nbsp;배송비 0원 &nbsp;&nbsp;-&nbsp;&nbsp; 할인금액 0 원
-                </DetailAmt>
-                <Amount>
-                  <h4>{totalPrice.toLocaleString('ko-KR')}</h4>
-                  <em>원</em><br/>
-                  <span>39,900원 이상 무료배송</span>
-                </Amount>
-              </AmountWrap>
-            </GrayArea>
-            <SubOrder>
-              <h4>
+                    </DetailAmt>
+                    <Amount>
+                      <h4>{totalPrice.toLocaleString('ko-KR')}</h4>
+                      <em>원</em><br/>
+                      <span>39,900원 이상 무료배송</span>
+                    </Amount>
+                  </AmountWrap>
+                </GrayArea>
+                <SubOrder>
+                  <h4>
                 결제 예정 금액
-                <span>총&nbsp;<em>{checkedList.length}</em>건</span>
-              </h4>
-              <CalcWrap>
-                <CalcItem>
-                  <span>
-                    {totalPrice.toLocaleString('ko-KR')}원
-                  </span>
-                  <em>
+                    <span>총&nbsp;<em>{checkedList.length}</em>건</span>
+                  </h4>
+                  <CalcWrap>
+                    <CalcItem>
+                      <span>
+                        {totalPrice.toLocaleString('ko-KR')}원
+                      </span>
+                      <em>
                     상품금액
-                  </em>
-                </CalcItem>
-                <CalcItem>
-                  <span>
+                      </em>
+                    </CalcItem>
+                    <CalcItem>
+                      <span>
                     0원
-                  </span>
-                  <em>
+                      </span>
+                      <em>
                     배송비
-                  </em>
-                </CalcItem>
-                <CalcItem>
-                  <span>
+                      </em>
+                    </CalcItem>
+                    <CalcItem>
+                      <span>
                     0원
-                  </span>
-                  <em>
+                      </span>
+                      <em>
                     할인금액
-                  </em>
-                </CalcItem>
-                <CalcItem>
-                  <span>
-                    {totalPrice.toLocaleString('ko-KR')}원
-                  </span>
-                  <em>
+                      </em>
+                    </CalcItem>
+                    <CalcItem>
+                      <span>
+                        {totalPrice.toLocaleString('ko-KR')}원
+                      </span>
+                      <em>
                     총 주문금액
-                  </em>
-                </CalcItem>
-              </CalcWrap>
-              <SubmitWrap>
-                <Link 
-                  href={{
-                    pathname: '/order',
-                    query: { ids: ((JSON.stringify(checkedList))) },
-                  }}
-                  prefetch={false}
-                >
+                      </em>
+                    </CalcItem>
+                  </CalcWrap>
+                  <SubmitWrap>
+                    <Link 
+                      href={{
+                        pathname: '/order',
+                        query: { ids: ((JSON.stringify(checkedList))) },
+                      }}
+                      prefetch={false}
+                    >
                   주문하기
-                </Link>
-              </SubmitWrap>
-            </SubOrder>
+                    </Link>
+                  </SubmitWrap>
+                </SubOrder>
+              </>
+            ) : null
+            }
           </OrderWrap>
         </Main>
-      </Cart>
+      </CartWrap>
     </>
   );
 };
 
-export default CartMain;
+export default Cart;

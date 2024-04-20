@@ -1,9 +1,10 @@
 import React from 'react';
-import MainComponent from './_component/Main';
 import { dehydrate } from '@tanstack/react-query';
 import getQueryClient from '../utils/getQueryClient';
 import apis from '../apis';
 import HydrateOnClient from '../utils/hydrateOnClient';
+import Slide from './_component/Slide';
+import Products from './_component/Products';
 
 const MainPage = async() => {
   const queryClient = getQueryClient();
@@ -13,7 +14,10 @@ const MainPage = async() => {
   
   return (
     <HydrateOnClient state={dehydratedState}>
-      <MainComponent/>
+      <main>
+        <Slide/>
+        <Products />
+      </main>
     </HydrateOnClient>
   );
 };

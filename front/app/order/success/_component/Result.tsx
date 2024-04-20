@@ -8,6 +8,7 @@ import BreadCrumb from '../../../../components/common/BreadCrumb';
 import BillWrap from '../../../../components/common/BillWrap';
 import LinkBtn from '../../../../components/common/LinkBtn';
 import apis from '../../../../apis';
+import useGetPayments from '../../../../hooks/queries/useGetPayments';
 const Main = styled.div`
   width: 960px;
   margin: 0 auto;
@@ -149,7 +150,7 @@ const BankCodeObj: {
   '23': 'SC제일',
   '07': '수협'
 };
-type TossPayment = {
+export type TossPayment = {
   orderId: string;
   paymentKey: string;
   orderName: string;
@@ -174,7 +175,7 @@ interface IOrderSuccessPageProps{
 
 const Result = ({ tossPayment }: IOrderSuccessPageProps) => {
   const router = useRouter();
-  const { data: payments } = useQuery(['getPayments'], () => apis.Payment.getPayments(tossPayment.orderId));
+  const { payments } = useGetPayments(tossPayment);
 
   useEffect(() => {
     if (!tossPayment) {
@@ -182,9 +183,6 @@ const Result = ({ tossPayment }: IOrderSuccessPageProps) => {
     }
   }, [tossPayment]);
   
-  console.log('tossPayment',tossPayment);
-  console.log('payments',payments);
-
   /** 가상계좌이면 true 아니면 false 리턴 */
   const isVirtualPayment = useMemo(() => {
     if (tossPayment?.virtualAccount) {

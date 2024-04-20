@@ -2,7 +2,7 @@ import React from 'react';
 import getQueryClient from '../../utils/getQueryClient';
 import apis from '../../apis';
 import { Hydrate, dehydrate } from '@tanstack/react-query';
-import CartMain from './_components/CartMain';
+import Cart from './_components/Cart';
 import { notFound } from 'next/navigation';
 import { NextResponse } from 'next/server';
 import { backUrl } from '../../config/backUrl';
@@ -22,7 +22,7 @@ const CartPage = async() => {
 
   return (
     <Hydrate state={dehydratedState}>
-      <CartMain />
+      <Cart />
     </Hydrate>
   );
 };
