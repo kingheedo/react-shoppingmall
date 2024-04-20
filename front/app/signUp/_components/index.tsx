@@ -10,6 +10,7 @@ const Main = styled.div`
   min-width: 1280px;
   max-width: 1440px;
   padding: 80px var(--gap) 120px;
+  margin: 0 auto;
 `;
 const Title = styled.h1`
   margin-bottom: 40px;
@@ -27,7 +28,8 @@ const InputRow = styled.div`
     position: relative;
     margin-top: 30px;
     padding-left: 102px;
-    > label {
+    
+    label {
       position: absolute;
       left: 0;
       top: 9px;
@@ -118,6 +120,9 @@ const SignUp = () => {
     onSuccess: () => {
       alert('회원가입이 완료되었습니다.');
       router.push('/signIn');
+    },
+    onError: () => {
+      alert('회원가입 오류가 발생하였습니다.');
     }
   });
   /** 비밀번호와 비밀번호 확인란이 일치하는 지 여부 리턴 */
@@ -128,13 +133,13 @@ const SignUp = () => {
       return true;
     }
 
-  },[password, passwordCheck]);
+  }, [password, passwordCheck]);
 
   /** 폼 제출 시 */
   const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('isCorrectPassword',isCorrectPassword);
-    
+    console.log('isCorrectPassword', isCorrectPassword);
+
     if (isCorrectPassword) {
       postSignUp();
     }
@@ -149,7 +154,7 @@ const SignUp = () => {
       payloadRef.current.type = payloadRef.current.type === 'password' ? 'text' : 'password';
     }
   };
-  
+
   return (
     <Main>
       <Title>회원가입</Title>
@@ -157,9 +162,9 @@ const SignUp = () => {
         <form onSubmit={onSubmitForm}>
           <InputRow>
             <label htmlFor="email">
-            이메일
+              이메일
             </label>
-            <input 
+            <input
               id="email"
               type="email"
               maxLength={30}
@@ -169,40 +174,43 @@ const SignUp = () => {
           </InputRow>
           <InputRow>
             <label htmlFor="password">
-            비밀번호
+              비밀번호
             </label>
-            <input 
+            <input
               ref={passwordRef}
-              id="password" 
+              id="password"
               type="password"
               maxLength={100}
               value={password}
               onChange={handlePassword}
             />
-            <i onClick={() => onClickEye(passwordRef)} className="eye-icon"/>
+            <i onClick={() => onClickEye(passwordRef)} className="eye-icon" />
 
           </InputRow>
           <InputRow>
+            <label htmlFor="password-check">
+              비밀번호 확인
+            </label>
             <InputWrap valid={isCorrectPassword}>
-              <input 
+              <input
                 ref={passwordCheckRef}
-                id="password-check" 
+                id="password-check"
                 type="password"
                 maxLength={30}
                 value={passwordCheck}
                 onChange={handlePasswordCheck}
               />
-              <i onClick={() => onClickEye(passwordCheckRef)} className="eye-icon"/>
+              <i onClick={() => onClickEye(passwordCheckRef)} className="eye-icon" />
             </InputWrap>
             {!isCorrectPassword && <p className="invalid-text">비밀번호를 다시 확인해주세요.</p>}
           </InputRow>
           <InputRow>
             <label htmlFor="name">
-            이름
+              이름
             </label>
-            <input 
-              id="name" 
-              type="text" 
+            <input
+              id="name"
+              type="text"
               maxLength={30}
               value={name}
               onChange={handleName}
@@ -222,7 +230,7 @@ const SignUp = () => {
         </InputRow> */}
           <Submit>
             <button type="submit">
-            가입하기
+              가입하기
             </button>
           </Submit>
 
