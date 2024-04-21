@@ -3,11 +3,11 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
 import styled from 'styled-components';
 import { PaymentInfo } from '..';
-import BillWrap from '../../common/BillWrap';
 import { useRouter, useSearchParams } from 'next/navigation';
-import useAddPayment from '../../../hooks/mutations/useAddPayment';
-import useGetUser from '../../../hooks/queries/useGetUser';
-import useAddAddress from '../../../hooks/mutations/useAddAddress';
+import useAddPayment from '../../../../hooks/mutations/useAddPayment';
+import useGetUser from '../../../../hooks/queries/useGetUser';
+import useAddAddress from '../../../../hooks/mutations/useAddAddress';
+import BillWrap from '../../../../components/common/BillWrap';
 
 const PaymentWrapper = styled.div``;
 

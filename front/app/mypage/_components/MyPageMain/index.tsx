@@ -8,7 +8,7 @@ import { SettlementState } from '../../../../apis/payment/schema';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import ko from 'date-fns/locale/ko';
-import ReviewModal from '../../../../components/ReviewModal';
+import ReviewModal from '../ReviewModal';
 import useGetAllPayments from '../../../../hooks/queries/useGetAllPayments';
 
 registerLocale('ko', ko);
@@ -232,27 +232,27 @@ const MyPageMain: FC = () => {
   /** 결제 진행 상황 텍스트 */
   const getSettlementStatus = (payload: { method: '카드' | '가상계좌' | '간편결제' | '휴대폰' | '계좌이체' | '문화상품권' | '도서문화상품권' | '게임문화상품권', status: SettlementState }) => {
     switch (payload.status) {
-      case SettlementState.DONE: {
-        if (payload.method === '가상계좌') {
-          // return '입금 완료';
-          return '구매 완료';
-        } else {
-          return '구매 완료';
-        }
+    case SettlementState.DONE: {
+      if (payload.method === '가상계좌') {
+        // return '입금 완료';
+        return '구매 완료';
+      } else {
+        return '구매 완료';
       }
+    }
 
-      case SettlementState.EXPIRED:
+    case SettlementState.EXPIRED:
 
-        return '유효기간 만료';
+      return '유효기간 만료';
 
-      case SettlementState.CANCELED:
+    case SettlementState.CANCELED:
 
-        return '전체 취소';
-      case SettlementState.WAITING_FOR_DEPOSIT:
+      return '전체 취소';
+    case SettlementState.WAITING_FOR_DEPOSIT:
 
-        return '입금 대기';
-      default:
-        return '';
+      return '입금 대기';
+    default:
+      return '';
     }
   };
 
@@ -270,7 +270,7 @@ const MyPageMain: FC = () => {
       .catch((error) => {
         console.error(error);
       })
-      ;
+    ;
   };
 
   /** 리뷰 버튼 클릭 시 */

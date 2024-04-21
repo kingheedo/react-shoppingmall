@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import PostBtn from '../../PostBtn';
-import { useModal } from '../../../../../context/ModalProvider';
-import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
 import { DeliveryType } from '../../..';
+import { useModal } from '../../../../../../context/ModalProvider';
+import hypenPhoneNum from '../../../../../../utils/hypenPhoneNum';
 
 const Form = styled.form`
 

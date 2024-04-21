@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
-import apis from '../../apis';
-import { PostReviewReq } from '../../apis/product/schema';
-import { backUrl } from '../../config/backUrl';
-import { TargetPaymentType } from '../../app/mypage/_components/MyPageMain';
+import apis from '../../../../apis';
+import { PostReviewReq } from '../../../../apis/product/schema';
+import { backUrl } from '../../../../config/backUrl';
+import { TargetPaymentType } from '../MyPageMain';
 
 const Bg = styled.div`
   position: fixed;

@@ -2,18 +2,14 @@
 
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import {
-  useQueryClient,
-} from '@tanstack/react-query';
 import Link from 'next/link';
-import { SizeOption } from '../../../../apis/product/schema';
-import { useModal } from '../../../../context/ModalProvider';
-import apis from '../../../../apis';
-import ReviewList from '../../../../components/ReviewList';
+import { SizeOption } from '../../../../../apis/product/schema';
+import { useModal } from '../../../../../context/ModalProvider';
+import ReviewList from '../ReviewList';
 import { useRouter } from 'next/navigation';
-import useGetUser from '../../../../hooks/queries/useGetUser';
-import useGetSingleProduct from '../../../../hooks/queries/useGetSingleProduct';
-import useAddItemToCart from '../../../../hooks/mutations/useAddItemToCart';
+import useGetUser from '../../../../../hooks/queries/useGetUser';
+import useGetSingleProduct from '../../../../../hooks/queries/useGetSingleProduct';
+import useAddItemToCart from '../../../../../hooks/mutations/useAddItemToCart';
 
 const Container = styled.div`
   max-width: 1440px;

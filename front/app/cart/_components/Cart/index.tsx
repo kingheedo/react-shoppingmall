@@ -3,12 +3,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChangeOption, GetCartListRes, Size } from '../../../../apis/cart/schema';
-import OptionModal from '../../../../components/Cart/OptionModal';
+import { GetCartListRes, Size } from '../../../../apis/cart/schema';
+import OptionModal from '../OptionModal';
 import BreadCrumb from '../../../../components/common/BreadCrumb';
 import { useModal } from '../../../../context/ModalProvider';
-import apis from '../../../../apis';
 import useGetCartList from '../../../../hooks/queries/useGetCartList';
 import useDeleteItem from '../../../../hooks/mutations/useDeleteItem';
 import useChangeOption from '../../../../hooks/mutations/useChangeOption';

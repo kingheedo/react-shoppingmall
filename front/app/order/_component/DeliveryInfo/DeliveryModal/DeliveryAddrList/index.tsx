@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import hypenPhoneNum from '../../../../../utils/hypenPhoneNum';
 import { SaveType } from '..';
-import { Address } from '../../../../../apis/user/schema';
-import useGetAddresses from '../../../../../hooks/queries/useGetAddresses';
+import hypenPhoneNum from '../../../../../../utils/hypenPhoneNum';
+import { Address } from '../../../../../../apis/user/schema';
+import useGetAddresses from '../../../../../../hooks/queries/useGetAddresses';
 
 const Title = styled.h1`
   line-height: 50px;

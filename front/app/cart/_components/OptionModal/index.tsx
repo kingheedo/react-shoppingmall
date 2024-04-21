@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Optionitem } from '..';
-import { Size } from '../../../apis/cart/schema';
+import { Size } from '../../../../apis/cart/schema';
+import { Optionitem } from '../Cart';
 
 const Wrap = styled.div`
   position: relative;

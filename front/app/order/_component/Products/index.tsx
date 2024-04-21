@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { GetCartListRes } from '../../../apis/cart/schema';
+import { GetCartListRes } from '../../../../apis/cart/schema';
 
 const Table = styled.table`
   width: 100%;
@@ -105,7 +105,7 @@ const Products = ({
         </tr>
       </Thead>
       <tbody>
-        {list?.map((info, idx) => (
+        {list?.map((info) => (
           <tr key={info.id}>
             <Td>
               <ProductImg src={info.Product.Images[0].src}/>

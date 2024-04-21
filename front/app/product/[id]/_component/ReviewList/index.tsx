@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 import { ko } from 'date-fns/locale';
 import { format } from 'date-fns';
-import { backUrl } from '../../config/backUrl';
-import { useRef, useState } from 'react';
-import { RevieListType } from '../../app/product/[id]/_component/Products';
+import { backUrl } from '../../../../../config/backUrl';
+import { useState } from 'react';
+import { RevieListType } from '../Products';
 
 interface IContentProps{
   isOpened: boolean;

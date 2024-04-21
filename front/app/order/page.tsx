@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import Order from '../../components/Order';
 import { useSearchParams } from 'next/navigation';
 import useGetCartList from '../../hooks/queries/useGetCartList';
+import Order from './_component';
 
 const OrderPage = () => {
   const params = useSearchParams();

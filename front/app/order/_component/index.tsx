@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { GetCartListRes } from '../../apis/cart/schema';
-import BreadCrumb from '../common/BreadCrumb';
 import styled from 'styled-components';
 import DeliveryInfo from './DeliveryInfo';
 import Payments from './Payments';
 import Products from './Products';
-import { Address } from '../../apis/user/schema';
+import { Address } from '../../../apis/user/schema';
+import { GetCartListRes } from '../../../apis/cart/schema';
+import BreadCrumb from '../../../components/common/BreadCrumb';
 
 const Title = styled.h1`
   margin-bottom: 40px;  

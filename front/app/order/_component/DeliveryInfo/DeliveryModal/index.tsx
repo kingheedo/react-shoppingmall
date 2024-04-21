@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import DeliveryAddrList from './DeliveryAddrList';
 import DeliveryAddrForm from './DeliveryAddrForm';
 import { useMutation } from '@tanstack/react-query';
-import apis from '../../../../apis';
-import { Address } from '../../../../apis/user/schema';
 import { DeliveryType } from '../..';
+import { Address } from '../../../../../apis/user/schema';
+import apis from '../../../../../apis';
 
 interface IModalProps {
   width: number;
