@@ -12,6 +12,8 @@ const OrderPage = () => {
 
   /** 주문 대상 리스트 */
   const orderList = useMemo(() => {
+    console.log('ids',ids);
+    
     if (ids) {
       return list?.filter(product => ids.includes(String(product.id))) || [];
     } else {
@@ -19,6 +21,8 @@ const OrderPage = () => {
     }
   }, [list, ids]);
 
+  console.log('orderList',orderList);
+  
   return (
     orderList.length > 0 &&
     <Order

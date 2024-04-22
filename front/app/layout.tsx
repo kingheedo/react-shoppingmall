@@ -11,9 +11,12 @@ import getQueryClient from '../utils/getQueryClient';
 import apis from '../apis';
 import { Hydrate, dehydrate } from '@tanstack/react-query';
 
-export const metaData: Metadata = {
-  title: 'next',
-  description: 'created by next app'
+export const metadata: Metadata = {
+  title: 'react-shoppingmall',
+  description: 'react-shoppingmall',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 const Layout = async({ children }: PropsWithChildren) => {
@@ -26,7 +29,7 @@ const Layout = async({ children }: PropsWithChildren) => {
   }));
 
   const dehydratedState = dehydrate(queryClient);
-  // queryClient.clear();
+  queryClient.clear();
 
   return (
     <html lang="kr">

@@ -13,7 +13,7 @@ const useGetUser = <D>({
   dep
 }: Partial<IUseGetUserProps<D>> = {}) => {
   const { data: user } = useQuery({
-    queryKey: ['getUser',dep], 
+    queryKey: dep ? ['getUser',dep] : ['getUser'], 
     queryFn: () => apis.User.getUser(),
     onError: () => onErrorCb && onErrorCb(),
     onSuccess: () => onSuccessCb && onSuccessCb()

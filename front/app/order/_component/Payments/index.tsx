@@ -58,6 +58,14 @@ const Payments = ({
     PaymentWidgetInstance['renderPaymentMethods']
   > | null>(null);
   const router = useRouter();
+  const { addAddress } = useAddAddress({
+    rcName: info.delivery.rcName,
+    rcPhone: info.delivery.rcPhone,
+    rcPostNum: info.delivery.address.rcPostNum,
+    rcPostBase: info.delivery.address.rcPostBase,
+    rcPostDetail: info.delivery.address.rcPostDetail,
+    base: info.delivery.address.base
+  });
   const { addPayment } = useAddPayment();
   const searchParams = useSearchParams();
 
@@ -131,14 +139,7 @@ const Payments = ({
       console.log('info', info);
       if (orderId && paymentKey && amount) {
         // 주소 추가
-        await useAddAddress({
-          rcName: info.delivery.rcName,
-          rcPhone: info.delivery.rcPhone,
-          rcPostNum: info.delivery.address.rcPostNum,
-          rcPostBase: info.delivery.address.rcPostBase,
-          rcPostDetail: info.delivery.address.rcPostDetail,
-          base: info.delivery.address.base
-        });
+        await addAddress();
 
         await addPayment({
           orderId,

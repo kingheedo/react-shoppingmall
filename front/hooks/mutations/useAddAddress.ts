@@ -11,12 +11,12 @@ interface IUseAddAddressProps {
 }
 
 const useAddAddress = (payload: IUseAddAddressProps) => {
-  const { mutate: addAdress } = useMutation({
+  const { mutate: addAddress } = useMutation({
     mutationFn: () => apis.User.addAddress(payload)
   });
   
   return {
-    addAdress
+    addAddress
   };
 };
 

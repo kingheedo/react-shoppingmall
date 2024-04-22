@@ -348,6 +348,31 @@ const Products = ({ id }: IProductDetailProps) => {
     return reviewLength ? (rate / reviewLength).toFixed(1) : 0;
   },[product]);
   
+  /** 상품 장바구니 및 구매 가능 상태인지 여부 */
+  const checkBuyInfoValid = () => {
+    if (!product) {
+      return false;
+    }
+    if (!user) {
+      router.push('/signIn');
+      
+      return false;
+    }
+    if (!buyInfo.size) {
+      modal?.confirm.sizeSlct.handleConfirm();
+      
+      return false;
+    }
+    if (
+      buyInfo.productId &&
+      buyInfo.size &&
+      buyInfo.totalPrice &&
+      buyInfo.quantity
+    ) {
+      return true;
+    }
+  };
+
   /** 사이즈 옵션 선택 시 */
   const onClickSize = (option: SizeOption) => {
     if (!product) {
@@ -384,29 +409,30 @@ const Products = ({ id }: IProductDetailProps) => {
 
   /** 장바구니 클릭 시 */
   const onClickAddCart = () => {
-    console.log('buyInfo',buyInfo);
-    
-    if (!product) {
-      return;
-    }
-    if (!user) {
-      router.push('/signIn');
-    }
-    if (!buyInfo.size) {
-      modal?.confirm.sizeSlct.handleConfirm();
-    }
-
-    if (
-      buyInfo.productId &&
-      buyInfo.size &&
-      buyInfo.totalPrice &&
-      buyInfo.quantity
-    ) {
+    if (checkBuyInfoValid()) {
       addItemToCart({
         productId: buyInfo.productId,
         size: buyInfo.size,
         totalPrice: buyInfo.totalPrice,
         quantity: buyInfo.quantity,
+        buyNow: false
+      }, {
+        onSuccess: () => modal?.confirm.addCart.handleConfirm(() => router.push('/cart'))
+      });
+    }
+  };
+
+  //바로구매 클릭 시
+  const onClickBuyNow = () => {
+    if (checkBuyInfoValid()) {
+      addItemToCart({
+        productId: buyInfo.productId,
+        size: buyInfo.size,
+        totalPrice: buyInfo.totalPrice,
+        quantity: buyInfo.quantity,
+        buyNow: true
+      },{
+        onSuccess: (data) => router.push(`/order/?ids=${JSON.stringify(data.id)}`)
       });
     }
   };
@@ -497,7 +523,7 @@ const Products = ({ id }: IProductDetailProps) => {
                 </BuyWrap>
                 <DecisionWrap>
                   <BasketBtn onClick={onClickAddCart}>장바구니</BasketBtn>
-                  <BuyBtn>바로구매</BuyBtn>
+                  <BuyBtn onClick={onClickBuyNow}>바로구매</BuyBtn>
                 </DecisionWrap>
               </InfoArea>
             </ProductInfo>

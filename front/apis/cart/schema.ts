@@ -12,6 +12,7 @@ export type AddItmToCartReq = {
   size: SizeOption | '';
   totalPrice: number;
   quantity: number;
+  buyNow: boolean;
 };
 
 export type GetCartListRes = {
