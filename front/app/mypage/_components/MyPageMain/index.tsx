@@ -399,7 +399,7 @@ const MyPageMain: FC = () => {
                           받으시는 분
                         </span>
                         <strong>
-                          왕희도
+                          {val1.dbPayments[0].rcName}
                         </strong>
                         {/* {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
                         <Link href={'#'}>
