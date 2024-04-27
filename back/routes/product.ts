@@ -1,43 +1,8 @@
 import * as express from 'express';
 import { isLoggedIn } from './middlewares';
-import * as path from 'path'
-import * as fs from 'fs';
-import * as multer from 'multer';
 import { Product, Review, User, Image, Size, HistoryCart, Payment, ReviewImage } from '../models';
 import { Op } from 'sequelize';
 const router = express.Router();
-
-// AWS.config.update({
-//     accessKeyId: process.env.AWSAccessKeyId,
-//     secretAccessKey: process.env.AWSSecretKey,
-//     region: 'ap-northeast-2',
-// })
-
-// const upload = multer({
-//     storage: multerS3({
-//         s3: new AWS.S3(),
-//         bucket: 'reactshoppingmall-s3',
-//         key(rep,file,cb){
-//             cb(null, `orignal/${Date.now()}_${path.basename(file.originalname)}`)
-//         }
-//     }),
-//     limits : {fileSize: 20 * 1024 * 1024, files: 2}
-// });
-
-
-// const upload = multer({
-//     storage: multer.diskStorage({
-//         destination: (req,file,cb) => {
-//             cb(null, 'uploads')
-//         },
-//         filename: (req,file,cb) => {
-//             cb(null, `${file.fieldname} - ${Date.now()}`)
-//         },
-//     }),
-//     limits: {
-//         fileSize : 20 * 1024 * 1024, files: 2
-//     }
-// })
 
 router.get('/search', async(req, res, next) => {
     try{
