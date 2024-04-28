@@ -13,35 +13,30 @@ const express = require("express");
 const middlewares_1 = require("./middlewares");
 const models_1 = require("../models");
 const sequelize_1 = require("sequelize");
+const path = require("path");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const client_s3_1 = require("@aws-sdk/client-s3");
 const router = express.Router();
-// AWS.config.update({
-//     accessKeyId: process.env.AWSAccessKeyId,
-//     secretAccessKey: process.env.AWSSecretKey,
-//     region: 'ap-northeast-2',
-// })
-// const upload = multer({
-//     storage: multerS3({
-//         s3: new AWS.S3(),
-//         bucket: 'reactshoppingmall-s3',
-//         key(rep,file,cb){
-//             cb(null, `orignal/${Date.now()}_${path.basename(file.originalname)}`)
-//         }
-//     }),
-//     limits : {fileSize: 20 * 1024 * 1024, files: 2}
-// });
-// const upload = multer({
-//     storage: multer.diskStorage({
-//         destination: (req,file,cb) => {
-//             cb(null, 'uploads')
-//         },
-//         filename: (req,file,cb) => {
-//             cb(null, `${file.fieldname} - ${Date.now()}`)
-//         },
-//     }),
-//     limits: {
-//         fileSize : 20 * 1024 * 1024, files: 2
-//     }
-// })
+/** multer에서 s3접근 */
+const s3 = new client_s3_1.S3Client({
+    credentials: {
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+    region: 'ap-northeast-2',
+});
+/** multer에서 s3업로드 설정 */
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.BUCKET_NAME,
+        key: (req, file, cb) => {
+            cb(null, `review/${Date.now()}_${path.basename(file.originalname)}`);
+        }
+    }),
+    limits: { fileSize: 20 * 1024 * 1024 },
+});
 router.get('/search', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const SearchProducts = yield models_1.Product.findAll({
@@ -116,12 +111,20 @@ router.get('/:productId', (req, res, next) => __awaiter(void 0, void 0, void 0, 
         next(error);
     }
 }));
+/** 로컬 리뷰 이미지 추가 */
 // router.post('/review/images', isLoggedIn, upload.array('image'), async(req, res, next) => {
 //     console.log('req.files', req.files);
 //     if(Array.isArray(req.files)){
 //         return res.json((req.files as Express.Multer.File[]).map(v => v.filename))
 //     }
 // })
+/** s3에 리뷰이미지 추가 */
+router.post('/review/images', middlewares_1.isLoggedIn, upload.array('image'), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('req.files', req.files);
+    if (Array.isArray(req.files)) {
+        return res.json(req.files.map(v => v.location));
+    }
+}));
 router.post('/:productId/review', middlewares_1.isLoggedIn, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
