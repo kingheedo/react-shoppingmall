@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 import apis from '../../../../apis';
 import { PostReviewReq } from '../../../../apis/product/schema';
-import { backUrl } from '../../../../config/backUrl';
 import { TargetPaymentType } from '../MyPageMain';
 
 const Bg = styled.div`
@@ -154,10 +153,14 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
 
   const queryClient = useQueryClient();
   const { mutate: postReview } = useMutation((data: PostReviewReq) => apis.Product.postReview(data),{
-    onSettled: () => {
-      queryClient.invalidateQueries(['getAllPayments']);
+    onSuccess: async() => {
+      await queryClient.invalidateQueries(['getAllPayments']);
       onClose();
     }
+    // onSettled: () => {
+    //   queryClient.invalidateQueries(['getAllPayments']);
+    //   onClose();
+    // }
   });
   
   /** 별점 마우스 호버시 */
@@ -175,8 +178,8 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
   /** 폼 제출시 */
   const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('content', content);
-    console.log('starScore', starScore);
+    // console.log('content', content);
+    // console.log('starScore', starScore);
     postReview({
       content,
       rate: starScore,
@@ -195,7 +198,7 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
   };
 
   const onChangeImgFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('onchange');
+    // console.log('onchange');
     
     const fileData = e.currentTarget.files?.[0];
     if (!fileData) {
@@ -205,14 +208,13 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
     formData.append('image', fileData);
     //리뷰 이미지 등록 api
     apis.Product.postReviewImage(formData).then((res) => {
-      console.log('changefile',res);
-      
+      // console.log('changefile',res);
       setTempImage([res[0]]);
     });
   };
 
   const onClickDeleteRq = () => {
-    console.log('inputRef.current?.files',inputRef.current?.files);
+    // console.log('inputRef.current?.files',inputRef.current?.files);
     formData.delete('image');
     if (!inputRef.current) {
       return;
@@ -220,9 +222,6 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
     inputRef.current.value = '';
     setTempImage([]);
   };
-
-  console.log('formData', formData);
-  console.log('inputref', inputRef.current?.value);
   
   return (
     <Bg onClick={onClose}>
@@ -254,7 +253,7 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
         </ImageSelect>
         {tempImage.length > 0 && (
           <ImageWrap>
-            <TempImage src={`${backUrl}/${tempImage[0]}`} alt={tempImage[0]} />
+            <TempImage src={`${tempImage[0]}`} alt={tempImage[0]} />
             <button className="delete-req-btn" onClick={onClickDeleteRq}/>
           </ImageWrap>
         )}

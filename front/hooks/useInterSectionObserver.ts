@@ -1,21 +1,26 @@
 import React from 'react';
 
-export default function useIntersectionObserver({
+const useIntersectionObserver = ({
   root,
   target,
   onInterSect,
   threshold = 0.5,
   rootMargin = '0px',
   enabled = true,
-}: any) {
+}: any) => {
   React.useEffect(() => {
+    console.log('target',target);
+    console.log('enabled',enabled);
+    
     if (!enabled) {
       return;
     }
 
     const observer = new IntersectionObserver(
       entries =>
-        entries.forEach(entry => entry.isIntersecting && onInterSect()),
+        entries.forEach(entry => {
+          return entry.isIntersecting && onInterSect();
+        }),
       {
         root: root && root.current,
         rootMargin,
@@ -34,5 +39,7 @@ export default function useIntersectionObserver({
     return () => {
       observer.unobserve(el);
     };
-  }, [target, enabled, root, threshold, rootMargin, onInterSect]);
-}
+  }, [target, enabled]);
+};
+
+export default useIntersectionObserver;

@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { ko } from 'date-fns/locale';
 import { format } from 'date-fns';
-import { backUrl } from '../../../../../config/backUrl';
 import { useState } from 'react';
 import { RevieListType } from '../Products';
 
@@ -179,7 +178,7 @@ const ReviewList = ({ list }: IReviewListProps) => {
               <p>
                 {val.content}
               </p>
-              {val.reviewImage && <img src={`${backUrl}/${val.reviewImage}`} />}
+              {val.reviewImage && <img src={`${val.reviewImage}`} />}
             </Content>
             <UserEmail>
               {secretEmail(val.userEmail)}

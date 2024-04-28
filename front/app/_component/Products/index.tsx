@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
-import useIntersectionObserver from '../../../hooks/useInterSectionObserver';
 import Item from './Item';
 import useGetProducts from '../../../hooks/queries/useInfiniteQuery';
 
@@ -30,21 +29,11 @@ const ProductsArea = styled.section`
 `;
 
 const Products = () => {
-
-  const loadRef = useRef<HTMLUListElement | null>(null);
-  
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetProducts();
+  const { loadRef, data } = useGetProducts();
   const list = useMemo(() => {
     return data?.pages?.flatMap(value => value);
   }, [data?.pages]);
-  
-  useIntersectionObserver({
-    root: null,
-    target: loadRef,
-    onInterSect: () => fetchNextPage,
-    enabled: hasNextPage && !isFetchingNextPage
-  });
-  
+
   return (
     <ProductsArea>
       <ListContainer ref={loadRef}>
