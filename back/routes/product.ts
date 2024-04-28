@@ -155,7 +155,7 @@ router.post('/:productId/review', isLoggedIn, async(req, res,next) => {
         })
         
 
-        return res.status(202).send('리뷰 작성 완료');
+        return res.status(201).send('리뷰 작성 완료');
     }
     catch(error){
         console.error(error);

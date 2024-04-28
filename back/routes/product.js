@@ -149,7 +149,7 @@ router.post('/:productId/review', middlewares_1.isLoggedIn, (req, res, next) => 
         yield (payment === null || payment === void 0 ? void 0 : payment.update({
             isReviewed: true
         }));
-        return res.status(202).send('리뷰 작성 완료');
+        return res.status(201).send('리뷰 작성 완료');
     }
     catch (error) {
         console.error(error);
