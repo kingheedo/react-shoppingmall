@@ -152,15 +152,16 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
   const formData = new FormData();
 
   const queryClient = useQueryClient();
-  const { mutate: postReview } = useMutation((data: PostReviewReq) => apis.Product.postReview(data),{
-    onSuccess: async() => {
-      await queryClient.invalidateQueries(['getAllPayments']);
+  const { mutate: postReview } = useMutation({
+    mutationFn: (data: PostReviewReq) => apis.Product.postReview(data),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['getAllPayments'],
+      },{
+        cancelRefetch: true
+      });
       onClose();
     }
-    // onSettled: () => {
-    //   queryClient.invalidateQueries(['getAllPayments']);
-    //   onClose();
-    // }
   });
   
   /** 별점 마우스 호버시 */

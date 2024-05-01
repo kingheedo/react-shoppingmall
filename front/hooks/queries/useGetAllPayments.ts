@@ -34,11 +34,9 @@ const useGetAllPayments = ({
     setIsCanceled(payload);
   };
   
-  const { data: payments, isPlaceholderData } = useQuery(
-    ['getAllPayments',
-      startDate || endDate || isInquired || isCanceled || page
-    ],
-    () => apis.Payment.getAllPayments({
+  const { data: payments, isPlaceholderData } = useQuery({
+    queryKey: ['getAllPayments', startDate || endDate || isInquired || isCanceled || page],
+    queryFn: () => apis.Payment.getAllPayments({
       startDate: new Date(
         startDate.getUTCFullYear(),
         startDate.getUTCMonth(),
@@ -56,10 +54,9 @@ const useGetAllPayments = ({
         endDate.getUTCSeconds(),
       ),
       page
-    }),{
-      enabled: !!startDate && !!endDate && isInquired
-    }
-  );
+    }),
+    enabled: !!startDate && !!endDate && isInquired
+  });
 
   useEffect(() => {
     if (!isPlaceholderData) {

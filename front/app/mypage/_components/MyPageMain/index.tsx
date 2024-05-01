@@ -211,7 +211,7 @@ const MyPageMain: FC = () => {
 
   const [startDate, setStartDate] = useState(new Date(new Date().setMonth(new Date().getMonth() - 3)));
   const [endDate, setEndDate] = useState(new Date());
-  const [reviewModal, setReviewModal] = useState(false); //리뷰 모달 오픈 여부
+  const [reviewModalOpen, setReviewModalOpen] = useState(false); //리뷰 모달 오픈 여부
   const [targetPayment, setTargetPayment] = useState<TargetPaymentType>({ //리뷰 대상
     productId: -1,
     paymentId: -1
@@ -279,15 +279,15 @@ const MyPageMain: FC = () => {
     paymentId: number
   }) => {
     setTargetPayment(payload);
-    setReviewModal(true);
+    setReviewModalOpen(true);
   };
 
   return (
     <div className="my-page">
-      {reviewModal && (
+      {reviewModalOpen && (
         <ReviewModal
           target={targetPayment}
-          onClose={() => setReviewModal(false)} />
+          onClose={() => setReviewModalOpen(false)} />
       )}
       <BreadCrumb
         list={[
