@@ -18,3 +18,5 @@
 - Styled Components
 - Express
 - Sequelize
+
+*관리자 홈페이지 url: https://github.com/kingheedo/react-shoppingmall-admin/blob/master/README.md
