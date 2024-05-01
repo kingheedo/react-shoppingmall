@@ -154,11 +154,9 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
   const queryClient = useQueryClient();
   const { mutate: postReview } = useMutation({
     mutationFn: (data: PostReviewReq) => apis.Product.postReview(data),
-    onSettled: () => {
-      queryClient.invalidateQueries({
+    onSettled: async() => {
+      await queryClient.invalidateQueries({
         queryKey: ['getAllPayments'],
-      },{
-        cancelRefetch: true
       });
       onClose();
     }

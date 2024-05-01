@@ -124,7 +124,8 @@ const Table = styled.table`
           }
 
           .btn-group{
-            button{
+            span, button{
+              display: inline-block;
               width: 108px;
               min-width: 72px;
               padding: 0;
@@ -367,7 +368,7 @@ const MyPageMain: FC = () => {
                         <span>
                           {`${new Date(val1.dbPayments[0].createdAt).getFullYear()}.${new Date(val1.dbPayments[0].createdAt).getMonth() + 1}.${new Date(val1.dbPayments[0].createdAt).getDate()}`}
                         </span>
-                        {(val1.tossPayment.cancels && val1.tossPayment.cancels[0] || !val1.tossPayment.virtualAccount)
+                        {/* {(val1.tossPayment.cancels && val1.tossPayment.cancels[0] || !val1.tossPayment.virtualAccount)
                           ? (
                             null
                           )
@@ -387,7 +388,7 @@ const MyPageMain: FC = () => {
                                 </strong>
                               </span>
                             </>
-                          )}
+                          )} */}
                         {/* <Link href={'#'}>
                         주문상세
                       </Link> */}
@@ -426,23 +427,30 @@ const MyPageMain: FC = () => {
                             </div>
                           </td>
                           <td>
-                            <span className="status">{getSettlementStatus({ method: val1.tossPayment.method, status: val1.tossPayment.status })}</span>
+                            {/* <span className="status">{getSettlementStatus({ method: val1.tossPayment.method, status: val1.tossPayment.status })}</span> */}
                           </td>
                           <td />
                           <td>
-                            {!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && (
+                            {/*!(val1.tossPayment.cancels && val1.tossPayment.cancels[0]) && */(
                               <div className="btn-group">
-                                {val1.tossPayment.status !== SettlementState.DONE && (
+                                {/* {val1.tossPayment.status !== SettlementState.DONE && (
                                   <button onClick={() => onClickCancel(val1.tossPayment.paymentKey)}>
                                     전체취소
-                                  </button>)}
-                                {val1.tossPayment.status === SettlementState.DONE && !val2.isReviewed && (
-                                  <button onClick={() => onClickReview({
+                                  </button>)} */}
+                                {/*val1.tossPayment.status === SettlementState.DONE && */!val2.isReviewed ? (
+                                  <button type="button" onClick={() => onClickReview({
                                     productId: val2.HistoryCart.Product.id,
                                     paymentId: val2.id
                                   })}>
                                     리뷰 작성
-                                  </button>)}
+                                  </button>
+                                )
+                                  : (
+                                    <span>
+                                    리뷰 작성 완료
+                                    </span>
+                                  )
+                                }
                                 {/* <button>
                     결제수단 변경
                     </button> */}

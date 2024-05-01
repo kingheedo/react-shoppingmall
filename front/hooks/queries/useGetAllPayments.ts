@@ -5,7 +5,7 @@ import { GetAllPaymentsRes, GetTossPmntOrderRes } from '../../apis/payment/schem
 
 type PayemntState = {
   dbPayments: GetAllPaymentsRes;
-  tossPayment: GetTossPmntOrderRes;
+  // tossPayment: GetTossPmntOrderRes;
 }
 
 interface IUseGetAllPaymentsProps {
@@ -91,23 +91,23 @@ const useGetAllPayments = ({
     (async () => {
       setPaymentsState(() => new Map());
       const orderIds = [...new Set(payments?.map(payment => payment.orderId))];
-      const fethArr = orderIds.map(orderId => (
-        apis.Payment.getTossPmntOrder(orderId)
-      ));
+      // const fethArr = orderIds.map(orderId => (
+      //   apis.Payment.getTossPmntOrder(orderId)
+      // ));
 
-      const tossPmntOrderList = await Promise.all(fethArr);
+      // const tossPmntOrderList = await Promise.all(fethArr);
 
-      for (let i = 0; i < tossPmntOrderList.length; i++) {
-        const dbPayments = payments?.filter(payment => payment.orderId === tossPmntOrderList[i].orderId);
+      for (let i = 0; i < orderIds.length; i++) {
+        const dbPayments = payments?.filter(payment => payment.orderId === orderIds[i]);
         if (!dbPayments) {
           return;
         }
 
         setPaymentsState(prev => new Map(prev).set(
-          tossPmntOrderList[i].orderId,
+          orderIds[i],
           {
             dbPayments,
-            tossPayment: tossPmntOrderList[i]
+            // tossPayment: tossPmntOrderList[i]
           }));
       }
       setIsInquired(false);
