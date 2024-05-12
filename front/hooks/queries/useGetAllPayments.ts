@@ -1,11 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import apis from '../../apis';
 import { useEffect, useState } from 'react';
-import { GetAllPaymentsRes, GetTossPmntOrderRes } from '../../apis/payment/schema';
+import { GetAllPaymentsRes } from '../../apis/payment/schema';
 
 type PayemntState = {
   dbPayments: GetAllPaymentsRes;
-  // tossPayment: GetTossPmntOrderRes;
 }
 
 interface IUseGetAllPaymentsProps {
@@ -19,23 +18,11 @@ const useGetAllPayments = ({
   endDate,
   page
 }: IUseGetAllPaymentsProps) => {
-  const queryClient = useQueryClient();
   const [paymentsState, setPaymentsState] = useState<Map<string, PayemntState>>(() => new Map());
-  const [isInquired, setIsInquired] = useState(true); //조회하기 버튼 클릭 여부
-  const [isCanceled, setIsCanceled] = useState(false); //결제 취소 여부
-  
-  /** 조회 여부 */
-  const handleInquired = (payload: boolean) => {
-    setIsInquired(payload);
-  };
 
-  /** 결제 취소 여부 */
-  const handleCancel = (payload: boolean) => {
-    setIsCanceled(payload);
-  };
-  
-  const { data: payments, isPlaceholderData } = useQuery({
-    queryKey: ['getAllPayments', startDate || endDate || isInquired || isCanceled || page],
+  /** 주문 내역 invalidate */
+  const { data: payments, refetch: refetchGetAllPayments } = useQuery({
+    queryKey: ['getAllPayments', startDate || endDate || page],
     queryFn: () => apis.Payment.getAllPayments({
       startDate: new Date(
         startDate.getUTCFullYear(),
@@ -55,37 +42,8 @@ const useGetAllPayments = ({
       ),
       page
     }),
-    enabled: !!startDate && !!endDate && isInquired
+    enabled: !!startDate && !!endDate
   });
-
-  useEffect(() => {
-    if (!isPlaceholderData) {
-      // console.log('hasmore', payments!.hasMore);
-
-      queryClient.prefetchQuery({
-        queryKey: ['getAllPayments', startDate, endDate, page + 1],
-        queryFn: () => () => apis.Payment.getAllPayments({
-          startDate: new Date(
-            startDate.getUTCFullYear(),
-            startDate.getUTCMonth(),
-            startDate.getUTCDate(),
-            startDate.getUTCHours(),
-            startDate.getUTCMinutes(),
-            startDate.getUTCSeconds(),
-          ),
-          endDate: new Date(
-            endDate.getUTCFullYear(),
-            endDate.getUTCMonth(),
-            endDate.getUTCDate(),
-            endDate.getUTCHours(),
-            endDate.getUTCMinutes(),
-            endDate.getUTCSeconds(),
-          ),
-          page: page + 1
-        })
-      });
-    }
-  }, [payments, isPlaceholderData, page, queryClient, startDate, endDate]);
 
   useEffect(() => {
     (async () => {
@@ -110,16 +68,13 @@ const useGetAllPayments = ({
             // tossPayment: tossPmntOrderList[i]
           }));
       }
-      setIsInquired(false);
-      setIsCanceled(false);
     })();
 
-  }, [payments, isCanceled]);
+  }, [payments]);
   
   return {
     paymentsState,
-    handleInquired,
-    handleCancel
+    refetchGetAllPayments,
   };
 };
 

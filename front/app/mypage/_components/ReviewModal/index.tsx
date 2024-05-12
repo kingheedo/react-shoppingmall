@@ -152,13 +152,16 @@ const ReviewModal = ({ target, onClose }: IReviewModalProps) => {
   const formData = new FormData();
 
   const queryClient = useQueryClient();
-  const { mutate: postReview } = useMutation({
+  const { mutateAsync: postReview } = useMutation({
     mutationFn: (data: PostReviewReq) => apis.Product.postReview(data),
-    onSettled: async() => {
+    onSuccess: async() => {
       await queryClient.invalidateQueries({
         queryKey: ['getAllPayments'],
       });
       onClose();
+    },
+    onError: () => {
+      alert('리뷰 작성에 실패하였습니다.');
     }
   });
   

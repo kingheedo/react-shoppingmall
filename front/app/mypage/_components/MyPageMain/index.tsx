@@ -221,9 +221,7 @@ const MyPageMain: FC = () => {
 
   const {
     paymentsState,
-    handleInquired,
-    handleCancel
-
+    refetchGetAllPayments,
   } = useGetAllPayments({
     startDate,
     endDate,
@@ -259,14 +257,14 @@ const MyPageMain: FC = () => {
 
   /** 조회하기 버튼 클릭 시 */
   const onClickInquiry = () => {
-    handleInquired(true);
+    refetchGetAllPayments();
   };
 
   /** 결제 취소 버튼 클릭 시 */
   const onClickCancel = (paymentKey: string) => {
     apis.Payment.cancelTossPmntOrder(paymentKey)
       .then(() => {
-        handleCancel(true);
+        refetchGetAllPayments();
       })
       .catch((error) => {
         console.error(error);
