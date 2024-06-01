@@ -132,6 +132,7 @@ router.post('/:productId/review', isLoggedIn, async(req, res,next) => {
             content: req.body.content,
             rate: req.body.rate,
             ProductId: req.params.productId,
+            PaymentId: req.body.paymentId,
             UserId: req.user?.id
         });
 

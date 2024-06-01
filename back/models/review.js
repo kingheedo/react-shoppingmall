@@ -30,6 +30,7 @@ const associate = (db) => {
     db.Review.hasMany(db.ReviewImage);
     db.Review.belongsTo(db.User);
     db.Review.belongsTo(db.Product);
+    db.Review.belongsTo(db.Payment);
 };
 exports.associate = associate;
 exports.default = Review;

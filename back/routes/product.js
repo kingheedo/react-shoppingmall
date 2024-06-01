@@ -132,6 +132,7 @@ router.post('/:productId/review', middlewares_1.isLoggedIn, (req, res, next) => 
             content: req.body.content,
             rate: req.body.rate,
             ProductId: req.params.productId,
+            PaymentId: req.body.paymentId,
             UserId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.id
         });
         if (review && Array.isArray(req.body.image) && req.body.image.length > 0) {

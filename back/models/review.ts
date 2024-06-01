@@ -36,5 +36,6 @@ import {sequelize} from './sequelize'
          db.Review.hasMany(db.ReviewImage);
          db.Review.belongsTo(db.User);
          db.Review.belongsTo(db.Product);
+         db.Review.belongsTo(db.Payment);
     }
     export default Review
